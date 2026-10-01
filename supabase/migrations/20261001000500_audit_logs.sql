@@ -102,9 +102,8 @@ language plpgsql
 set search_path = ''
 as $$
 begin
-  execute format('drop trigger if exists audit_row on %s', target);
   execute format(
-    'create trigger audit_row after insert or update or delete on %s for each row execute function public.audit_trigger(%s)',
+    'create or replace trigger audit_row after insert or update or delete on %s for each row execute function public.audit_trigger(%s)',
     target,
     (select string_agg(quote_literal(c), ', ') from unnest(key_columns) as c)
   );

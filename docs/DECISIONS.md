@@ -95,3 +95,7 @@ The admin image uploader uploads to the public `media` bucket with the user's se
 ### D-023 · Admin forms send raw values; the server re-validates
 
 Forms use react-hook-form with `zodResolver(schema, undefined, { raw: true })` for instant field errors, then send the raw values to the server action, which parses them with the same schema. The server never trusts client-side transforms.
+
+### D-024 · Hosted Supabase project and function grants
+
+The hosted project `ps-traveler` (Free plan, Mumbai `ap-south-1`) was created and migrated through the Supabase connector, so its migration history has connector timestamps instead of the file names. Before running `supabase db push` against it, mark the existing files as applied with `supabase migration repair --status applied <version>`. `enable_audit()` uses `create or replace trigger` (Postgres 14+), so it never needs a destructive statement. `20261002000600_function_grants.sql` revokes API access to trigger-only SECURITY DEFINER functions, which the Supabase security advisor flagged.
