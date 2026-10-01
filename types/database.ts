@@ -407,6 +407,7 @@ export type Database = {
         date: string;
         units: number | null;
         sold_units: number;
+        held_units: number;
         is_closed: boolean;
         min_stay: number | null;
         updated_at: string;
@@ -439,6 +440,192 @@ export type Database = {
         [MediaFk<"hotel_media_media_id_fkey", "media_id">]
       >;
       hotel_amenities: Simple<{ hotel_id: string; amenity_id: string }>;
+      coupons: Simple<
+        {
+          id: string;
+          code: string;
+          description: LocalizedJson | null;
+          discount_type: Database["public"]["Enums"]["coupon_discount"];
+          value: number;
+          max_discount_paise: number | null;
+          min_order_paise: number;
+          services: Database["public"]["Enums"]["booking_service"][];
+          hotel_ids: string[];
+          starts_at: string | null;
+          ends_at: string | null;
+          usage_limit: number | null;
+          per_user_limit: number;
+          first_booking_only: boolean;
+          is_public: boolean;
+          is_active: boolean;
+        } & Timestamps
+      >;
+      bookings: Simple<
+        {
+          id: string;
+          code: string;
+          user_id: string | null;
+          service: Database["public"]["Enums"]["booking_service"];
+          status: Database["public"]["Enums"]["booking_status"];
+          hotel_id: string | null;
+          vendor_id: string | null;
+          check_in: string | null;
+          check_out: string | null;
+          rooms: number | null;
+          adults: number | null;
+          children: number;
+          contact_name: string;
+          contact_email: string | null;
+          contact_phone: string;
+          special_requests: string | null;
+          gst_details: Json | null;
+          subtotal_paise: number;
+          discount_paise: number;
+          tax_paise: number;
+          total_paise: number;
+          payable_now_paise: number;
+          paid_paise: number;
+          refunded_paise: number;
+          payment_mode: Database["public"]["Enums"]["payment_mode"];
+          coupon_id: string | null;
+          coupon_code: string | null;
+          price_breakdown: Json;
+          snapshot: Json;
+          locale: "en" | "hi";
+          expires_at: string | null;
+          confirmed_at: string | null;
+          completed_at: string | null;
+          cancelled_at: string | null;
+          cancelled_by: string | null;
+          cancel_reason: string | null;
+        } & Timestamps
+      >;
+      booking_items: Simple<{
+        id: string;
+        booking_id: string;
+        kind: "room" | "extra_guest" | "addon" | "fee";
+        line_key: string;
+        description: string;
+        service_date: string | null;
+        room_id: string | null;
+        rate_plan_id: string | null;
+        quantity: number;
+        amount_paise: number;
+        discount_paise: number;
+        tax_rate_bps: number;
+        tax_paise: number;
+        sac: string | null;
+        sort_order: number;
+      }>;
+      booking_guests: Simple<{
+        id: string;
+        booking_id: string;
+        full_name: string;
+        is_child: boolean;
+        is_primary: boolean;
+        sort_order: number;
+      }>;
+      inventory_locks: Simple<
+        {
+          id: string;
+          booking_id: string;
+          room_id: string;
+          date: string;
+          units: number;
+          status: Database["public"]["Enums"]["lock_status"];
+          expires_at: string;
+        } & Timestamps
+      >;
+      coupon_redemptions: Simple<
+        {
+          id: string;
+          coupon_id: string;
+          booking_id: string;
+          user_id: string | null;
+          discount_paise: number;
+          status: "reserved" | "redeemed" | "released";
+        } & Timestamps
+      >;
+      payments: Simple<
+        {
+          id: string;
+          booking_id: string;
+          provider: Database["public"]["Enums"]["payment_provider"];
+          provider_order_id: string | null;
+          provider_payment_id: string | null;
+          payment_link_id: string | null;
+          payment_link_url: string | null;
+          amount_paise: number;
+          status: Database["public"]["Enums"]["payment_status"];
+          method: string | null;
+          reference: string | null;
+          error_code: string | null;
+          error_description: string | null;
+          raw: Json | null;
+          recorded_by: string | null;
+          captured_at: string | null;
+        } & Timestamps
+      >;
+      payment_events: Simple<{
+        id: string;
+        provider: Database["public"]["Enums"]["payment_provider"];
+        event_id: string;
+        event_type: string;
+        payload: Json;
+        booking_id: string | null;
+        processed_at: string | null;
+        result: string | null;
+        error: string | null;
+        received_at: string;
+      }>;
+      refunds: Simple<
+        {
+          id: string;
+          booking_id: string;
+          payment_id: string;
+          provider_refund_id: string | null;
+          amount_paise: number;
+          status: Database["public"]["Enums"]["refund_status"];
+          reason: string | null;
+          initiated_by: string | null;
+          raw: Json | null;
+          processed_at: string | null;
+        } & Timestamps
+      >;
+      invoices: Simple<{
+        id: string;
+        booking_id: string;
+        number: string;
+        financial_year: string;
+        issued_at: string;
+        seller: Json;
+        buyer: Json;
+        created_at: string;
+      }>;
+      notification_templates: Simple<
+        {
+          id: string;
+          key: string;
+          channel: Database["public"]["Enums"]["notification_channel"];
+          locale: "en" | "hi";
+          subject: string | null;
+          body: string;
+          is_active: boolean;
+        } & Timestamps
+      >;
+      notification_logs: Simple<{
+        id: string;
+        template_key: string;
+        channel: Database["public"]["Enums"]["notification_channel"];
+        recipient: string | null;
+        booking_id: string | null;
+        user_id: string | null;
+        status: Database["public"]["Enums"]["notification_status"];
+        provider: string | null;
+        provider_message_id: string | null;
+        error: string | null;
+        created_at: string;
+      }>;
     };
     Views: { [_ in never]: never };
     Functions: {
@@ -450,6 +637,36 @@ export type Database = {
       grant_role_by_email: { Args: { p_email: string; p_role: string }; Returns: string };
       is_vendor_member: { Args: { p_vendor_id: string }; Returns: boolean };
       can_read_hotel: { Args: { p_hotel_id: string }; Returns: boolean };
+      can_read_booking: { Args: { p_booking_id: string }; Returns: boolean };
+      create_hotel_booking: { Args: { p_booking: Json; p_items: Json; p_guests: Json }; Returns: Json };
+      attach_payment_order: {
+        Args: { p_booking_id: string; p_order_id: string; p_amount: number };
+        Returns: string;
+      };
+      record_payment: { Args: { p: Json }; Returns: Json };
+      record_refund: { Args: { p: Json }; Returns: Json };
+      cancel_booking: {
+        Args: {
+          p_booking_id: string;
+          p_actor: string | null;
+          p_reason: string | null;
+          p_to?: Database["public"]["Enums"]["booking_status"];
+        };
+        Returns: Database["public"]["Tables"]["bookings"]["Row"];
+      };
+      record_offline_payment: {
+        Args: {
+          p_booking_id: string;
+          p_amount: number;
+          p_method: string;
+          p_reference: string | null;
+          p_actor: string;
+        };
+        Returns: string;
+      };
+      complete_booking: { Args: { p_booking_id: string; p_actor: string }; Returns: undefined };
+      issue_invoice: { Args: { p_booking_id: string }; Returns: string };
+      expire_stale_bookings: { Args: Record<PropertyKey, never>; Returns: number };
     };
     Enums: {
       service_kind: "bookable" | "enquiry";
@@ -474,6 +691,25 @@ export type Database = {
         "hotel" | "guest_house" | "dharamshala" | "ashram" | "homestay" | "resort" | "apartment" | "hostel";
       meal_plan: "room_only" | "breakfast" | "half_board" | "full_board";
       price_adjustment: "percent" | "flat" | "fixed";
+      booking_status:
+        | "draft"
+        | "pending_payment"
+        | "confirmed"
+        | "completed"
+        | "cancelled"
+        | "refunded"
+        | "partially_refunded"
+        | "failed"
+        | "expired";
+      booking_service: "hotel" | "cab" | "ride" | "food" | "medicine" | "package" | "travel";
+      payment_mode: "full" | "part" | "pay_at_hotel";
+      payment_provider: "razorpay" | "offline";
+      payment_status: "created" | "authorized" | "captured" | "failed" | "refunded" | "partially_refunded";
+      refund_status: "pending" | "processed" | "failed";
+      lock_status: "held" | "converted" | "released";
+      coupon_discount: "percent" | "flat";
+      notification_channel: "email" | "sms" | "whatsapp";
+      notification_status: "sent" | "failed" | "skipped";
     };
     CompositeTypes: { [_ in never]: never };
   };

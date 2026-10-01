@@ -15,3 +15,26 @@ export function serverEnv() {
   }
   return parsed.data;
 }
+
+export type RazorpayConfig = { keyId: string; keySecret: string; webhookSecret: string | null };
+
+/** Razorpay keys, or null when online payment is not set up (checkout then offers only pay at hotel). */
+export function razorpayConfig(): RazorpayConfig | null {
+  const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+  const keySecret = process.env.RAZORPAY_KEY_SECRET;
+  if (!keyId || !keySecret) return null;
+  return { keyId, keySecret, webhookSecret: process.env.RAZORPAY_WEBHOOK_SECRET || null };
+}
+
+/** True when the service-role key is present, which booking writes need. */
+export function hasServiceRole(): boolean {
+  return Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY);
+}
+
+export type EmailConfig = { apiKey: string; from: string };
+
+export function emailConfig(): EmailConfig | null {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) return null;
+  return { apiKey, from: process.env.NOTIFY_FROM_EMAIL || "The P & S Traveler Group <bookings@example.com>" };
+}

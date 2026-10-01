@@ -40,6 +40,8 @@ export type InventoryDay = {
   date: IsoDate;
   units: number | null;
   soldUnits: number;
+  /** Units held by unpaid bookings (released when their hold expires). */
+  heldUnits: number;
   isClosed: boolean;
   minStay: number | null;
 };
@@ -173,11 +175,15 @@ export type Unavailable =
 
 export type NightPrice = { date: IsoDate; roomRatePaise: number; availableUnits: number };
 
+/** One room for one night: the unit GST is assessed on and bookings are itemised by. */
+export type RoomNight = { date: IsoDate; room: number; ratePaise: number; extraPaise: number };
+
 export type StayQuote = {
   ok: true;
   roomId: string;
   ratePlanId: string;
   nights: NightPrice[];
+  roomNights: RoomNight[];
   /** Room rate × rooms × nights. */
   roomChargesPaise: number;
   /** Extra adults and children across all rooms and nights. */
@@ -199,7 +205,7 @@ export function availableUnits(room: RoomType, date: IsoDate, calendar: Calendar
   const day = calendar.inventory.get(`${room.id}|${date}`);
   if (day?.isClosed) return 0;
   const units = day?.units ?? room.totalUnits;
-  return Math.max(0, units - (day?.soldUnits ?? 0));
+  return Math.max(0, units - (day?.soldUnits ?? 0) - (day?.heldUnits ?? 0));
 }
 
 export function offersFreeCancellation(plan: RatePlan): boolean {
@@ -226,6 +232,7 @@ export function quoteStay(
   if (plan.maxStay !== null && dates.length > plan.maxStay) return { ok: false, reason: "max_stay" };
 
   const nights: NightPrice[] = [];
+  const roomNights: RoomNight[] = [];
   let roomCharges = 0;
   let extras = 0;
   let tax = 0;
@@ -237,9 +244,10 @@ export function quoteStay(
 
     const rate = nightlyRate(plan, date, calendar);
     nights.push({ date, roomRatePaise: rate, availableUnits: left });
-    for (const o of occupancy) {
+    for (const [index, o] of occupancy.entries()) {
       const extra =
         Math.max(0, o.adults - room.baseOccupancy) * plan.extraAdultPaise + o.children * plan.extraChildPaise;
+      roomNights.push({ date, room: index + 1, ratePaise: rate, extraPaise: extra });
       roomCharges += rate;
       extras += extra;
       // GST slab is decided by what this room costs for this night.
@@ -253,6 +261,7 @@ export function quoteStay(
     roomId: room.id,
     ratePlanId: plan.id,
     nights,
+    roomNights,
     roomChargesPaise: roomCharges,
     extraGuestPaise: extras,
     subtotalPaise: subtotal,

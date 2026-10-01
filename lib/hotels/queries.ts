@@ -164,6 +164,12 @@ export const getHotelCatalog = unstable_cache(
         isFeatured: h.is_featured,
         isSponsored: h.is_sponsored,
         payAtHotel: h.pay_at_hotel_enabled,
+        partPaymentPercent: h.part_payment_percent,
+        addonPrices: {
+          early_checkin: h.early_checkin_paise,
+          late_checkout: h.late_checkout_paise,
+          breakfast: h.breakfast_addon_paise,
+        },
         ratingAvg: h.rating_avg === null ? null : Number(h.rating_avg),
         ratingCount: h.rating_count,
         sortOrder: h.sort_order,
@@ -212,64 +218,72 @@ export async function getHotelBySlug(slug: string): Promise<CatalogHotel | undef
   return (await getHotelCatalog()).hotels.find((h) => h.slug === slug);
 }
 
-const getCalendarRows = unstable_cache(
-  async (
-    roomIds: string[],
-    planIds: string[],
-    from: IsoDate,
-    to: IsoDate,
-  ): Promise<{ inventory: InventoryDay[]; rates: RateOverride[] }> => {
-    const supabase = createPublicClient();
-    if (!supabase || (roomIds.length === 0 && planIds.length === 0)) return { inventory: [], rates: [] };
-    const [inv, rates] = await Promise.all([
-      roomIds.length
-        ? supabase
-            .from("hotel_inventory")
-            .select("room_id, date, units, sold_units, is_closed, min_stay")
-            .in("room_id", roomIds)
-            .gte("date", from)
-            .lte("date", to)
-        : null,
-      planIds.length
-        ? supabase
-            .from("hotel_rates")
-            .select("rate_plan_id, date, price_paise")
-            .in("rate_plan_id", planIds)
-            .gte("date", from)
-            .lte("date", to)
-        : null,
-    ]);
-    if (inv?.error) fail("inventory", inv.error);
-    if (rates?.error) fail("rates", rates.error);
-    return {
-      inventory: (inv?.data ?? []).map((d) => ({
-        roomId: d.room_id,
-        date: d.date,
-        units: d.units,
-        soldUnits: d.sold_units,
-        isClosed: d.is_closed,
-        minStay: d.min_stay,
-      })),
-      rates: (rates?.data ?? []).map((r) => ({
-        ratePlanId: r.rate_plan_id,
-        date: r.date,
-        pricePaise: r.price_paise,
-      })),
-    };
-  },
-  ["hotels:calendar"],
-  { tags: [HOTEL_CALENDAR_TAG, CATALOG_TAG], revalidate: 60 },
-);
+type CalendarRows = { inventory: InventoryDay[]; rates: RateOverride[] };
 
-/** Per-date inventory and rate overrides for these hotels over [from, to]. */
+async function fetchCalendarRows(
+  roomIds: string[],
+  planIds: string[],
+  from: IsoDate,
+  to: IsoDate,
+): Promise<CalendarRows> {
+  const supabase = createPublicClient();
+  if (!supabase || (roomIds.length === 0 && planIds.length === 0)) return { inventory: [], rates: [] };
+  const [inv, rates] = await Promise.all([
+    roomIds.length
+      ? supabase
+          .from("hotel_inventory")
+          .select("room_id, date, units, sold_units, held_units, is_closed, min_stay")
+          .in("room_id", roomIds)
+          .gte("date", from)
+          .lte("date", to)
+      : null,
+    planIds.length
+      ? supabase
+          .from("hotel_rates")
+          .select("rate_plan_id, date, price_paise")
+          .in("rate_plan_id", planIds)
+          .gte("date", from)
+          .lte("date", to)
+      : null,
+  ]);
+  if (inv?.error) fail("inventory", inv.error);
+  if (rates?.error) fail("rates", rates.error);
+  return {
+    inventory: (inv?.data ?? []).map((d) => ({
+      roomId: d.room_id,
+      date: d.date,
+      units: d.units,
+      soldUnits: d.sold_units,
+      heldUnits: d.held_units,
+      isClosed: d.is_closed,
+      minStay: d.min_stay,
+    })),
+    rates: (rates?.data ?? []).map((r) => ({
+      ratePlanId: r.rate_plan_id,
+      date: r.date,
+      pricePaise: r.price_paise,
+    })),
+  };
+}
+
+const getCalendarRows = unstable_cache(fetchCalendarRows, ["hotels:calendar"], {
+  tags: [HOTEL_CALENDAR_TAG, CATALOG_TAG],
+  revalidate: 60,
+});
+
+/**
+ * Per-date inventory and rate overrides for these hotels over [from, to].
+ * `live` skips the short cache: checkout must price against current availability.
+ */
 export async function getHotelCalendar(
   hotels: CatalogHotel[],
   from: IsoDate,
   to: IsoDate,
+  { live = false }: { live?: boolean } = {},
 ): Promise<CalendarIndex> {
   const roomIds = hotels.flatMap((h) => h.rooms.map((r) => r.id)).sort();
   const planIds = hotels.flatMap((h) => h.plans.map((p) => p.id)).sort();
-  const { inventory, rates } = await getCalendarRows(roomIds, planIds, from, to);
+  const { inventory, rates } = await (live ? fetchCalendarRows : getCalendarRows)(roomIds, planIds, from, to);
   return indexCalendar(
     inventory,
     rates,

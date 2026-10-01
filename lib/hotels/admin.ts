@@ -374,7 +374,7 @@ export async function getRoomCalendar(
   const [inventory, rates, rules] = await Promise.all([
     supabase
       .from("hotel_inventory")
-      .select("room_id, date, units, sold_units, is_closed, min_stay")
+      .select("room_id, date, units, sold_units, held_units, is_closed, min_stay")
       .eq("room_id", room.id)
       .gte("date", from)
       .lte("date", to),
@@ -396,6 +396,7 @@ export async function getRoomCalendar(
       date: d.date,
       units: d.units,
       soldUnits: d.sold_units,
+      heldUnits: d.held_units,
       isClosed: d.is_closed,
       minStay: d.min_stay,
     })),

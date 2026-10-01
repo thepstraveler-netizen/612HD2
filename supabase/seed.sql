@@ -183,3 +183,20 @@ begin
   values ('demo-draft-hotel', v_vrindavan, '{"en": "Demo · Draft Hotel"}', 'hotel', 'draft');
 end
 $$;
+
+-- Phase 4: checkout options on the demo hotels, and demo coupons.
+update public.hotels
+   set early_checkin_paise = 50000, late_checkout_paise = 50000, breakfast_addon_paise = 15000,
+       part_payment_percent = 25, pay_at_hotel_enabled = true
+ where slug = 'demo-prem-sarovar-hotel';
+update public.hotels
+   set early_checkin_paise = 30000, breakfast_addon_paise = 10000, pay_at_hotel_enabled = true
+ where slug in ('demo-radha-kunj-residency', 'demo-janmabhoomi-inn');
+
+insert into public.coupons (code, description, discount_type, value, max_discount_paise, min_order_paise, services, is_public, per_user_limit)
+values
+  ('DEMO10', '{"en": "Demo · 10% off hotel stays (up to ₹500)", "hi": "डेमो · होटल पर 10% छूट (₹500 तक)"}', 'percent', 1000, 50000, 100000, '{hotel}', true, 3),
+  ('DEMOFLAT300', '{"en": "Demo · ₹300 off stays above ₹3,000", "hi": "डेमो · ₹3,000 से ऊपर ₹300 छूट"}', 'flat', 30000, null, 300000, '{hotel}', true, 1),
+  ('DEMOFIRST', '{"en": "Demo · 15% off your first booking", "hi": "डेमो · पहली बुकिंग पर 15% छूट"}', 'percent', 1500, 100000, 0, '{}', false, 1)
+on conflict (code) do nothing;
+update public.coupons set first_booking_only = true where code = 'DEMOFIRST';

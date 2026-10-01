@@ -160,7 +160,15 @@ describe("quoteStay", () => {
 
   it("blocks sold-out, closed and short stays", () => {
     const inventory: InventoryDay[] = [
-      { roomId: room.id, date: "2026-11-03", units: 2, soldUnits: 2, isClosed: false, minStay: null },
+      {
+        roomId: room.id,
+        date: "2026-11-03",
+        units: 2,
+        soldUnits: 2,
+        heldUnits: 0,
+        isClosed: false,
+        minStay: null,
+      },
     ];
     expect(quoteStay(room, plan, stay(), indexCalendar(inventory, [], []), DEFAULT_GST_SLABS)).toEqual({
       ok: false,
@@ -184,7 +192,15 @@ describe("quoteStay", () => {
 
   it("needs enough units for every room requested", () => {
     const inventory: InventoryDay[] = [
-      { roomId: room.id, date: "2026-11-02", units: null, soldUnits: 4, isClosed: false, minStay: null },
+      {
+        roomId: room.id,
+        date: "2026-11-02",
+        units: null,
+        soldUnits: 4,
+        heldUnits: 0,
+        isClosed: false,
+        minStay: null,
+      },
     ];
     const calendar = indexCalendar(inventory, [], []);
     expect(quoteStay(room, plan, stay({ rooms: 2, adults: 2 }), calendar, DEFAULT_GST_SLABS)).toEqual({
@@ -221,8 +237,24 @@ describe("bestOffer", () => {
   it("explains why nothing is bookable", () => {
     const soldOut = indexCalendar(
       [
-        { roomId: "deluxe", date: "2026-11-02", units: 0, soldUnits: 0, isClosed: false, minStay: null },
-        { roomId: "suite", date: "2026-11-02", units: 0, soldUnits: 0, isClosed: false, minStay: null },
+        {
+          roomId: "deluxe",
+          date: "2026-11-02",
+          units: 0,
+          soldUnits: 0,
+          heldUnits: 0,
+          isClosed: false,
+          minStay: null,
+        },
+        {
+          roomId: "suite",
+          date: "2026-11-02",
+          units: 0,
+          soldUnits: 0,
+          heldUnits: 0,
+          isClosed: false,
+          minStay: null,
+        },
       ],
       [],
       [],

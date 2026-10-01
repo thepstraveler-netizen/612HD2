@@ -46,3 +46,14 @@ export async function asUser<T>(db: PGlite, userId: string, fn: (tx: Transaction
     return fn(tx);
   });
 }
+
+/** Runs `fn` as the service role (trusted server code: webhooks, booking functions). */
+export async function asService<T>(db: PGlite, fn: (tx: Transaction) => Promise<T>): Promise<T> {
+  return db.transaction(async (tx) => {
+    await tx.query("select set_config('request.jwt.claims', $1, true)", [
+      JSON.stringify({ role: "service_role" }),
+    ]);
+    await tx.exec("set local role service_role");
+    return fn(tx);
+  });
+}

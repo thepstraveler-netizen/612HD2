@@ -1,5 +1,6 @@
 import type { PricingRule, RatePlan, RoomType } from "@/lib/availability/engine";
 import type { LocalizedJson } from "@/lib/i18n/localized";
+import type { AddonPrices } from "@/lib/pricing/booking";
 import type { HotelPolicies, PropertyType } from "@/schemas/hotels";
 
 /** A photo ready for the page: public URL plus localized alt text. */
@@ -43,6 +44,10 @@ export type CatalogHotel = {
   isFeatured: boolean;
   isSponsored: boolean;
   payAtHotel: boolean;
+  /** Advance % for part payment; null = this hotel takes full payment only. */
+  partPaymentPercent: number | null;
+  /** Review-page add-on prices in paise; null = not offered. */
+  addonPrices: AddonPrices;
   ratingAvg: number | null;
   ratingCount: number;
   sortOrder: number;
