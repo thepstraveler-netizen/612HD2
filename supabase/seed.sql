@@ -217,7 +217,7 @@ select c.id, m.id, v.reg, v.colour, v.year, m.fuel, d.id, current_date + v.ins, 
   join public.cab_categories c on c.key = v.category_key
   join public.cab_models m on m.category_id = c.id and m.name = v.model_name
   join public.drivers d on d.full_name = v.driver_name
-on conflict (registration_no) do nothing;
+on conflict do nothing;
 
 insert into public.cab_surcharges (name, multiplier_bps, weekdays, trip_types)
 values ('{"en": "Demo · Weekend outstation peak", "hi": "डेमो · सप्ताहांत आउटस्टेशन पीक"}', 11000, '{6,7}', '{one_way,round_trip}');

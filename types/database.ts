@@ -690,7 +690,7 @@ export type Database = {
           trip_type: Exclude<Database["public"]["Enums"]["cab_trip_type"], "local">;
           from_place_id: string;
           to_place_id: string;
-          name: LocalizedJson;
+          name: LocalizedJson | null;
           description: LocalizedJson | null;
           stops: Json;
           distance_km: number;

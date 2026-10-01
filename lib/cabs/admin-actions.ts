@@ -8,6 +8,7 @@ import type { SessionContext } from "@/lib/auth/session";
 import { mergeSettingValue } from "@/lib/bookings/admin-forms";
 import { publicEnv } from "@/lib/env";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { notifyTripAssigned } from "./service";
 import { createClient } from "@/lib/supabase/server";
 import { cabSettingsSchema } from "@/schemas/cabs";
 import { mediaRegisterSchema } from "@/schemas/cms";
@@ -534,7 +535,10 @@ export async function assignTripAction(input: unknown): Promise<TripActionResult
       p_vehicle_id: data.vehicleId,
       p_actor: session.user.id,
     });
-    return error ? rpcFailure("assign", error) : { ok: true };
+    if (error) return rpcFailure("assign", error);
+    // A failed message never undoes the assignment (D-041).
+    await notifyTripAssigned(data.tripId).catch((e: unknown) => console.error("[cabs admin] notify", e));
+    return { ok: true };
   });
 }
 

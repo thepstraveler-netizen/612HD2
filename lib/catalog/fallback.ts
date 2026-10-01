@@ -92,7 +92,7 @@ export const fallbackHomeSections: HomeSection[] = [
 
 const HEADER: [keyof typeof en.nav, string][] = [
   ["hotels", "/services/hotel-vendors"],
-  ["cabs", "/services/car"],
+  ["cabs", "/cabs"],
   ["bikes", "/services/bike"],
   ["rickshaw", "/services/rickshaw"],
   ["food", "/services/food"],

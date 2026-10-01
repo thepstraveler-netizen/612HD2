@@ -222,7 +222,7 @@ create table public.vehicles (
   id                 uuid primary key default gen_random_uuid(),
   category_id        uuid not null references public.cab_categories (id) on delete restrict,
   model_id           uuid references public.cab_models (id) on delete set null,
-  registration_no    text not null unique check (registration_no ~ '^[A-Z0-9 -]{6,15}$'),
+  registration_no    text not null check (registration_no ~ '^[A-Z0-9 -]{6,15}$'),
   colour             text,
   year               smallint check (year between 1990 and 2100),
   fuel               public.fuel_type not null,
@@ -240,6 +240,8 @@ create table public.vehicles (
   deleted_at         timestamptz
 );
 create index vehicles_category_idx on public.vehicles (category_id) where deleted_at is null;
+-- A removed vehicle frees its number for re-registration.
+create unique index vehicles_registration_key on public.vehicles (registration_no) where deleted_at is null;
 
 -- Scans of licences, RCs, insurance etc. in the private `documents` bucket.
 create table public.fleet_documents (
@@ -356,6 +358,14 @@ begin
   end loop;
 end
 $$;
+
+-- Cab editors upload category photos to the media bucket and register them.
+create policy "cab editors upload media" on storage.objects
+  for insert to authenticated
+  with check (bucket_id = 'media' and public.has_permission('cabs.write'));
+create policy "cab editors register media" on public.media
+  for insert to authenticated
+  with check (public.has_permission('cabs.write'));
 
 -- Fleet: cab staff; a driver with a login reads their own record.
 create policy "cab staff and the driver read drivers" on public.drivers
