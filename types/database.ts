@@ -503,7 +503,7 @@ export type Database = {
       booking_items: Simple<{
         id: string;
         booking_id: string;
-        kind: "room" | "extra_guest" | "addon" | "fee";
+        kind: "room" | "extra_guest" | "addon" | "fee" | "fare" | "allowance" | "surcharge";
         line_key: string;
         description: string;
         service_date: string | null;
@@ -626,6 +626,227 @@ export type Database = {
         error: string | null;
         created_at: string;
       }>;
+      cab_places: Simple<
+        {
+          id: string;
+          slug: string;
+          name: LocalizedJson;
+          kind: Database["public"]["Enums"]["cab_place_kind"];
+          lat: number;
+          lng: number;
+          is_popular: boolean;
+          is_active: boolean;
+          sort_order: number;
+        } & Timestamps
+      >;
+      cab_categories: Simple<
+        {
+          id: string;
+          key: string;
+          name: LocalizedJson;
+          description: LocalizedJson | null;
+          body_type: Database["public"]["Enums"]["cab_body_type"];
+          seats: number;
+          luggage: number;
+          is_ac: boolean;
+          image_id: string | null;
+          is_active: boolean;
+          sort_order: number;
+        } & Timestamps,
+        [MediaFk<"cab_categories_image_id_fkey", "image_id">]
+      >;
+      cab_models: Simple<
+        {
+          id: string;
+          category_id: string;
+          name: string;
+          fuel: Database["public"]["Enums"]["fuel_type"];
+          is_featured: boolean;
+          is_active: boolean;
+          sort_order: number;
+        } & Timestamps
+      >;
+      cab_fare_rules: Simple<
+        {
+          id: string;
+          category_id: string;
+          trip_type: "one_way" | "round_trip";
+          rate_per_km_paise: number;
+          min_km: number;
+          min_km_per_day: number;
+          driver_allowance_per_day_paise: number;
+          night_charge_paise: number;
+          extra_km_paise: number;
+          tolls_included: boolean;
+          waiting_free_minutes: number;
+          waiting_per_hour_paise: number;
+          is_active: boolean;
+        } & Timestamps
+      >;
+      cab_routes: Simple<
+        {
+          id: string;
+          slug: string;
+          trip_type: Exclude<Database["public"]["Enums"]["cab_trip_type"], "local">;
+          from_place_id: string;
+          to_place_id: string;
+          name: LocalizedJson;
+          description: LocalizedJson | null;
+          stops: Json;
+          distance_km: number;
+          duration_minutes: number;
+          is_popular: boolean;
+          is_active: boolean;
+          sort_order: number;
+        } & Timestamps
+      >;
+      cab_route_fares: Simple<
+        {
+          route_id: string;
+          category_id: string;
+          fare_paise: number;
+          extra_km_paise: number | null;
+          tolls_included: boolean;
+        } & Timestamps
+      >;
+      cab_local_packages: Simple<
+        {
+          id: string;
+          key: string;
+          name: LocalizedJson;
+          hours: number;
+          km: number;
+          is_active: boolean;
+          sort_order: number;
+        } & Timestamps
+      >;
+      cab_local_fares: Simple<
+        {
+          package_id: string;
+          category_id: string;
+          fare_paise: number;
+          extra_km_paise: number;
+          extra_hour_paise: number;
+        } & Timestamps
+      >;
+      cab_addons: Simple<
+        {
+          id: string;
+          key: string;
+          name: LocalizedJson;
+          description: LocalizedJson | null;
+          price_paise: number;
+          trip_types: Database["public"]["Enums"]["cab_trip_type"][];
+          category_ids: string[];
+          is_active: boolean;
+          sort_order: number;
+        } & Timestamps
+      >;
+      cab_surcharges: Simple<
+        {
+          id: string;
+          name: LocalizedJson;
+          multiplier_bps: number;
+          starts_on: string | null;
+          ends_on: string | null;
+          weekdays: number[];
+          trip_types: Database["public"]["Enums"]["cab_trip_type"][];
+          category_ids: string[];
+          is_active: boolean;
+        } & Timestamps
+      >;
+      drivers: Simple<
+        {
+          id: string;
+          user_id: string | null;
+          vendor_id: string | null;
+          full_name: string;
+          phone: string;
+          alt_phone: string | null;
+          licence_no: string | null;
+          licence_expiry: string | null;
+          photo_id: string | null;
+          languages: string[];
+          rating: number | null;
+          is_active: boolean;
+          notes: string | null;
+          deleted_at: string | null;
+        } & Timestamps
+      >;
+      vehicles: Simple<
+        {
+          id: string;
+          category_id: string;
+          model_id: string | null;
+          registration_no: string;
+          colour: string | null;
+          year: number | null;
+          fuel: Database["public"]["Enums"]["fuel_type"];
+          vendor_id: string | null;
+          default_driver_id: string | null;
+          rc_expiry: string | null;
+          insurance_expiry: string | null;
+          permit_expiry: string | null;
+          puc_expiry: string | null;
+          fitness_expiry: string | null;
+          is_active: boolean;
+          notes: string | null;
+          deleted_at: string | null;
+        } & Timestamps
+      >;
+      fleet_documents: Simple<{
+        id: string;
+        owner_type: "driver" | "vehicle";
+        owner_id: string;
+        kind: "licence" | "rc" | "insurance" | "permit" | "puc" | "fitness" | "id_proof" | "other";
+        file_path: string;
+        expires_on: string | null;
+        uploaded_by: string | null;
+        created_at: string;
+      }>;
+      trips: Simple<
+        {
+          id: string;
+          booking_id: string;
+          trip_type: Database["public"]["Enums"]["cab_trip_type"];
+          category_id: string;
+          route_id: string | null;
+          package_id: string | null;
+          pickup_place_id: string;
+          drop_place_id: string | null;
+          pickup_address: string;
+          drop_address: string | null;
+          stops: Json;
+          pickup_at: string;
+          return_at: string | null;
+          passengers: number;
+          distance_km: number | null;
+          status: Database["public"]["Enums"]["trip_status"];
+          driver_id: string | null;
+          vehicle_id: string | null;
+          driver_name: string | null;
+          driver_phone: string | null;
+          vehicle_label: string | null;
+          vehicle_registration: string | null;
+          assigned_at: string | null;
+          started_at: string | null;
+          picked_up_at: string | null;
+          completed_at: string | null;
+          pickup_otp: string | null;
+          /** Service role only (column grant excludes it). */
+          driver_token: string | null;
+          driver_token_expires_at: string | null;
+        } & Timestamps
+      >;
+      trip_events: Simple<{
+        id: string;
+        trip_id: string;
+        status: Database["public"]["Enums"]["trip_status"];
+        note: string | null;
+        actor: string | null;
+        source: "admin" | "driver" | "system" | "customer";
+        created_at: string;
+      }>;
     };
     Views: { [_ in never]: never };
     Functions: {
@@ -671,6 +892,23 @@ export type Database = {
       complete_booking: { Args: { p_booking_id: string; p_actor: string }; Returns: undefined };
       issue_invoice: { Args: { p_booking_id: string }; Returns: string };
       expire_stale_bookings: { Args: Record<PropertyKey, never>; Returns: number };
+      can_read_trip: { Args: { p_trip_id: string }; Returns: boolean };
+      create_cab_booking: { Args: { p_booking: Json; p_items: Json; p_trip: Json }; Returns: Json };
+      assign_trip: {
+        Args: { p_trip_id: string; p_driver_id: string; p_vehicle_id: string; p_actor: string };
+        Returns: Database["public"]["Tables"]["trips"]["Row"];
+      };
+      set_trip_status: {
+        Args: {
+          p_trip_id: string;
+          p_status: Database["public"]["Enums"]["trip_status"];
+          p_actor: string | null;
+          p_source: "admin" | "driver" | "system";
+          p_note?: string | null;
+          p_otp?: string | null;
+        };
+        Returns: Database["public"]["Tables"]["trips"]["Row"];
+      };
     };
     Enums: {
       service_kind: "bookable" | "enquiry";
@@ -714,6 +952,20 @@ export type Database = {
       coupon_discount: "percent" | "flat";
       notification_channel: "email" | "sms" | "whatsapp";
       notification_status: "sent" | "failed" | "skipped";
+      cab_trip_type: "one_way" | "round_trip" | "local" | "transfer" | "sightseeing";
+      cab_body_type: "hatchback" | "sedan" | "compact_suv" | "suv" | "muv" | "tempo_traveller" | "bus";
+      fuel_type: "petrol" | "diesel" | "cng" | "electric";
+      cab_place_kind: "city" | "station" | "airport" | "temple" | "landmark";
+      trip_status:
+        | "awaiting_payment"
+        | "unassigned"
+        | "assigned"
+        | "en_route"
+        | "arrived"
+        | "picked_up"
+        | "completed"
+        | "cancelled"
+        | "no_show";
     };
     CompositeTypes: { [_ in never]: never };
   };
