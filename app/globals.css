@@ -1,0 +1,151 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * P&S brand tokens (from the poster) + the shadcn/ui semantic tokens mapped
+ * onto them. Components use the semantic tokens (bg-primary, text-muted-…);
+ * service accents are exposed as bg-accent-teal etc.
+ */
+:root {
+  --brand-navy: #0b2e6b;
+  --brand-navy-deep: #071f4a;
+  --brand-blue: #1d4ed8;
+  --brand-sky: #e8f1fb;
+  --brand-sky-soft: #f5f9ff;
+  --brand-white: #ffffff;
+
+  --accent-teal: #14b8a6;
+  --accent-purple: #7c3aed;
+  --accent-pink: #e11d74;
+  --accent-green: #16a34a;
+  --accent-amber: #f59e0b;
+  --accent-red: #ef4444;
+  --accent-orange: #f97316;
+  --accent-magenta: #c026d3;
+  --accent-indigo: #4f46e5;
+
+  --radius: 0.875rem;
+
+  --background: var(--brand-sky-soft);
+  --foreground: #0f1b33;
+  --card: var(--brand-white);
+  --card-foreground: #0f1b33;
+  --popover: var(--brand-white);
+  --popover-foreground: #0f1b33;
+  --primary: var(--brand-blue);
+  --primary-foreground: #ffffff;
+  --secondary: var(--brand-sky);
+  --secondary-foreground: var(--brand-navy);
+  --muted: #eef3fa;
+  --muted-foreground: #4a5874;
+  --accent: var(--brand-sky);
+  --accent-foreground: var(--brand-navy);
+  --destructive: #dc2626;
+  --border: #d9e3f2;
+  --input: #cfdbee;
+  --ring: var(--brand-blue);
+  --heading: var(--brand-navy);
+
+  --sidebar: var(--brand-navy-deep);
+  --sidebar-foreground: #dbe6fb;
+  --sidebar-accent: #12357a;
+}
+
+.dark {
+  --background: #06142f;
+  --foreground: #e6edf9;
+  --card: #0b1f45;
+  --card-foreground: #e6edf9;
+  --popover: #0b1f45;
+  --popover-foreground: #e6edf9;
+  --primary: #4f7ef0;
+  --primary-foreground: #ffffff;
+  --secondary: #12305f;
+  --secondary-foreground: #e6edf9;
+  --muted: #10264f;
+  --muted-foreground: #9fb0cf;
+  --accent: #12305f;
+  --accent-foreground: #e6edf9;
+  --destructive: #ef4444;
+  --border: #1b3666;
+  --input: #23417a;
+  --ring: #6b93f5;
+  --heading: #e6edf9;
+
+  --sidebar: #040e22;
+  --sidebar-foreground: #c9d6f0;
+  --sidebar-accent: #12305f;
+}
+
+@theme inline {
+  --font-sans: var(--font-sans), var(--font-devanagari), ui-sans-serif, system-ui, sans-serif;
+  --font-script: var(--font-script), cursive;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-heading: var(--heading);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+
+  --color-brand-navy: var(--brand-navy);
+  --color-brand-navy-deep: var(--brand-navy-deep);
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-sky: var(--brand-sky);
+  --color-brand-sky-soft: var(--brand-sky-soft);
+
+  --color-accent-teal: var(--accent-teal);
+  --color-accent-purple: var(--accent-purple);
+  --color-accent-pink: var(--accent-pink);
+  --color-accent-green: var(--accent-green);
+  --color-accent-amber: var(--accent-amber);
+  --color-accent-red: var(--accent-red);
+  --color-accent-orange: var(--accent-orange);
+  --color-accent-magenta: var(--accent-magenta);
+  --color-accent-indigo: var(--accent-indigo);
+
+  --radius-sm: calc(var(--radius) - 6px);
+  --radius-md: calc(var(--radius) - 4px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 2px);
+  --radius-2xl: calc(var(--radius) + 6px);
+
+  /* Fluid type scale for headings. */
+  --text-display: clamp(2rem, 1.4rem + 3vw, 3.5rem);
+  --text-title: clamp(1.5rem, 1.2rem + 1.4vw, 2.25rem);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-background font-sans text-foreground antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply text-heading;
+  }
+}
