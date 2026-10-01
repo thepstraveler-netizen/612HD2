@@ -1,5 +1,23 @@
 # Changelog
 
+## Phase 2 · Catalog core
+
+### Added
+
+- Database: cities and areas, media library, services (with kind, accent, icon, highlights, SEO), categories, amenities, tags, home sections, offer banners, testimonials, FAQs, navigation menus, CMS pages, settings and feature flags. RLS and audit triggers on every table.
+- Storage buckets: public `media`, private `documents` and `prescriptions`, with policies.
+- Baseline content migration (14 services in English and Hindi, home sections, menus, business profile, feature flags) and demo seed (banners with coupon codes, testimonials, FAQs).
+- Public site now reads from the database: Home (hero with search card, pillars, offers carousel, services, about, testimonials, why collaborate, FAQs, partner CTA), new Services index, service pages with highlights and FAQs, header and footer menus, business contact links.
+- Admin CMS: Services, Home sections, Testimonials, FAQs and Navigation, each with a searchable table and an edit form (English + Hindi fields, image upload, unsaved-changes warning).
+- Admin Offers: offer banners with coupon code, tab, image, link and start/end window.
+- Admin Settings: business profile and feature-flag switches.
+- Reusable admin pieces: DataTable (TanStack Table), form fields, image uploader, delete button.
+- Tests: 11 database tests for the catalog (RLS, audit, storage policies, banner windows), 9 schema unit tests, 8 more Playwright tests.
+
+### Changed
+
+- Services, menus and footer contact details are no longer hard-coded.
+
 ## Phase 1 · Foundation
 
 ### Added

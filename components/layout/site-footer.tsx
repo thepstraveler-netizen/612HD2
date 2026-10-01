@@ -1,14 +1,24 @@
-import { MapPin } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { MapPin, MessageCircle, Phone } from "lucide-react";
+import { getLocale, getTranslations } from "next-intl/server";
+import type { ReactNode } from "react";
 import { LogoMark } from "@/components/shared/logo";
 import { PeacockFeather, TempleSkyline } from "@/components/shared/motifs";
 import { Link } from "@/i18n/navigation";
-import { MAIN_NAV } from "@/lib/navigation";
-import { SERVICES } from "@/lib/services";
+import { getBusinessInfo, getNavigation, getServices } from "@/lib/catalog/queries";
+import { pickLocalized } from "@/lib/i18n/localized";
 
-export function SiteFooter() {
-  const t = useTranslations();
+export async function SiteFooter() {
+  const [t, locale, services, company, legal, business] = await Promise.all([
+    getTranslations(),
+    getLocale(),
+    getServices(),
+    getNavigation("footer_company"),
+    getNavigation("footer_legal"),
+    getBusinessInfo(),
+  ]);
   const year = new Date().getFullYear();
+  const whatsapp = business.whatsapp.replace(/[^0-9]/g, "");
+
   return (
     <footer className="relative mt-16 bg-brand-navy-deep text-white">
       <TempleSkyline className="absolute -top-[59px] h-[60px] text-brand-navy-deep" />
@@ -21,34 +31,63 @@ export function SiteFooter() {
           </div>
           <p className="text-sm text-white/75">{t("brand.tagline")}</p>
           <p className="flex items-center gap-1.5 text-sm text-white/75">
-            <MapPin className="size-4" aria-hidden="true" />
-            {t("brand.location")} · {t("brand.locationTag")}
+            <MapPin className="size-4 shrink-0" aria-hidden="true" />
+            {business.address || `${t("brand.location")} · ${t("brand.locationTag")}`}
           </p>
+          <div className="flex flex-wrap gap-2">
+            {business.phone ? (
+              <a
+                href={`tel:${business.phone.replace(/\s/g, "")}`}
+                className="inline-flex min-h-10 items-center gap-1.5 rounded-lg bg-white/10 px-3 text-sm"
+              >
+                <Phone className="size-4" aria-hidden="true" /> {t("contact.call")}
+              </a>
+            ) : null}
+            {whatsapp ? (
+              <a
+                href={`https://wa.me/${whatsapp}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-10 items-center gap-1.5 rounded-lg bg-accent-green px-3 text-sm"
+              >
+                <MessageCircle className="size-4" aria-hidden="true" /> {t("contact.whatsapp")}
+              </a>
+            ) : null}
+          </div>
         </div>
-        <FooterColumn title={t("footer.quickLinks")}>
-          {MAIN_NAV.slice(0, 6).map((item) => (
-            <FooterLink key={item.key} href={item.href}>
-              {t(`nav.${item.key}`)}
-            </FooterLink>
-          ))}
-        </FooterColumn>
         <FooterColumn title={t("footer.services")}>
-          {SERVICES.slice(0, 6).map((s) => (
-            <FooterLink key={s.slug} href={`/services/${s.slug}`}>
-              {t(`services.${s.slug}.name`)}
-            </FooterLink>
-          ))}
+          {services
+            .filter((s) => s.kind === "bookable")
+            .slice(0, 7)
+            .map((s) => (
+              <FooterLink key={s.id} href={`/services/${s.slug}`}>
+                {pickLocalized(s.name, locale)}
+              </FooterLink>
+            ))}
+        </FooterColumn>
+        <FooterColumn title={t("servicesIndex.enquiry")}>
+          {services
+            .filter((s) => s.kind === "enquiry")
+            .slice(0, 7)
+            .map((s) => (
+              <FooterLink key={s.id} href={`/services/${s.slug}`}>
+                {pickLocalized(s.name, locale)}
+              </FooterLink>
+            ))}
         </FooterColumn>
         <FooterColumn title={t("footer.company")}>
-          <FooterLink href="/#about">{t("footer.about")}</FooterLink>
-          <FooterLink href="/partner">{t("nav.partner")}</FooterLink>
+          {[...company, ...legal].map((link) => (
+            <FooterLink key={link.href} href={link.href}>
+              {pickLocalized(link.label, locale)}
+            </FooterLink>
+          ))}
         </FooterColumn>
       </div>
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col items-center gap-2 px-4 py-6 text-center">
           <p className="font-script text-2xl">{t("brand.footerLine")}</p>
           <p className="text-xs text-white/60">
-            © {year} {t("brand.name")}. {t("footer.rights")}
+            © {year} {business.name || t("brand.name")}. {t("footer.rights")}
           </p>
         </div>
       </div>
@@ -56,7 +95,7 @@ export function SiteFooter() {
   );
 }
 
-function FooterColumn({ title, children }: { title: string; children: React.ReactNode }) {
+function FooterColumn({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div>
       <h2 className="mb-3 text-sm font-semibold tracking-wide !text-white uppercase">{title}</h2>
@@ -65,12 +104,23 @@ function FooterColumn({ title, children }: { title: string; children: React.Reac
   );
 }
 
-function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
+function FooterLink({ href, children }: { href: string; children: ReactNode }) {
+  const external = href.startsWith("https://");
   return (
     <li>
-      <Link href={href} className="inline-flex min-h-9 items-center text-sm text-white/75 hover:text-white">
-        {children}
-      </Link>
+      {external ? (
+        <a
+          href={href}
+          className="inline-flex min-h-9 items-center text-sm text-white/75 hover:text-white"
+          rel="noopener noreferrer"
+        >
+          {children}
+        </a>
+      ) : (
+        <Link href={href} className="inline-flex min-h-9 items-center text-sm text-white/75 hover:text-white">
+          {children}
+        </Link>
+      )}
     </li>
   );
 }

@@ -14,9 +14,8 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Link } from "@/i18n/navigation";
-import { MAIN_NAV } from "@/lib/navigation";
 
-export function MobileNav() {
+export function MobileNav({ items }: { items: { label: string; href: string }[] }) {
   const t = useTranslations();
   const [open, setOpen] = useState(false);
   return (
@@ -34,14 +33,14 @@ export function MobileNav() {
           <SheetDescription className="sr-only">{t("nav.main")}</SheetDescription>
         </SheetHeader>
         <nav aria-label={t("nav.main")} className="flex flex-col gap-1 overflow-y-auto px-2 pb-6">
-          {MAIN_NAV.map((item) => (
+          {items.map((item) => (
             <Link
-              key={item.key}
+              key={item.href + item.label}
               href={item.href}
               onClick={() => setOpen(false)}
               className="flex min-h-11 items-center rounded-xl px-3 font-medium hover:bg-accent"
             >
-              {t(`nav.${item.key}`)}
+              {item.label}
             </Link>
           ))}
         </nav>

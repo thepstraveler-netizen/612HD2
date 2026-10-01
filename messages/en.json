@@ -91,7 +91,10 @@
       "name": "OTA Handling",
       "description": "Inventory, rates, availability, listings and more."
     },
-    "bike": { "name": "Bike Pick & Drop", "description": "Fast and reliable bike service across Vrindavan." },
+    "bike": {
+      "name": "Bike Pick & Drop",
+      "description": "Fast and reliable bike service across Vrindavan."
+    },
     "rickshaw": {
       "name": "Rickshaw / E-Rickshaw Pick & Drop",
       "description": "Local transport for your short and long rides."
@@ -100,7 +103,10 @@
       "name": "Car Pick & Drop",
       "description": "Comfortable and safe car service for all your travel needs."
     },
-    "food": { "name": "24×7 Food Delivery", "description": "Your favourite food, anytime, anywhere." },
+    "food": {
+      "name": "24×7 Food Delivery",
+      "description": "Your favourite food, anytime, anywhere."
+    },
     "essentials": {
       "name": "24×7 Essentials Delivery",
       "description": "Groceries, daily-use items and travel essentials."
@@ -261,5 +267,185 @@
   "common": {
     "skipToContent": "Skip to content",
     "loading": "Loading…"
+  },
+  "search": {
+    "label": "Search",
+    "tabs": {
+      "hotels": "Hotels",
+      "cabs": "Cabs",
+      "rides": "Bike / Rickshaw",
+      "packages": "Packages",
+      "travel": "Flights / Trains / Buses"
+    },
+    "destination": "City, area or temple",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "guests": "Guests",
+    "from": "From",
+    "to": "To",
+    "date": "Date",
+    "time": "Pickup time",
+    "tripType": "Trip type",
+    "tripOneWay": "One way",
+    "tripRound": "Round trip",
+    "tripLocal": "Local hours",
+    "tripAirport": "Airport / station",
+    "vehicle": "Vehicle",
+    "vehicleBike": "Bike",
+    "vehicleRickshaw": "E-rickshaw",
+    "vehicleCar": "Car",
+    "month": "Travel month",
+    "mode": "Travel by",
+    "modeFlight": "Flight",
+    "modeTrain": "Train",
+    "modeBus": "Bus",
+    "submit": "Search",
+    "submitEnquiry": "Send enquiry"
+  },
+  "offers": {
+    "tabs": {
+      "all": "All offers",
+      "hotels": "Hotels",
+      "cabs": "Cabs",
+      "food": "Food",
+      "packages": "Packages"
+    },
+    "code": "Code",
+    "copy": "Copy code",
+    "copied": "Code {code} copied",
+    "empty": "No offers in this category right now."
+  },
+  "testimonials": {
+    "rating": "{rating} out of 5"
+  },
+  "collaborate": {
+    "openTo": "We are open to collaborating with"
+  },
+  "servicesIndex": {
+    "title": "All services",
+    "lead": "Travel, stays, local rides, deliveries and business services across Vrindavan.",
+    "bookable": "Book & order",
+    "enquiry": "Business services"
+  },
+  "faq": {
+    "title": "Frequently asked questions"
+  },
+  "contact": {
+    "whatsapp": "Chat on WhatsApp",
+    "call": "Call us"
+  },
+  "cms": {
+    "nav": {
+      "services": "Services",
+      "sections": "Home sections",
+      "testimonials": "Testimonials",
+      "faqs": "FAQs",
+      "navigation": "Navigation",
+      "banners": "Offer banners",
+      "business": "Business profile",
+      "flags": "Feature flags"
+    },
+    "lead": "Edit what the public site shows. Changes go live immediately.",
+    "offersLead": "Homepage offer banners and their coupon codes. Coupon rules arrive with the coupon engine in phase 4.",
+    "settingsLead": "Business details shown on the site and invoices, and on/off switches for features.",
+    "actions": {
+      "new": "Add new",
+      "edit": "Edit",
+      "save": "Save changes",
+      "create": "Create",
+      "delete": "Delete",
+      "confirmDelete": "Delete this item? This cannot be undone.",
+      "cancel": "Cancel",
+      "back": "Back",
+      "saved": "Saved. The site is updated.",
+      "deleted": "Deleted.",
+      "search": "Search…",
+      "prev": "Previous",
+      "next": "Next",
+      "page": "Page {page} of {pages}",
+      "noResults": "Nothing here yet.",
+      "unsaved": "You have unsaved changes."
+    },
+    "fields": {
+      "english": "English",
+      "hindi": "हिन्दी (Hindi)",
+      "missingHindi": "Hindi missing: English is shown",
+      "name": "Name",
+      "slug": "URL slug",
+      "kind": "Type",
+      "kindBookable": "Bookable (cart / booking)",
+      "kindEnquiry": "Enquiry (B2B / lead form)",
+      "accent": "Accent colour",
+      "icon": "Icon",
+      "summary": "Short summary",
+      "description": "Description",
+      "highlights": "Highlights",
+      "addHighlight": "Add highlight",
+      "remove": "Remove",
+      "ctaLabel": "Button label",
+      "heroImage": "Hero image",
+      "sortOrder": "Order",
+      "published": "Published",
+      "visible": "Visible",
+      "active": "Active",
+      "showInNav": "Show in navigation",
+      "title": "Title",
+      "subtitle": "Subtitle",
+      "content": "Section content (JSON)",
+      "contentHelp": "Structured content for this section type. It is validated before saving.",
+      "type": "Type",
+      "tab": "Offer tab",
+      "couponCode": "Coupon code",
+      "href": "Link (starts with /)",
+      "image": "Image",
+      "startsAt": "Starts",
+      "endsAt": "Ends",
+      "author": "Author",
+      "place": "Place",
+      "quote": "Quote",
+      "rating": "Rating",
+      "question": "Question",
+      "answer": "Answer",
+      "service": "Service",
+      "general": "General (home page)",
+      "menu": "Menu",
+      "menuHeader": "Header",
+      "menuFooterCompany": "Footer · company",
+      "menuFooterLegal": "Footer · legal",
+      "label": "Label",
+      "status": "Status",
+      "phone": "Phone",
+      "whatsapp": "WhatsApp number",
+      "email": "Email",
+      "address": "Address",
+      "gstin": "GSTIN",
+      "businessName": "Business name",
+      "page": "Page"
+    },
+    "upload": {
+      "choose": "Upload image",
+      "uploading": "Uploading…",
+      "replace": "Replace",
+      "remove": "Remove image",
+      "tooBig": "Images must be under 10 MB.",
+      "badType": "Use JPG, PNG, WebP or AVIF.",
+      "failed": "Upload failed. Please try again."
+    },
+    "errors": {
+      "forbidden": "You don't have permission to do that.",
+      "duplicate": "Something with that slug or key already exists.",
+      "saveFailed": "Could not save. Please try again.",
+      "invalidJson": "The content is not valid JSON.",
+      "invalidContent": "The content doesn't match this section type.",
+      "invalid": "Please check the highlighted fields.",
+      "required": "This field is required.",
+      "invalidSlug": "Use lowercase letters, numbers and dashes.",
+      "invalidHref": "Links must start with / (or https:// for external).",
+      "invalidCoupon": "3–24 capital letters, numbers, - or _.",
+      "endBeforeStart": "End must be after start.",
+      "invalidPhone": "Enter a valid phone number.",
+      "invalidEmail": "Enter a valid email address.",
+      "invalidGstin": "Enter a 15-character GSTIN."
+    }
   }
 }

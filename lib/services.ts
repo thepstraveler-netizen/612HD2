@@ -1,28 +1,10 @@
-import {
-  Bike,
-  Building2,
-  Camera,
-  Car,
-  CarTaxiFront,
-  Clapperboard,
-  Headset,
-  Megaphone,
-  MonitorCog,
-  Pill,
-  Plane,
-  ShoppingCart,
-  UserRound,
-  UtensilsCrossed,
-  type LucideIcon,
-} from "lucide-react";
-
 /**
- * The 14 services from the poster, keyed by slug.
+ * Service accents and the offline service registry.
  *
- * Phase 1 keeps presentation metadata (icon + accent) in code so the shell
- * renders without a database. Phase 2 adds the `services` table holding the
- * admin-editable copy, ordering, visibility and config; this registry then
- * only maps a service slug to its icon and accent. See docs/DECISIONS.md (D-008).
+ * Since Phase 2 the `services` table is the source of truth (name, copy,
+ * order, visibility, icon, accent are all admin-editable). This file keeps
+ * the Tailwind classes per accent and the slug list used by the offline
+ * fallback (lib/catalog/fallback.ts) when Supabase isn't configured.
  */
 
 export type ServiceKind = "bookable" | "enquiry";
@@ -30,50 +12,86 @@ export type ServiceKind = "bookable" | "enquiry";
 export type ServiceAccent =
   "blue" | "teal" | "purple" | "pink" | "green" | "amber" | "red" | "orange" | "magenta" | "indigo";
 
-export type ServiceDefinition = {
-  slug: string;
-  icon: LucideIcon;
-  accent: ServiceAccent;
-  kind: ServiceKind;
-};
-
 export const SERVICES = [
-  { slug: "travel-hotel-booking", icon: Plane, accent: "blue", kind: "bookable" },
-  { slug: "travel-agent", icon: UserRound, accent: "teal", kind: "enquiry" },
-  { slug: "hotel-photography", icon: Camera, accent: "blue", kind: "enquiry" },
-  { slug: "calling-centre", icon: Headset, accent: "purple", kind: "enquiry" },
-  { slug: "hotel-vendors", icon: Building2, accent: "pink", kind: "bookable" },
-  { slug: "ota-handling", icon: MonitorCog, accent: "teal", kind: "enquiry" },
-  { slug: "bike", icon: Bike, accent: "green", kind: "bookable" },
-  { slug: "rickshaw", icon: CarTaxiFront, accent: "amber", kind: "bookable" },
-  { slug: "car", icon: Car, accent: "red", kind: "bookable" },
-  { slug: "food", icon: UtensilsCrossed, accent: "orange", kind: "bookable" },
-  { slug: "essentials", icon: ShoppingCart, accent: "magenta", kind: "bookable" },
-  { slug: "medicine", icon: Pill, accent: "indigo", kind: "bookable" },
-  { slug: "instagram-marketing", icon: Clapperboard, accent: "pink", kind: "enquiry" },
-  { slug: "lead-generation", icon: Megaphone, accent: "teal", kind: "enquiry" },
-] as const satisfies readonly ServiceDefinition[];
-
-export type ServiceSlug = (typeof SERVICES)[number]["slug"];
-
-export function getService(slug: string): ServiceDefinition | undefined {
-  return SERVICES.find((s) => s.slug === slug);
-}
+  { slug: "travel-hotel-booking", iconName: "plane", accent: "blue", kind: "bookable" },
+  { slug: "travel-agent", iconName: "user-round", accent: "teal", kind: "enquiry" },
+  { slug: "hotel-photography", iconName: "camera", accent: "blue", kind: "enquiry" },
+  { slug: "calling-centre", iconName: "headset", accent: "purple", kind: "enquiry" },
+  { slug: "hotel-vendors", iconName: "building-2", accent: "pink", kind: "bookable" },
+  { slug: "ota-handling", iconName: "monitor-cog", accent: "teal", kind: "enquiry" },
+  { slug: "bike", iconName: "bike", accent: "green", kind: "bookable" },
+  { slug: "rickshaw", iconName: "car-taxi-front", accent: "amber", kind: "bookable" },
+  { slug: "car", iconName: "car", accent: "red", kind: "bookable" },
+  { slug: "food", iconName: "utensils-crossed", accent: "orange", kind: "bookable" },
+  { slug: "essentials", iconName: "shopping-cart", accent: "magenta", kind: "bookable" },
+  { slug: "medicine", iconName: "pill", accent: "indigo", kind: "bookable" },
+  { slug: "instagram-marketing", iconName: "clapperboard", accent: "pink", kind: "enquiry" },
+  { slug: "lead-generation", iconName: "megaphone", accent: "teal", kind: "enquiry" },
+] as const satisfies readonly { slug: string; iconName: string; accent: ServiceAccent; kind: ServiceKind }[];
 
 /** Static class names so Tailwind can see them at build time. */
-export const ACCENT_CLASSES: Record<ServiceAccent, { badge: string; text: string; ring: string }> = {
-  blue: { badge: "bg-brand-blue text-white", text: "text-brand-blue", ring: "ring-brand-blue/20" },
-  teal: { badge: "bg-accent-teal text-white", text: "text-accent-teal", ring: "ring-accent-teal/20" },
-  purple: { badge: "bg-accent-purple text-white", text: "text-accent-purple", ring: "ring-accent-purple/20" },
-  pink: { badge: "bg-accent-pink text-white", text: "text-accent-pink", ring: "ring-accent-pink/20" },
-  green: { badge: "bg-accent-green text-white", text: "text-accent-green", ring: "ring-accent-green/20" },
-  amber: { badge: "bg-accent-amber text-white", text: "text-accent-amber", ring: "ring-accent-amber/20" },
-  red: { badge: "bg-accent-red text-white", text: "text-accent-red", ring: "ring-accent-red/20" },
-  orange: { badge: "bg-accent-orange text-white", text: "text-accent-orange", ring: "ring-accent-orange/20" },
+export const ACCENT_CLASSES: Record<
+  ServiceAccent,
+  { badge: string; text: string; ring: string; soft: string }
+> = {
+  blue: {
+    badge: "bg-brand-blue text-white",
+    text: "text-brand-blue",
+    ring: "ring-brand-blue/20",
+    soft: "bg-brand-blue/10",
+  },
+  teal: {
+    badge: "bg-accent-teal text-white",
+    text: "text-accent-teal",
+    ring: "ring-accent-teal/20",
+    soft: "bg-accent-teal/10",
+  },
+  purple: {
+    badge: "bg-accent-purple text-white",
+    text: "text-accent-purple",
+    ring: "ring-accent-purple/20",
+    soft: "bg-accent-purple/10",
+  },
+  pink: {
+    badge: "bg-accent-pink text-white",
+    text: "text-accent-pink",
+    ring: "ring-accent-pink/20",
+    soft: "bg-accent-pink/10",
+  },
+  green: {
+    badge: "bg-accent-green text-white",
+    text: "text-accent-green",
+    ring: "ring-accent-green/20",
+    soft: "bg-accent-green/10",
+  },
+  amber: {
+    badge: "bg-accent-amber text-white",
+    text: "text-accent-amber",
+    ring: "ring-accent-amber/20",
+    soft: "bg-accent-amber/10",
+  },
+  red: {
+    badge: "bg-accent-red text-white",
+    text: "text-accent-red",
+    ring: "ring-accent-red/20",
+    soft: "bg-accent-red/10",
+  },
+  orange: {
+    badge: "bg-accent-orange text-white",
+    text: "text-accent-orange",
+    ring: "ring-accent-orange/20",
+    soft: "bg-accent-orange/10",
+  },
   magenta: {
     badge: "bg-accent-magenta text-white",
     text: "text-accent-magenta",
     ring: "ring-accent-magenta/20",
+    soft: "bg-accent-magenta/10",
   },
-  indigo: { badge: "bg-accent-indigo text-white", text: "text-accent-indigo", ring: "ring-accent-indigo/20" },
+  indigo: {
+    badge: "bg-accent-indigo text-white",
+    text: "text-accent-indigo",
+    ring: "ring-accent-indigo/20",
+    soft: "bg-accent-indigo/10",
+  },
 };

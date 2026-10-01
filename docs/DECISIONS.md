@@ -61,3 +61,37 @@ The repo was empty, so `main` was created with a single empty "initialize reposi
 ### D-015 · pnpm
 
 Lockfile is `pnpm-lock.yaml`; CI uses `pnpm install --frozen-lockfile`. `packageManager` is pinned in `package.json` for Corepack/Vercel.
+
+## Phase 2 · Catalog core
+
+### D-016 · Localized content is `jsonb {en, hi}`, English required
+
+Every admin-editable string is one jsonb column validated by `public.is_localized()` in Postgres and `localizedSchema` in zod. Hindi is optional per field; `pickLocalized()` falls back to English and the admin form flags missing Hindi. This keeps one row per item instead of a translations table, which is enough for two languages.
+
+### D-017 · Baseline content ships as a migration, demo content as seed
+
+`20261002000500_content_baseline.sql` inserts cities, areas, the 14 services, home sections, navigation, business settings and feature flags idempotently (`on conflict do nothing`), so a fresh production database renders the full site. Demo banners, testimonials, FAQs and amenities live in `supabase/seed.sql` and only load locally or on demand.
+
+### D-018 · Public pages read through a cached, cookie-less client
+
+`lib/catalog/queries.ts` uses an anon client without cookies inside `unstable_cache` tagged `catalog`, so Home and Services stay static (ISR). Every CMS server action calls `revalidateTag("catalog")`, so admin edits show up on the next request. Banners also revalidate every 5 minutes so start/end windows apply without an edit.
+
+### D-019 · Offline fallback only when Supabase is not configured
+
+When `NEXT_PUBLIC_SUPABASE_URL` is missing (CI, E2E, first local run) the catalog reads `lib/catalog/fallback.ts`, which mirrors the baseline migration. With Supabase configured, the database is the only source; a query error shows empty sections rather than stale static copy.
+
+### D-020 · Home section content is edited as validated JSON for now
+
+Home sections are fixed slots (hero, pillars, about, …) that admins can reorder, hide and retitle. Their structured content is edited as JSON and validated per section type (`sectionContentSchemas`) on the server; one bad row is skipped on the public page, never breaks it. Dedicated visual editors per section type can replace the JSON box later without a schema change.
+
+### D-021 · Banners belong to the Offers module
+
+Homepage offer banners are guarded by `offers.read/offers.write` (marketing), not `cms.write`, because they carry coupon codes. The coupon rules themselves arrive with the coupon engine in Phase 4.
+
+### D-022 · Media: browser uploads straight to Storage, then registers a row
+
+The admin image uploader uploads to the public `media` bucket with the user's session (Storage RLS requires `cms.write` or `offers.write`), then a server action records the file in the `media` table (audited) and returns its id. `documents` and `prescriptions` are private buckets where users can only touch their own `<uid>/` folder and staff read with `vendors.read` / `medicine.read`.
+
+### D-023 · Admin forms send raw values; the server re-validates
+
+Forms use react-hook-form with `zodResolver(schema, undefined, { raw: true })` for instant field errors, then send the raw values to the server action, which parses them with the same schema. The server never trusts client-side transforms.

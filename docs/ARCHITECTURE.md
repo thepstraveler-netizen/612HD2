@@ -85,7 +85,14 @@ Default matrix: super_admin and admin get everything; manager reads everything a
 
 ## Internationalisation
 
-next-intl with `localePrefix: "as-needed"`: English at `/`, Hindi at `/hi`. All UI strings live in `messages/*.json`; a unit test checks key parity and placeholder parity. Admin-editable content gets `hi` columns/translations in the CMS phase. Fonts: Plus Jakarta Sans (UI), Noto Sans Devanagari (Hindi fallback), Dancing Script (taglines only).
+next-intl with `localePrefix: "as-needed"`: English at `/`, Hindi at `/hi`. All UI strings live in `messages/*.json`; a unit test checks key parity and placeholder parity. Admin-editable content is stored as jsonb `{en, hi}` (checked by `public.is_localized()`), read with `pickLocalized()` which falls back to English. Fonts: Plus Jakarta Sans (UI), Noto Sans Devanagari (Hindi fallback), Dancing Script (taglines only).
+
+## Catalog and CMS
+
+- Public reads: `lib/catalog/queries.ts` (cookie-less anon client inside `unstable_cache`, tag `catalog`). Falls back to `lib/catalog/fallback.ts` only when Supabase env vars are missing.
+- Writes: `lib/cms/actions.ts` server actions → `assertPermission` → zod (`schemas/cms.ts`) → write as the user (RLS) → audit trigger → `revalidateTag("catalog")`.
+- Admin UI: `components/admin/*` (DataTable, form fields, image uploader) and routes under `app/[locale]/admin/{cms,offers,settings}`; edit routes take `[id]` = uuid or `new`.
+- Media: browser uploads to the `media` bucket, `registerMedia` records the row; `mediaUrl()` builds the public URL.
 
 ## Design system
 

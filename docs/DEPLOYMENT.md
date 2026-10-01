@@ -39,7 +39,8 @@ Put the printed URL and keys into `.env.local`. Local emails land in Inbucket (t
    supabase db push
    ```
 
-4. Check Table Editor: `roles` has 7 rows, `permissions` has 41.
+4. Check Table Editor: `roles` has 7 rows, `permissions` has 41, `services` has 14.
+5. Optional demo content (banners, testimonials, FAQs): run `supabase/seed.sql` in the SQL editor. Skip it in production if you'll add your own.
 
 ## 3. Configure Auth
 
@@ -92,9 +93,18 @@ This creates the user with a confirmed email (or promotes an existing one) and g
 - [ ] As the super admin, `/admin` shows the sidebar with all 18 modules and the audit log, which lists the profile/role changes.
 - [ ] Signed out, `/admin`, `/account`, `/vendor`, `/driver` redirect to `/login?next=…`.
 
+## 7. Phase 2 smoke test
+
+- [ ] `/services` lists the 14 services; `/services/car` shows highlights.
+- [ ] As the super admin, Admin → CMS → Services: rename a service, save, and the home page shows the new name on refresh.
+- [ ] Upload a hero image for a service; it appears on the service page.
+- [ ] Admin → Offers: create a banner with a coupon code and today's dates; it appears in the home offers carousel.
+- [ ] Admin → Settings: change the WhatsApp number; the footer link updates.
+- [ ] Admin → Audit log lists each of those changes.
+- [ ] Storage → buckets shows `media` (public), `documents` and `prescriptions` (private).
+
 ## Later phases (prepare when you reach them)
 
-- **Phase 2:** Storage buckets: public `media`; private `documents` and `prescriptions` (policies ship as migrations).
 - **Phase 4:** Razorpay keys (`NEXT_PUBLIC_RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`), webhook at `https://<domain>/api/webhooks/razorpay` with `RAZORPAY_WEBHOOK_SECRET`; Vercel Cron for inventory-lock expiry protected by `CRON_SECRET`; Resend/MSG91/WhatsApp keys.
 - **Phase 5–6:** Google Maps key (`NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`), restricted to your domains.
 - **Phase 11:** Sentry DSN, Upstash Redis, Cloudflare Turnstile keys.

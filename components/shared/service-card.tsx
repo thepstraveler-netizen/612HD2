@@ -1,22 +1,23 @@
 import { ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { ACCENT_CLASSES, type ServiceDefinition } from "@/lib/services";
+import type { CatalogService } from "@/lib/catalog/types";
+import { pickLocalized } from "@/lib/i18n/localized";
+import { getIcon } from "@/lib/icons";
+import { ACCENT_CLASSES } from "@/lib/services";
 import { cn } from "@/lib/utils";
 
 /** Poster-style service tile: coloured circular icon badge, title, blurb. */
 export function ServiceCard({
   service,
-  name,
-  description,
+  locale,
   cta,
 }: {
-  service: ServiceDefinition;
-  name: string;
-  description: string;
+  service: CatalogService;
+  locale: string;
   cta: string;
 }) {
   const accent = ACCENT_CLASSES[service.accent];
-  const Icon = service.icon;
+  const Icon = getIcon(service.icon);
   return (
     <Link
       href={`/services/${service.slug}`}
@@ -32,12 +33,12 @@ export function ServiceCard({
         <Icon className="size-6" aria-hidden="true" />
       </span>
       <span className="flex min-w-0 flex-col gap-1">
-        <span className="font-semibold text-heading">{name}</span>
-        <span className="text-sm text-muted-foreground">{description}</span>
+        <span className="font-semibold text-heading">{pickLocalized(service.name, locale)}</span>
+        <span className="text-sm text-muted-foreground">{pickLocalized(service.summary, locale)}</span>
         <span
           className={cn("mt-auto inline-flex items-center gap-1 pt-1 text-sm font-semibold", accent.text)}
         >
-          {cta}
+          {service.ctaLabel ? pickLocalized(service.ctaLabel, locale) : cta}
           <ArrowRight className="size-4 transition group-hover:translate-x-0.5" aria-hidden="true" />
         </span>
       </span>
