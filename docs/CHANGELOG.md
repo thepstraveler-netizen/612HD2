@@ -11,10 +11,11 @@
 - Razorpay: order + Checkout popup (cards, UPI, netbanking, wallets), signature check on return, webhook at `/api/webhooks/razorpay` as the source of truth (deduplicated by event id), auto-capture, automatic refund if a payment lands after the hold expired, payment links.
 - `/hotels/[slug]/book`: review page with guest details, other guests, special requests, GST invoice details, add-ons, coupon, payment option and the full breakdown. "Reserve now" on the hotel page when online booking is switched on (`booking.hotels` flag).
 - My Trips (`/account/trips`): upcoming / past / cancelled, trip detail with price breakdown, payments and refunds, "Pay now" for a held booking, self-service cancellation with the refund worked out from the rate plan's policy, and a GST tax invoice PDF (`/api/invoices/[code]`).
+- Admin: Bookings (filters by status, date, hotel and guest; detail with lines, guests, payments, refunds, notifications and audit trail; cancel with suggested refund, refund, mark completed, record cash/UPI, send a payment link for the balance, resend confirmation), Payments (payments, refunds, webhook events), Offers → Coupons, Notifications (templates in English and Hindi with preview, delivery log), Settings → Payments & checkout and Invoice. The hotel calendar shows rooms on hold.
 - Notifications: confirmation and cancellation emails (English and Hindi) through Resend with DB templates; SMS and WhatsApp templates stored and logged as skipped until Phase 11 providers are connected.
 - Settings: `payments.defaults` (advance %, convenience fee, pay at hotel, hold minutes, customer cancellation) and `business.invoice` (legal name, GSTIN state, invoice prefix, SAC codes, terms).
 - Demo seed: add-on prices on three demo hotels; coupons DEMO10, DEMOFLAT300 and DEMOFIRST.
-- Tests: 16 database tests (double booking, expiry, replayed payments and webhooks, amount mismatch, late payment, refunds, coupon limits, RLS), 33 unit tests (pricing, coupons, refunds, state machine, signatures, invoice), 4 Playwright tests.
+- Tests: 17 database tests (double booking, expiry, replayed payments and webhooks, amount mismatch, late payment, refunds, coupon limits, RLS), unit tests for pricing, coupons, refunds, the state machine, signatures, invoices and admin helpers, 4 Playwright tests.
 
 ### Changed
 
