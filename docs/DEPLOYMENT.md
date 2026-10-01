@@ -134,7 +134,7 @@ This creates the user with a confirmed email (or promotes an existing one) and g
 - [ ] Razorpay → Webhooks → the delivery shows 200; resending it changes nothing (one payment, one invoice).
 - [ ] Book the last room of a night in two browsers at once: the second gets "sold out".
 - [ ] Start a booking and close the popup; after 15 minutes the trip shows Expired and the room is available again.
-- [ ] Pay at hotel on Demo · Radha Kunj confirms without payment.
+- [ ] Admin → Settings → Payments: switch on "Pay at hotel" (off by default). Pay at hotel on Demo · Radha Kunj then confirms without payment.
 - [ ] Cancel a refundable booking from My Trips; the refund appears in Razorpay and on the trip.
 - [ ] Admin → Bookings, Payments, Coupons and Notifications list the above; the audit log shows each change.
 
