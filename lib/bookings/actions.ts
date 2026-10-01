@@ -259,7 +259,11 @@ export async function resumeHotelPayment(input: unknown): Promise<ResumeResult> 
     .eq("code", parsed.data.code)
     .maybeSingle();
   if (!booking || booking.user_id !== session.user.id) return { ok: false, error: "not_found" };
-  if (booking.status !== "pending_payment" || !booking.expires_at || Date.parse(booking.expires_at) <= Date.now()) {
+  if (
+    booking.status !== "pending_payment" ||
+    !booking.expires_at ||
+    Date.parse(booking.expires_at) <= Date.now()
+  ) {
     return { ok: false, error: "expired" };
   }
   const { data: order } = await supabase
@@ -275,6 +279,10 @@ export async function resumeHotelPayment(input: unknown): Promise<ResumeResult> 
   return {
     ok: true,
     order: { id: order.provider_order_id, amountPaise: order.amount_paise, keyId: config.keyId },
-    prefill: { name: booking.contact_name, email: booking.contact_email ?? "", contact: booking.contact_phone },
+    prefill: {
+      name: booking.contact_name,
+      email: booking.contact_email ?? "",
+      contact: booking.contact_phone,
+    },
   };
 }

@@ -3,7 +3,11 @@ import type { CancellationRule } from "@/lib/availability/engine";
 type Translate = (key: string, values?: Record<string, string | number>) => string;
 
 /** One-line cancellation summary; `t` resolves `cancellation.*` keys. */
-export function cancellationText(rules: readonly CancellationRule[], refundable: boolean, t: Translate): string {
+export function cancellationText(
+  rules: readonly CancellationRule[],
+  refundable: boolean,
+  t: Translate,
+): string {
   if (!refundable || rules.length === 0) return t("cancellation.nonRefundable");
   const full = rules
     .filter((r) => r.refund_percent >= 100)

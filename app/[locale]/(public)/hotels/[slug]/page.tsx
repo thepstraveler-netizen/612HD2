@@ -22,12 +22,7 @@ import { RatingBadge, StarRow } from "@/components/hotels/rating";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
-import {
-  bestOffer,
-  indexCalendar,
-  quoteStay,
-  type QuoteResult,
-} from "@/lib/availability/engine";
+import { bestOffer, indexCalendar, quoteStay, type QuoteResult } from "@/lib/availability/engine";
 import { getFeatureFlag } from "@/lib/bookings/settings";
 import { getBusinessInfo } from "@/lib/catalog/queries";
 import { daysBetween, todayInIndia } from "@/lib/dates";
