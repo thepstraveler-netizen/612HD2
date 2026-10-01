@@ -19,7 +19,7 @@ type TabKey = "hotels" | "cabs" | "rides" | "packages" | "travel";
  */
 const TARGET: Record<TabKey, string> = {
   hotels: "/hotels",
-  cabs: "/services/car",
+  cabs: "/cabs",
   rides: "/services/rickshaw",
   packages: "/services/travel-hotel-booking",
   travel: "/services/travel-agent",

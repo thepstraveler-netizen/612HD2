@@ -64,7 +64,10 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
 
   const seller = sellerSchema.parse(invoice.seller ?? {});
   const buyer = buyerSchema.safeParse(invoice.buyer);
-  const snapshot = booking.snapshot as { hotel?: { name?: { en?: string }; address?: string | null } };
+  const snapshot = booking.snapshot as {
+    hotel?: { name?: { en?: string }; address?: string | null };
+    trip?: { label?: string; pickupAt?: string };
+  };
   const place = seller.state
     ? `${seller.state}${seller.state_code ? ` (${seller.state_code})` : ""}`
     : "India";
@@ -99,7 +102,10 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
           },
     placeOfSupply: place,
     stay: {
-      hotel: [snapshot.hotel?.name?.en, snapshot.hotel?.address].filter(Boolean).join(", "),
+      // Cab invoices show the trip and pickup date in place of the hotel.
+      hotel: snapshot.trip?.label
+        ? `Cab: ${snapshot.trip.label}`
+        : [snapshot.hotel?.name?.en, snapshot.hotel?.address].filter(Boolean).join(", "),
       checkIn: booking.check_in,
       checkOut: booking.check_out,
       guests: (booking.adults ?? 0) + booking.children,

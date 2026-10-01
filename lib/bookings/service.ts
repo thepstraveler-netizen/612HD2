@@ -41,6 +41,11 @@ const DB_ERRORS = [
   "refund_exceeds_paid",
   "overpaid",
   "not_found",
+  "cab_unavailable",
+  "payment_mode",
+  "driver_unavailable",
+  "vehicle_unavailable",
+  "otp_mismatch",
 ] as const;
 export type BookingDbError = (typeof DB_ERRORS)[number];
 
@@ -50,13 +55,13 @@ export class BookingError extends Error {
   }
 }
 
-function dbError(error: { message: string; code?: string }): BookingError {
+export function dbError(error: { message: string; code?: string }): BookingError {
   const known = DB_ERRORS.find((c) => error.message.includes(c));
   if (!known) console.error("[bookings] database error", error);
   return new BookingError(known ?? "unknown");
 }
 
-const createdSchema = z.object({ id: z.uuid(), code: z.string(), status: z.string() });
+export const createdSchema = z.object({ id: z.uuid(), code: z.string(), status: z.string() });
 const paymentResultSchema = z.object({
   result: z.enum([
     "confirmed",
@@ -194,18 +199,32 @@ export async function createHotelBooking(
     return { code: created.code, status: "confirmed" };
   }
 
+  return openPaymentOrder(created, checkout.payableNowPaise, userId, { hotel: hotel.slug });
+}
+
+/**
+ * Opens the Razorpay order for a new unpaid booking. If that fails the
+ * booking is marked failed at once so it stops holding anything.
+ */
+export async function openPaymentOrder(
+  created: { id: string; code: string },
+  amountPaise: number,
+  userId: string,
+  notes: Record<string, string>,
+): Promise<CreatedBooking> {
+  const admin = createAdminClient();
   const config = razorpayConfig();
   try {
     if (!config) throw new BookingError("payment_failed");
     const order = await createOrder(config, {
-      amountPaise: checkout.payableNowPaise,
+      amountPaise,
       receipt: created.code,
-      notes: { booking: created.code, hotel: hotel.slug },
+      notes: { booking: created.code, ...notes },
     });
     const { error } = await admin.rpc("attach_payment_order", {
       p_booking_id: created.id,
       p_order_id: order.id,
-      p_amount: checkout.payableNowPaise,
+      p_amount: amountPaise,
     });
     if (error) throw dbError(error);
     return {
@@ -352,15 +371,43 @@ export async function cancelWithRefund(input: {
   return { refundedPaise: refunded };
 }
 
-function bookingValues(b: Booking, extra: { refund?: number; amount?: number; link?: string }) {
-  const snapshot = b.snapshot as { hotel?: { name?: { en?: string; hi?: string | null } } };
+type CabTripValues = Pick<
+  Tables<"trips">,
+  | "pickup_at"
+  | "pickup_address"
+  | "pickup_otp"
+  | "driver_name"
+  | "driver_phone"
+  | "vehicle_label"
+  | "vehicle_registration"
+>;
+
+/** Pickup time as customers read it, in India time. */
+function formatPickup(iso: string, locale: "en" | "hi"): string {
+  return new Intl.DateTimeFormat(locale === "hi" ? "hi-IN" : "en-IN", {
+    timeZone: "Asia/Kolkata",
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(new Date(iso));
+}
+
+function bookingValues(
+  b: Booking,
+  extra: { refund?: number; amount?: number; link?: string },
+  trip: CabTripValues | null,
+) {
+  const snapshot = b.snapshot as {
+    hotel?: { name?: { en?: string; hi?: string | null } };
+    trip?: { label?: string; route?: string; vehicle?: string };
+  };
   const locale = b.locale;
   const hotelName = (locale === "hi" ? snapshot.hotel?.name?.hi : null) || snapshot.hotel?.name?.en || "";
   const site = publicEnv().NEXT_PUBLIC_SITE_URL.replace(/\/$/, "");
   return {
     name: b.contact_name,
     code: b.code,
-    hotel: hotelName,
+    // Generic templates (cancelled, payment link) say "at {{hotel}}"; for cabs that is the trip.
+    hotel: hotelName || snapshot.trip?.label || "",
     check_in: b.check_in,
     check_out: b.check_out,
     rooms: b.rooms,
@@ -372,25 +419,41 @@ function bookingValues(b: Booking, extra: { refund?: number; amount?: number; li
     amount: extra.amount === undefined ? "" : formatPaise(extra.amount, locale),
     link: extra.link ?? "",
     trip_url: `${site}${locale === "hi" ? "/hi" : ""}/account/trips/${b.code}`,
+    route: snapshot.trip?.route ?? "",
+    vehicle: trip?.vehicle_label || snapshot.trip?.vehicle || "",
+    pickup_at: trip ? formatPickup(trip.pickup_at, locale) : "",
+    pickup_address: trip?.pickup_address ?? "",
+    otp: trip?.pickup_otp ?? "",
+    driver: trip?.driver_name ?? "",
+    driver_phone: trip?.driver_phone ?? "",
+    registration: trip?.vehicle_registration ?? "",
   };
 }
 
+/** Booking notifications. Cab bookings get their own confirmation template. */
 export async function notifyBooking(
   bookingId: string,
   key: string,
   extra: { refund?: number; amount?: number; link?: string } = {},
 ): Promise<void> {
-  const { data: booking } = await createAdminClient()
-    .from("bookings")
-    .select("*")
-    .eq("id", bookingId)
-    .maybeSingle();
+  const admin = createAdminClient();
+  const { data: booking } = await admin.from("bookings").select("*").eq("id", bookingId).maybeSingle();
   if (!booking) return;
+  const { data: trip } =
+    booking.service === "cab"
+      ? await admin
+          .from("trips")
+          .select(
+            "pickup_at, pickup_address, pickup_otp, driver_name, driver_phone, vehicle_label, vehicle_registration",
+          )
+          .eq("booking_id", bookingId)
+          .maybeSingle()
+      : { data: null };
   await notify({
-    key,
+    key: booking.service === "cab" && key === "booking.confirmed" ? "cab.confirmed" : key,
     locale: booking.locale,
     to: { email: booking.contact_email, phone: booking.contact_phone, userId: booking.user_id },
-    values: bookingValues(booking, extra),
+    values: bookingValues(booking, extra, trip),
     bookingId,
   });
 }

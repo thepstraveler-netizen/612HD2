@@ -181,3 +181,31 @@ A refund on a confirmed or completed booking (a goodwill gesture or a price corr
 ### D-044 · Coupons, templates and settings are edited, not deleted
 
 A coupon that has been reserved or redeemed can't be deleted, only switched off. Notification templates can't change key, channel or language after creation and are switched off rather than deleted. Settings forms overwrite only their own keys in the stored JSON, so keys added later survive.
+
+### D-045 · Cabs are booked on request and dispatched, not held from inventory
+
+A cab booking reserves a car category, not a specific vehicle: once paid, the trip lands on the dispatch board and staff assign a driver and vehicle. There is no per-vehicle availability lock; operations can always add a vendor car. Staff may assign a vehicle of a higher category (a free upgrade) but never a lower one by mistake, because the board lists the booked category first and labels the rest as upgrades.
+
+### D-046 · Places come from an admin catalog; distance from routes or an estimate
+
+Pickup and drop points are an admin-managed list (cities, stations, airport, temples) rather than free-text map search, so prices are predictable and no maps API key is needed. Distance and time come from the admin's route row when one exists; otherwise straight-line distance × a road factor (default 1.25) at an average speed from settings. A maps provider can be plugged in behind `DistanceProvider` (`lib/cabs/distance.ts`) later. The exact street address is captured on the review page and passed to the driver.
+
+### D-047 · Cab fares: fixed route fares first, then the per-km rule
+
+Transfers and sightseeing tours are always fixed-fare per category. Outstation one-way trips use a fixed route fare when the admin set one, otherwise `max(min km, km) × rate + driver allowance`. Round trips are always per km: `max(min km per day × days, 2 × km) × rate + allowance × days`, with days counted on the India calendar. Local hire uses the package fare (4 h/40 km, 8 h/80 km, 12 h/120 km). A peak multiplier (highest matching rule by date window, weekday, trip type and category) applies to the base fare only, never to allowances or add-ons. A night charge applies when pickup falls in the night window. Coupons apply to fare, peak surcharge and add-ons, not to allowances, night charge or fees.
+
+### D-048 · GST on cabs is 5% under SAC 996601, from settings
+
+Passenger transport by a cab operator is billed at 5% (without input tax credit) under SAC 996601, both editable in `cabs.defaults`, so the business's CA can change them without code. The convenience fee keeps its own 18% rate.
+
+### D-049 · Part pay for cabs: an advance online, the rest to the driver
+
+The advance is the larger of the configured share (default 20%) and a minimum (default ₹500), rounded up to whole rupees and never more than the total; when that would be the whole fare, only full payment is offered. Pay-at-pickup with nothing online is not offered for cabs (the database refuses it), so every dispatched trip has a confirmed customer. The driver page shows the cash to collect.
+
+### D-050 · Drivers work from a secret trip link; pickup needs the customer's OTP
+
+Drivers don't need an account: every assignment issues a fresh 48-character link `/driver/trip/<token>` that expires two days after the trip, and reassigning a trip invalidates the previous driver's link. The token is never readable through the API (column grant) and is checked with the service role. At pickup the driver enters the customer's 4-digit OTP (shown in My Trips and the confirmation message) when `require_pickup_otp` is on; staff can move a trip along from the dispatch board without it. Completing the trip completes the booking. Drivers may also be linked to a login for the `/driver` portal later.
+
+### D-051 · The customer sees driver and vehicle details copied onto the trip
+
+Driver name and phone, vehicle model and registration are copied onto the trip at assignment, so the customer can read them under RLS without access to the fleet tables (which hold licences, documents and other trips). Cancellation refund rules for cabs come from settings and are frozen into the booking snapshot at booking time.

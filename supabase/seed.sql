@@ -200,3 +200,28 @@ values
   ('DEMOFIRST', '{"en": "Demo · 15% off your first booking", "hi": "डेमो · पहली बुकिंग पर 15% छूट"}', 'percent', 1500, 100000, 0, '{}', false, 1)
 on conflict (code) do nothing;
 update public.coupons set first_booking_only = true where code = 'DEMOFIRST';
+
+-- Phase 5: demo fleet, a demo weekend peak rule and a cab coupon. Names
+-- start with "Demo" and registrations with "DEMO" — remove before launch.
+insert into public.drivers (full_name, phone, licence_no, licence_expiry, languages, rating)
+values
+  ('Demo Driver Ramesh', '+919800000001', 'UP85 20190001234', current_date + 400, '{hi,en}', 4.8),
+  ('Demo Driver Suresh', '+919800000002', 'UP85 20170005678', current_date + 20, '{hi}', 4.6);
+
+insert into public.vehicles (category_id, model_id, registration_no, colour, year, fuel, default_driver_id, insurance_expiry, permit_expiry, puc_expiry)
+select c.id, m.id, v.reg, v.colour, v.year, m.fuel, d.id, current_date + v.ins, current_date + 300, current_date + 90
+  from (values
+    ('sedan', 'Maruti Swift Dzire', 'DEMO UP85 1001', 'White', 2023, 'Demo Driver Ramesh', 200),
+    ('innova', 'Toyota Innova Crysta', 'DEMO UP85 2002', 'Silver', 2022, 'Demo Driver Suresh', 15)
+  ) as v(category_key, model_name, reg, colour, year, driver_name, ins)
+  join public.cab_categories c on c.key = v.category_key
+  join public.cab_models m on m.category_id = c.id and m.name = v.model_name
+  join public.drivers d on d.full_name = v.driver_name
+on conflict do nothing;
+
+insert into public.cab_surcharges (name, multiplier_bps, weekdays, trip_types)
+values ('{"en": "Demo · Weekend outstation peak", "hi": "डेमो · सप्ताहांत आउटस्टेशन पीक"}', 11000, '{6,7}', '{one_way,round_trip}');
+
+insert into public.coupons (code, description, discount_type, value, max_discount_paise, min_order_paise, services, is_public, per_user_limit)
+values ('DEMOCAB5', '{"en": "Demo · 5% off cabs (up to ₹300)", "hi": "डेमो · कैब पर 5% छूट (₹300 तक)"}', 'percent', 500, 30000, 50000, '{cab}', true, 2)
+on conflict (code) do nothing;

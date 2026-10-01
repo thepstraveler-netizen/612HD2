@@ -1,4 +1,4 @@
-import { splitGst } from "@/lib/pricing/booking";
+import { splitGst, type LineKind } from "@/lib/pricing/booking";
 
 /**
  * The GST tax invoice as plain data, built from a booking's stored lines.
@@ -9,7 +9,7 @@ import { splitGst } from "@/lib/pricing/booking";
  */
 
 export type InvoiceItem = {
-  kind: "room" | "extra_guest" | "addon" | "fee";
+  kind: LineKind;
   description: string;
   sac: string | null;
   quantity: number;

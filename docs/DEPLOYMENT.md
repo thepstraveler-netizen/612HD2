@@ -138,7 +138,29 @@ This creates the user with a confirmed email (or promotes an existing one) and g
 - [ ] Cancel a refundable booking from My Trips; the refund appears in Razorpay and on the trip.
 - [ ] Admin → Bookings, Payments, Coupons and Notifications list the above; the audit log shows each change.
 
+## 10. Phase 5 setup and smoke test
+
+### Setup
+
+1. Apply the two Phase 5 migrations (`20261005000100_cabs.sql`, `20261005000200_cabs_baseline.sql`). They add the cab tables and a starter catalog: 14 places around Braj, Delhi, Agra and Jaipur, 5 car categories, per-km rules, 18 routes and tours with fares, local packages and two add-ons. **Review every fare in Admin → Cabs before going live**; they are starting points, not market rates.
+2. Razorpay keys and webhook from §9 are required: cabs are always paid online (full, or an advance with the rest to the driver).
+3. Admin → Settings → Cabs: advance %, minimum advance, GST rate and SAC, booking window, night hours, pickup OTP, cancellation refunds.
+4. Admin → Cabs → Drivers and Vehicles: add your real fleet with document expiry dates.
+5. Admin → Settings → Feature flags → turn on `booking.cabs`.
+
+### Smoke test
+
+- [ ] `/cabs`: each tab (Outstation one way / round trip, Local, Transfers, Sightseeing) leads to results with prices incl. GST, approximate distance and time.
+- [ ] Results filters (car type, model, fuel) work; a 7-person search shows small cars last and disabled.
+- [ ] Review page: add a roof carrier, apply `DEMOCAB5` (local demo seed only), choose Part pay; the fare breakup and "pay driver" balance add up to the total.
+- [ ] Pay with test card `4111 1111 1111 1111`. My Trips shows the cab, "Driver to be assigned" and a 4-digit pickup OTP.
+- [ ] Admin → Cabs → Dispatch: the trip is under Unassigned. Assign a driver and vehicle; My Trips now shows the driver, phone and registration.
+- [ ] Copy the driver link and open it on a phone (signed out): Start trip → Arrived → Picked up (wrong OTP is refused, the customer's OTP works) → Complete. The booking becomes Completed.
+- [ ] Reassign another trip: the old driver link stops working.
+- [ ] Cancel a paid trip from My Trips more than 24 h before pickup: full refund in Razorpay; the trip disappears from the dispatch board.
+- [ ] Drivers / Vehicles lists flag documents expiring within 30 days.
+
 ## Later phases (prepare when you reach them)
 
-- **Phase 5–6:** Google Maps key (`NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`), restricted to your domains.
+- **Phase 6:** Google Maps key (`NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`), restricted to your domains, for live ride distances (cabs work without it, see D-046).
 - **Phase 11:** SMS (MSG91) and WhatsApp keys, Sentry DSN, Upstash Redis, Cloudflare Turnstile keys.
