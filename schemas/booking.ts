@@ -67,17 +67,30 @@ export const gstDetailsSchema = z.object({
 });
 
 /** Who is travelling: primary contact, other guests, requests, optional GST details. */
-export const guestDetailsSchema = z.object({
-  name: z.string().trim().min(2, { error: "required" }).max(120),
-  email: z.email({ error: "invalidEmail" }).or(z.literal("")).default(""),
-  phone: phoneSchema,
-  guests: z.array(z.string().trim().max(120)).max(30).default([]),
-  specialRequests: z.string().trim().max(1000).default(""),
-  wantsGst: z.boolean().default(false),
-  gst: gstDetailsSchema.optional(),
-  acceptPolicies: z.literal(true, { error: "acceptPolicies" }),
-});
-export type GuestDetailsInput = z.input<typeof guestDetailsSchema>;
+/** The review-page form (the browser clears `gst` when the switch is off). */
+export const guestDetailsFormSchema = z
+  .object({
+    name: z.string().trim().min(2, { error: "required" }).max(120),
+    email: z.email({ error: "invalidEmail" }).or(z.literal("")).default(""),
+    phone: phoneSchema,
+    guests: z.array(z.string().trim().max(120)).max(30).default([]),
+    specialRequests: z.string().trim().max(1000).default(""),
+    wantsGst: z.boolean().default(false),
+    gst: gstDetailsSchema.optional(),
+    acceptPolicies: z.literal(true, { error: "acceptPolicies" }),
+  })
+  .superRefine((value, ctx) => {
+    if (value.wantsGst && !value.gst)
+      ctx.addIssue({ code: "custom", path: ["gst", "gstin"], message: "invalidGstin" });
+  });
+
+/** GST fields are ignored unless the guest asked for a GST invoice. */
+export const guestDetailsSchema = z.preprocess(
+  (v) =>
+    v && typeof v === "object" && !(v as { wantsGst?: unknown }).wantsGst ? { ...v, gst: undefined } : v,
+  guestDetailsFormSchema,
+);
+export type GuestDetailsInput = z.input<typeof guestDetailsFormSchema>;
 
 export const bookHotelSchema = z.object({ checkout: hotelCheckoutSchema, guest: guestDetailsSchema });
 

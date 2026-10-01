@@ -1,12 +1,14 @@
 import { KeyRound, Luggage } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { TripCard } from "@/components/booking/trip-card";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "@/i18n/navigation";
 import { requireUser } from "@/lib/auth/guards";
+import { listMyTrips } from "@/lib/bookings/trips";
 import { ROLE_LABELS, type RoleKey } from "@/lib/permissions/constants";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -14,9 +16,11 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("title"), robots: { index: false } };
 }
 
-export default async function AccountPage() {
+export default async function AccountPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
   const session = await requireUser("/account");
   const t = await getTranslations("account");
+  const trips = await listMyTrips(session.user.id, 3);
   const name = session.profile?.full_name ?? session.user.email ?? "";
 
   return (
@@ -30,8 +34,23 @@ export default async function AccountPage() {
           <CardHeader>
             <CardTitle>{t("trips")}</CardTitle>
           </CardHeader>
-          <CardContent>
-            <EmptyState icon={Luggage} title={t("tripsEmpty")} />
+          <CardContent className="space-y-3">
+            {trips.length ? (
+              <>
+                <ul className="grid gap-3">
+                  {trips.map((trip) => (
+                    <li key={trip.code}>
+                      <TripCard trip={trip} locale={locale} />
+                    </li>
+                  ))}
+                </ul>
+                <Button asChild variant="outline" className="w-full">
+                  <Link href="/account/trips">{t("allTrips")}</Link>
+                </Button>
+              </>
+            ) : (
+              <EmptyState icon={Luggage} title={t("tripsEmpty")} />
+            )}
           </CardContent>
         </Card>
         <div className="space-y-6">

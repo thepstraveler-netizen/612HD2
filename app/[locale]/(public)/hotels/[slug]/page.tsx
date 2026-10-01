@@ -1,6 +1,7 @@
 import {
   ArrowLeft,
   BedDouble,
+  CalendarCheck,
   Check,
   Clock,
   MapPin,
@@ -25,9 +26,9 @@ import {
   bestOffer,
   indexCalendar,
   quoteStay,
-  type CancellationRule,
   type QuoteResult,
 } from "@/lib/availability/engine";
+import { getFeatureFlag } from "@/lib/bookings/settings";
 import { getBusinessInfo } from "@/lib/catalog/queries";
 import { daysBetween, todayInIndia } from "@/lib/dates";
 import { distanceMeters, mapsUrl } from "@/lib/geo";
@@ -40,6 +41,7 @@ import {
 } from "@/lib/hotels/queries";
 import { stayFromSearch } from "@/lib/hotels/search";
 import { pickStay, toQuery, withParams, type RawParams } from "@/lib/hotels/url";
+import { cancellationText } from "@/lib/hotels/policy-text";
 import { pickLocalized } from "@/lib/i18n/localized";
 import { getIcon } from "@/lib/icons";
 import { formatPaise } from "@/lib/money";
@@ -62,24 +64,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 type Translate = (key: string, values?: Record<string, string | number>) => string;
 
-function cancellationText(rules: CancellationRule[], refundable: boolean, t: Translate): string {
-  if (!refundable || rules.length === 0) return t("cancellation.nonRefundable");
-  const full = rules
-    .filter((r) => r.refund_percent >= 100)
-    .sort((a, b) => a.hours_before - b.hours_before)[0];
-  if (full) return t("cancellation.free", { hours: full.hours_before });
-  const best = [...rules].sort((a, b) => b.refund_percent - a.refund_percent)[0];
-  return t("cancellation.partial", { percent: best.refund_percent, hours: best.hours_before });
-}
-
 export default async function HotelPage({ params, searchParams }: Props) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
-  const [catalog, defaults, gstSlabs, business] = await Promise.all([
+  const [catalog, defaults, gstSlabs, business, bookingOpen] = await Promise.all([
     getHotelCatalog(),
     getHotelSearchDefaults(),
     getGstSlabs(),
     getBusinessInfo(),
+    getFeatureFlag("booking.hotels"),
   ]);
   const hotel = catalog.hotels.find((h) => h.slug === slug);
   if (!hotel) notFound();
@@ -586,8 +579,27 @@ export default async function HotelPage({ params, searchParams }: Props) {
                 <p className="text-xs text-muted-foreground">{td("addDatesForPrices")}</p>
               </div>
             ) : null}
-            {whatsapp ? (
+            {bookingOpen && offer?.ok && stay ? (
               <Button asChild size="lg" className="w-full">
+                <Link
+                  href={{
+                    pathname: `/hotels/${hotel.slug}/book`,
+                    query: {
+                      plan: offer.ratePlanId,
+                      checkin: stay.checkIn,
+                      checkout: stay.checkOut,
+                      rooms: String(stay.rooms),
+                      adults: String(stay.adults),
+                      children: String(stay.children),
+                    },
+                  }}
+                >
+                  <CalendarCheck /> {td("reserve")}
+                </Link>
+              </Button>
+            ) : null}
+            {whatsapp ? (
+              <Button asChild size="lg" variant={bookingOpen ? "outline" : "default"} className="w-full">
                 <a
                   href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(enquiry)}`}
                   target="_blank"
@@ -604,7 +616,9 @@ export default async function HotelPage({ params, searchParams }: Props) {
                 </a>
               </Button>
             ) : null}
-            <p className="text-xs text-muted-foreground">{td("bookingNote")}</p>
+            <p className="text-xs text-muted-foreground">
+              {bookingOpen ? td("bookingNoteOnline") : td("bookingNote")}
+            </p>
           </div>
         </aside>
       </div>
