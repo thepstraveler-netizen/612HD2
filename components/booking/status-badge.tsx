@@ -2,7 +2,7 @@ import { useTranslations } from "next-intl";
 import { statusTone, type BookingStatus } from "@/lib/bookings/state";
 import { cn } from "@/lib/utils";
 
-const TONES = {
+export const TONES = {
   success: "bg-accent-green/15 text-accent-green",
   warning: "bg-accent-orange/15 text-accent-orange",
   danger: "bg-destructive/10 text-destructive",
