@@ -48,3 +48,4 @@ supabase/.temp
 # playwright
 /playwright-report
 /test-results
+.claude/worktrees/
