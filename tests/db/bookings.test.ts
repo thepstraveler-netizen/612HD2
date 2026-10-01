@@ -291,6 +291,37 @@ describe("payments", () => {
     expect(await inventory(inn.room, "2027-02-10")).toEqual({ sold_units: 1, held_units: 0 });
   });
 
+  it("keeps a goodwill refund's stay confirmed and audits payment links", async () => {
+    const b = await book({ user: alice, target: inn, checkIn: "2027-02-20", checkOut: "2027-02-21" });
+    await pay(b.id, "order_G", 210_000);
+    await capture("order_G", "pay_G", 210_000);
+    const paymentId = (
+      await db.query<{ id: string }>("select id from public.payments where provider_order_id = 'order_G'")
+    ).rows[0].id;
+    await service((tx) =>
+      tx.query("select public.record_refund($1)", [
+        JSON.stringify({
+          payment_id: paymentId,
+          amount_paise: 50_000,
+          provider_refund_id: "rfnd_G",
+          actor: manager,
+        }),
+      ]),
+    );
+    expect(await bookingRow(b.id)).toMatchObject({ status: "confirmed", refunded_paise: 50_000 });
+
+    await service((tx) =>
+      tx.query("select public.create_payment_link_payment($1, 'plink_G', 'https://rzp.io/x', 10000, $2)", [
+        b.id,
+        manager,
+      ]),
+    );
+    const audit = await db.query<{ actor_id: string }>(
+      "select actor_id from public.audit_logs where table_name = 'payments' and new_data->>'payment_link_id' = 'plink_G'",
+    );
+    expect(audit.rows[0]?.actor_id).toBe(manager);
+  });
+
   it("cancels, returns the room and records the refund", async () => {
     const b = await book({ user: alice, target: inn, checkIn: "2027-02-15", checkOut: "2027-02-16" });
     await pay(b.id, "order_E", 210_000);

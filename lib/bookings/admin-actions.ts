@@ -236,14 +236,12 @@ export async function sendPaymentLinkAction(input: unknown): Promise<BookingActi
       expireBy: Math.floor(Date.now() / 1000) + PAYMENT_LINK_DAYS * 86_400,
       notes: { booking: booking.code },
     });
-    const { error } = await admin.from("payments").insert({
-      booking_id: booking.id,
-      provider: "razorpay",
-      payment_link_id: link.id,
-      payment_link_url: link.short_url,
-      amount_paise: balance,
-      status: "created",
-      recorded_by: session.user.id,
+    const { error } = await admin.rpc("create_payment_link_payment", {
+      p_booking_id: booking.id,
+      p_link_id: link.id,
+      p_url: link.short_url,
+      p_amount: balance,
+      p_actor: session.user.id,
     });
     if (error) throw rpcError(error);
     await notifyBooking(booking.id, "payment.link", { amount: balance, link: link.short_url });

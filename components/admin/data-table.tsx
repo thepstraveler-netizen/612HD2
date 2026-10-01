@@ -10,10 +10,11 @@ import {
   type ColumnDef,
   type SortingState,
 } from "@tanstack/react-table";
-import { ArrowUpDown, Check, Minus, Pencil } from "lucide-react";
+import { ArrowUpDown, Check, Eye, Minus, Pencil } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import { ToneBadge, type Tone } from "@/components/admin/booking-status";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link } from "@/i18n/navigation";
@@ -26,15 +27,19 @@ import { missingTranslation, pickLocalized, type LocalizedJson } from "@/lib/i18
 export type DataColumn = {
   key: string;
   header: string;
-  kind?: "text" | "localized" | "boolean" | "badge" | "number" | "date";
+  kind?: "text" | "localized" | "boolean" | "badge" | "tone" | "number" | "date";
   sortable?: boolean;
 };
 
 type Row = Record<string, unknown> & { id: string };
 
+/** Value of a `tone` column: a coloured status pill. */
+export type ToneCell = { label: string; tone: Tone };
+
 function cellText(value: unknown, kind: DataColumn["kind"], locale: string): string {
   if (value == null) return "";
   if (kind === "localized") return pickLocalized(value as LocalizedJson, locale);
+  if (kind === "tone") return (value as ToneCell).label;
   return String(value);
 }
 
@@ -47,12 +52,15 @@ export function DataTable({
   rows,
   columns,
   editHref,
+  editLabel,
   pageSize = 20,
 }: {
   rows: Row[];
   columns: DataColumn[];
   /** Path prefix for the edit link; the row id is appended. */
   editHref?: string;
+  /** Label for the row link when it opens a detail page rather than an edit form. */
+  editLabel?: string;
   pageSize?: number;
 }) {
   const t = useTranslations("cms");
@@ -92,6 +100,10 @@ export function DataTable({
             );
           case "badge":
             return value ? <Badge variant="secondary">{String(value)}</Badge> : null;
+          case "tone":
+            return value ? (
+              <ToneBadge tone={(value as ToneCell).tone} label={(value as ToneCell).label} />
+            ) : null;
           case "localized":
             return (
               <span className="flex items-center gap-2">
@@ -113,18 +125,18 @@ export function DataTable({
     if (editHref) {
       defs.push({
         id: "actions",
-        header: () => <span className="sr-only">{t("actions.edit")}</span>,
+        header: () => <span className="sr-only">{editLabel ?? t("actions.edit")}</span>,
         cell: ({ row }) => (
           <Button asChild variant="ghost" size="sm" className="h-9">
             <Link href={`${editHref}/${row.original.id}`}>
-              <Pencil /> {t("actions.edit")}
+              {editLabel ? <Eye /> : <Pencil />} {editLabel ?? t("actions.edit")}
             </Link>
           </Button>
         ),
       });
     }
     return defs;
-  }, [columns, editHref, locale, t]);
+  }, [columns, editHref, editLabel, locale, t]);
 
   const table = useReactTable({
     data: rows,

@@ -643,6 +643,10 @@ export type Database = {
         Args: { p_booking_id: string; p_order_id: string; p_amount: number };
         Returns: string;
       };
+      create_payment_link_payment: {
+        Args: { p_booking_id: string; p_link_id: string; p_url: string; p_amount: number; p_actor: string };
+        Returns: string;
+      };
       record_payment: { Args: { p: Json }; Returns: Json };
       record_refund: { Args: { p: Json }; Returns: Json };
       cancel_booking: {

@@ -1500,6 +1500,7 @@
     "calendar": {
       "held": "{count} held",
       "heldTitle": "Held by bookings awaiting payment; freed when the hold expires."
-    }
+    },
+    "view": "View"
   }
 }

@@ -169,3 +169,15 @@ Invoice numbers look like `PST/26-27/00001` (prefix from `business.invoice`, cou
 ### D-041 · Notifications are templates plus provider adapters
 
 `notification_templates` holds editable text per key, channel and language with `{{placeholders}}`; every send is logged in `notification_logs`. Email goes through Resend when `RESEND_API_KEY` is set; SMS and WhatsApp adapters log "skipped" until their providers are configured. A failed notification never fails a booking.
+
+### D-042 · Admin booking screens
+
+The bookings list is filtered and paged in the database (25 per page) with the filters in the URL, so a filtered view can be bookmarked. Payments, refunds, webhook events and notification logs show the latest 200 rows. A booking shows only the actions its status allows and the staff member's permissions cover (`canTransition`), and the server checks again. Cancelling needs `bookings.write`; refunding needs `payments.refund` and is capped at paid minus already refunded. If a cancel succeeds but the refund fails, staff see that and can retry the refund. A balance is collected with a Razorpay payment link (an open link is re-sent rather than a second one created, so the balance can't be paid twice) or recorded as cash/UPI.
+
+### D-043 · Goodwill refunds keep the stay on
+
+A refund on a confirmed or completed booking (a goodwill gesture or a price correction) leaves its status alone, so staff can still complete it, collect the balance or cancel it later. Only cancelled or failed bookings move to refunded / partially refunded.
+
+### D-044 · Coupons, templates and settings are edited, not deleted
+
+A coupon that has been reserved or redeemed can't be deleted, only switched off. Notification templates can't change key, channel or language after creation and are switched off rather than deleted. Settings forms overwrite only their own keys in the stored JSON, so keys added later survive.

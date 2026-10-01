@@ -7,6 +7,7 @@ import { Link } from "@/i18n/navigation";
 import { requirePermission } from "@/lib/auth/guards";
 import { BOOKINGS_PAGE_SIZE, listAdminBookings } from "@/lib/bookings/admin";
 import { bookingFiltersQuery, parseBookingFilters, readSnapshot } from "@/lib/bookings/admin-forms";
+import { statusTone, type BookingStatus } from "@/lib/bookings/state";
 import { formatPaise } from "@/lib/money";
 
 /**
@@ -42,6 +43,7 @@ export default async function AdminBookingsPage({
       <DataTable
         pageSize={BOOKINGS_PAGE_SIZE}
         editHref="/admin/bookings"
+        editLabel={t("view")}
         rows={rows.map((b) => ({
           id: b.id,
           code: b.code,
@@ -50,7 +52,7 @@ export default async function AdminBookingsPage({
           dates: b.check_in ? `${day(b.check_in)} → ${day(b.check_out)}` : "",
           total: formatPaise(b.total_paise, locale),
           paid: formatPaise(b.paid_paise, locale),
-          status: t(`status.${b.status}`),
+          status: { label: t(`status.${b.status}`), tone: statusTone(b.status as BookingStatus) },
           mode: t(`paymentModes.${b.payment_mode}`),
           created: b.created_at,
         }))}
@@ -61,7 +63,7 @@ export default async function AdminBookingsPage({
           { key: "dates", header: t("columns.dates") },
           { key: "total", header: t("columns.total") },
           { key: "paid", header: t("columns.paid") },
-          { key: "status", header: t("columns.status"), kind: "badge" },
+          { key: "status", header: t("columns.status"), kind: "tone" },
           { key: "mode", header: t("columns.mode") },
           { key: "created", header: t("columns.created"), kind: "date" },
         ]}
