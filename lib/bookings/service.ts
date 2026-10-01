@@ -430,7 +430,7 @@ function bookingValues(
   };
 }
 
-/** Booking notifications. Cab bookings get their own confirmation template. */
+/** Booking notifications. Cab and ride bookings get their own confirmation template. */
 export async function notifyBooking(
   bookingId: string,
   key: string,
@@ -439,18 +439,18 @@ export async function notifyBooking(
   const admin = createAdminClient();
   const { data: booking } = await admin.from("bookings").select("*").eq("id", bookingId).maybeSingle();
   if (!booking) return;
+  const tripColumns =
+    "pickup_at, pickup_address, pickup_otp, driver_name, driver_phone, vehicle_label, vehicle_registration";
   const { data: trip } =
     booking.service === "cab"
-      ? await admin
-          .from("trips")
-          .select(
-            "pickup_at, pickup_address, pickup_otp, driver_name, driver_phone, vehicle_label, vehicle_registration",
-          )
-          .eq("booking_id", bookingId)
-          .maybeSingle()
-      : { data: null };
+      ? await admin.from("trips").select(tripColumns).eq("booking_id", bookingId).maybeSingle()
+      : booking.service === "ride"
+        ? await admin.from("ride_requests").select(tripColumns).eq("booking_id", bookingId).maybeSingle()
+        : { data: null };
+  const confirmedKey =
+    booking.service === "cab" ? "cab.confirmed" : booking.service === "ride" ? "ride.confirmed" : key;
   await notify({
-    key: booking.service === "cab" && key === "booking.confirmed" ? "cab.confirmed" : key,
+    key: key === "booking.confirmed" ? confirmedKey : key,
     locale: booking.locale,
     to: { email: booking.contact_email, phone: booking.contact_phone, userId: booking.user_id },
     values: bookingValues(booking, extra, trip),

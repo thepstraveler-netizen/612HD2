@@ -498,7 +498,9 @@ export function newVehicleValues(categoryId: string): VehicleFormInput {
   };
 }
 
-export function vehicleFormValues(v: Tables<"vehicles">): VehicleFormInput {
+export function vehicleFormValues(
+  v: Tables<"vehicles"> & { category_id: string; registration_no: string },
+): VehicleFormInput {
   return {
     id: v.id,
     category_id: v.category_id,
