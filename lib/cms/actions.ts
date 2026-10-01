@@ -1,11 +1,7 @@
 "use server";
 
-import { revalidatePath, revalidateTag } from "next/cache";
-import type { z } from "zod";
-import { AuthorizationError, assertPermission } from "@/lib/auth/guards";
-import { CATALOG_TAG } from "@/lib/catalog/queries";
+import { mutate } from "@/lib/admin/mutate";
 import type { PermissionKey } from "@/lib/permissions/constants";
-import { createClient } from "@/lib/supabase/server";
 import {
   bannerFormSchema,
   businessProfileSchema,
@@ -20,50 +16,7 @@ import {
   testimonialFormSchema,
 } from "@/schemas/cms";
 
-/**
- * CMS mutations. Every action: (1) checks the permission server-side,
- * (2) validates input with the shared zod schema, (3) writes as the signed-in
- * user so RLS applies too, (4) the audit trigger records the change, and
- * (5) the public catalog cache is revalidated so the site updates at once.
- */
-
-export type MutationResult = { ok: true; id?: string } | { ok: false; error: string; field?: string };
-
-type Supabase = Awaited<ReturnType<typeof createClient>>;
-
-async function mutate<S extends z.ZodType>(
-  permission: PermissionKey,
-  schema: S,
-  input: unknown,
-  write: (
-    data: z.output<S>,
-    supabase: Supabase,
-  ) => Promise<{ id?: string; error?: { message: string; code?: string } | null }>,
-): Promise<MutationResult> {
-  try {
-    await assertPermission(permission);
-  } catch (error) {
-    if (error instanceof AuthorizationError) return { ok: false, error: "forbidden" };
-    throw error;
-  }
-  const parsed = schema.safeParse(input);
-  if (!parsed.success) {
-    const issue = parsed.error.issues[0];
-    return { ok: false, error: issue?.message ?? "invalid", field: issue?.path.join(".") };
-  }
-  const supabase = await createClient();
-  const { id, error } = await write(parsed.data, supabase);
-  if (error) {
-    if (error.code === "23505") return { ok: false, error: "duplicate" };
-    if (error.code === "invalidJson" || error.code === "invalidContent")
-      return { ok: false, error: error.code };
-    console.error("[cms] write failed", error);
-    return { ok: false, error: "saveFailed" };
-  }
-  revalidateTag(CATALOG_TAG);
-  revalidatePath("/[locale]/admin", "layout");
-  return { ok: true, id };
-}
+/** CMS mutations; each goes through {@link mutate} (permission, zod, RLS, audit, revalidate). */
 
 // ------------------------------------------------------------- services
 

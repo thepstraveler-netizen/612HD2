@@ -6,7 +6,7 @@ import { useTransition } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "@/i18n/navigation";
-import type { MutationResult } from "@/lib/cms/actions";
+import type { MutationResult } from "@/lib/admin/mutate";
 
 export function DeleteButton({
   id,

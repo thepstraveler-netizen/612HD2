@@ -28,7 +28,7 @@ describe("baseline content", () => {
       "select count(*)::int as n from public.navigation_links where menu = 'header'",
     );
     expect(services.rows[0].n).toBe(14);
-    expect(sections.rows[0].n).toBe(8);
+    expect(sections.rows[0].n).toBe(9);
     expect(nav.rows[0].n).toBe(10);
   });
 
@@ -85,7 +85,7 @@ describe("public catalog RLS", () => {
         (r) => r.key,
       ),
     );
-    expect(keys).toEqual(["business.profile", "business.social"]);
+    expect(keys).toEqual(["business.profile", "business.social", "hotels.search_defaults", "tax.hotel_gst_slabs"]);
   });
 });
 

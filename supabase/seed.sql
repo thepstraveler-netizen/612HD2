@@ -22,12 +22,3 @@ from (values
   ('medicine', '{"en": "Do I need a prescription?", "hi": "क्या पर्ची ज़रूरी है?"}', '{"en": "Prescription medicines are delivered only against a valid prescription, through licensed partner pharmacies.", "hi": "पर्ची वाली दवाएँ केवल वैध पर्ची पर, लाइसेंसशुदा पार्टनर फ़ार्मेसी के ज़रिए दी जाती हैं।"}', 1)
 ) as f(slug, question, answer, sort_order)
 join public.services s on s.slug = f.slug;
-
-insert into public.amenities (slug, name, icon, grouping, sort_order) values
-  ('wifi', '{"en": "Free Wi-Fi", "hi": "मुफ़्त वाई-फ़ाई"}', 'wifi', 'general', 1),
-  ('ac', '{"en": "Air conditioning", "hi": "एयर कंडीशनिंग"}', 'snowflake', 'room', 2),
-  ('parking', '{"en": "Parking", "hi": "पार्किंग"}', 'square-parking', 'general', 3),
-  ('power-backup', '{"en": "Power backup", "hi": "पावर बैकअप"}', 'battery-charging', 'general', 4),
-  ('temple-shuttle', '{"en": "Temple shuttle", "hi": "मंदिर शटल"}', 'bus', 'services', 5),
-  ('sattvik-kitchen', '{"en": "Sattvik kitchen", "hi": "सात्विक रसोई"}', 'leaf', 'dining', 6)
-on conflict (slug) do nothing;

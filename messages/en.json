@@ -445,7 +445,14 @@
       "endBeforeStart": "End must be after start.",
       "invalidPhone": "Enter a valid phone number.",
       "invalidEmail": "Enter a valid email address.",
-      "invalidGstin": "Enter a 15-character GSTIN."
+      "invalidGstin": "Enter a 15-character GSTIN.",
+      "invalidAmount": "Enter an amount like 1499 or 1499.50.",
+      "invalidCoordinate": "Enter a valid coordinate.",
+      "invalidTime": "Enter a time like 12:00.",
+      "needPlan": "Add at least one rate plan.",
+      "occupancyOrder": "Base occupancy ≤ max adults ≤ max occupancy.",
+      "rangeTooLong": "Pick a range of one year or less.",
+      "pickPlan": "Choose the rate plan this price is for."
     }
   }
 }

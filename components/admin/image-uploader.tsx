@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import type { MutationResult } from "@/lib/cms/actions";
+import type { MutationResult } from "@/lib/admin/mutate";
 import { createClient } from "@/lib/supabase/client";
 
 const MAX_BYTES = 10 * 1024 * 1024;

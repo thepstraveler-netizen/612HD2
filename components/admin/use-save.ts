@@ -5,7 +5,7 @@ import { useTransition } from "react";
 import type { FieldValues, Path, UseFormReturn } from "react-hook-form";
 import { toast } from "sonner";
 import { useRouter } from "@/i18n/navigation";
-import type { MutationResult } from "@/lib/cms/actions";
+import type { MutationResult } from "@/lib/admin/mutate";
 
 /**
  * Submits the raw form values to a server action (which re-validates them),

@@ -63,6 +63,7 @@ export const sectionContentSchemas = {
       .default([]),
   }),
   partner_cta: z.object({ cta_label: localizedSchema, href: internalHref }),
+  featured_hotels: z.object({ limit: z.number().int().min(1).max(12).default(6) }),
 } as const;
 
 export type SectionType = keyof typeof sectionContentSchemas;
