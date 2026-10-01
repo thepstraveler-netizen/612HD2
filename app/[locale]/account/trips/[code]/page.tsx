@@ -5,6 +5,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { BookingStatusBadge } from "@/components/booking/status-badge";
 import { formatStayDate } from "@/components/booking/trip-card";
 import { TripActions } from "@/components/booking/trip-actions";
+import { CabTripDetail } from "@/components/cabs/cab-trip-detail";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { requireUser } from "@/lib/auth/guards";
@@ -15,6 +16,7 @@ import { cancellationText } from "@/lib/hotels/policy-text";
 import { pickLocalized } from "@/lib/i18n/localized";
 import { formatPaise } from "@/lib/money";
 import { checkInInstant, quoteRefund } from "@/lib/refunds/policy";
+import { createClient } from "@/lib/supabase/server";
 
 type Props = { params: Promise<{ locale: string; code: string }> };
 
@@ -31,9 +33,27 @@ export default async function TripPage({ params }: Props) {
   if (!/^[A-Z0-9]{6,16}$/.test(code)) notFound();
   const trip = await getMyTrip(session.user.id, code);
   if (!trip) notFound();
+  const settings = await getPaymentSettings();
+  if (trip.booking.service === "cab") {
+    const supabase = await createClient();
+    const { data: cabTrip } = await supabase
+      .from("trips")
+      .select(
+        "status, pickup_address, drop_address, passengers, driver_name, driver_phone, vehicle_label, vehicle_registration, pickup_otp",
+      )
+      .eq("booking_id", trip.booking.id)
+      .maybeSingle();
+    return (
+      <CabTripDetail
+        data={trip}
+        trip={cabTrip}
+        locale={locale}
+        cancellationEnabled={settings.customer_cancellation_enabled}
+      />
+    );
+  }
   const t = await getTranslations("trips");
   const th = await getTranslations("hotels");
-  const settings = await getPaymentSettings();
 
   const { booking, items, guests, payments, refunds, invoice } = trip;
   const status = booking.status as BookingStatus;

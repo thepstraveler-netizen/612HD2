@@ -1108,7 +1108,8 @@
     "cancelCharge": "Cancellation charge: {amount}",
     "cancelConfirm": "Yes, cancel",
     "keepBooking": "Keep booking",
-    "cancelBooking": "Cancel booking"
+    "cancelBooking": "Cancel booking",
+    "findCabs": "Book a cab"
   },
   "bookingsAdmin": {
     "title": "Bookings & orders",
@@ -1502,5 +1503,373 @@
       "heldTitle": "Held by bookings awaiting payment; freed when the hold expires."
     },
     "view": "View"
+  },
+  "cabs": {
+    "landing": {
+      "metaTitle": "Cabs in Vrindavan, Mathura and beyond",
+      "metaDescription": "Book outstation, local, airport and station cabs or a Braj sightseeing tour from Vrindavan, with fares shown upfront including GST.",
+      "eyebrow": "Cabs from Vrindavan",
+      "title": "Book a cab for every Braj journey",
+      "subtitle": "Outstation rides, local hire by the hour, station and airport pickups, and temple tours, with the full fare shown before you book.",
+      "freeCancel": "Free cancellation up to {hours} hours before pickup",
+      "popularTitle": "Popular routes",
+      "routeType": {
+        "one_way": "One way",
+        "transfer": "Transfer",
+        "sightseeing": "Tour"
+      },
+      "from": "from",
+      "whyTitle": "Why travel with us",
+      "howTitle": "How it works",
+      "steps": {
+        "search": {
+          "title": "Tell us your trip",
+          "body": "Pick where you're going, the date and time, and how many are travelling."
+        },
+        "choose": {
+          "title": "Choose a car",
+          "body": "Compare cars with the fare, kilometres included and extra charges side by side."
+        },
+        "book": {
+          "title": "Book in a minute",
+          "body": "Pay {percent}% now to confirm, or the full fare. Your driver's details reach you before pickup."
+        }
+      }
+    },
+    "trust": {
+      "verified": {
+        "title": "Verified drivers",
+        "body": "Every driver is checked and knows the Braj roads well."
+      },
+      "onTime": {
+        "title": "On-time pickup",
+        "body": "We plan each pickup ahead and share the driver's details in time."
+      },
+      "support": {
+        "title": "Help 24×7",
+        "body": "Call or message us any time before or during your trip."
+      },
+      "transparent": {
+        "title": "Clear fares",
+        "body": "The price you see includes GST; extra charges are listed upfront."
+      }
+    },
+    "tripTypes": {
+      "one_way": "One way",
+      "round_trip": "Round trip",
+      "local": "Local hire",
+      "transfer": "Airport / station transfer",
+      "sightseeing": "Sightseeing tour"
+    },
+    "search": {
+      "label": "Search cabs",
+      "tabsLabel": "Trip type",
+      "tabs": {
+        "outstation": "Outstation",
+        "local": "Local",
+        "transfer": "Airport & station",
+        "sightseeing": "Sightseeing"
+      },
+      "tripKind": "One way or round trip",
+      "oneWay": "One way",
+      "roundTrip": "Round trip",
+      "from": "From",
+      "to": "To",
+      "fromPlaceholder": "Pickup city or place",
+      "toPlaceholder": "Where to?",
+      "placePlaceholder": "Search a place",
+      "swap": "Swap from and to",
+      "clearPlace": "Clear {place}",
+      "noPlaces": "No matching places. Try another name.",
+      "placeGroups": {
+        "popular": "Popular",
+        "city": "Cities and towns",
+        "temple": "Temples",
+        "landmark": "Landmarks",
+        "station": "Railway stations",
+        "airport": "Airports"
+      },
+      "city": "City",
+      "cityPlaceholder": "Where should the car wait for you?",
+      "package": "Package",
+      "noPackages": "Local packages are not available yet.",
+      "transferHint": "Pickups and drops between a railway station or airport and your hotel.",
+      "tour": "Choose a tour",
+      "noTours": "Sightseeing tours are coming soon.",
+      "fromPrice": "from {price}",
+      "tourMeta": "About {hours} h {minutes} min · {km} km",
+      "pickup": "Pickup date and time",
+      "return": "Return date and time",
+      "passengers": "Passengers",
+      "istNote": "Times are in India time (IST).",
+      "missing": {
+        "from": "Please choose where to start.",
+        "to": "Please choose where you're going.",
+        "pkg": "Please choose a package.",
+        "route": "Please choose a tour.",
+        "at": "Please choose the pickup date and time.",
+        "back": "Please choose when you'll return.",
+        "same": "Pickup and drop can't be the same place."
+      },
+      "submit": "Search cabs"
+    },
+    "results": {
+      "metaTitle": "Available cabs",
+      "back": "Back to cab search",
+      "heading": "Find a cab",
+      "modify": "Modify search",
+      "distanceTime": "About {km} km · {hours} h {minutes} min drive",
+      "packageLine": "{hours} hours · {km} km included",
+      "paxCount": "{count, plural, one {# passenger} other {# passengers}}",
+      "stops": "Covers: {list}",
+      "estimateNote": "Distance is estimated; the fare includes the kilometres shown on each car.",
+      "bookingSoon": "Online cab booking opens soon. Send us your trip on WhatsApp and we'll confirm a car and fare for you.",
+      "noCarsTitle": "No cars for this trip yet",
+      "noCarsBody": "We don't have a fare for this trip online. Call or message us and we'll arrange a car.",
+      "filtersLabel": "Filters",
+      "clearFilters": "Clear filters",
+      "filterType": "Cab type",
+      "filterFuel": "Fuel",
+      "filterModel": "Model",
+      "fuel": {
+        "petrol": "Petrol",
+        "diesel": "Diesel",
+        "cng": "CNG",
+        "electric": "Electric"
+      },
+      "count": "{count, plural, one {# car available} other {# cars available}}",
+      "noMatch": "No cars match these filters.",
+      "whatsappText": "Namaste! I'd like to book a {car} for {trip}.",
+      "orSimilar": "{model} or similar",
+      "seats": "{count, plural, one {# seat} other {# seats}}",
+      "bags": "{count, plural, one {# bag} other {# bags}}",
+      "ac": "AC",
+      "includedLocal": "{hours} h · {km} km included",
+      "includedKm": "{km} km included",
+      "extraKm": "{rate}/km after that",
+      "extraHour": "{rate}/extra hour",
+      "freeCancel": "Free cancellation till {hours} h before pickup",
+      "addonsAvailable": "Available: {list}",
+      "tooSmall": "Seats {seats}; too small for {passengers} passengers",
+      "inclTaxes": "incl. taxes",
+      "select": "Select",
+      "selectCar": "Select {car}",
+      "enquire": "Book on WhatsApp",
+      "call": "Call to book"
+    },
+    "errors": {
+      "incomplete": {
+        "title": "Tell us about your trip",
+        "body": "Choose where you're going and when, then search to see cars and fares."
+      },
+      "unknown_place": {
+        "title": "We don't serve that place yet",
+        "body": "Pick a place from the list, or call us and we'll arrange a car."
+      },
+      "same_place": {
+        "title": "Pickup and drop are the same",
+        "body": "Choose a different destination, or book a local package."
+      },
+      "no_route": {
+        "title": "This trip isn't available online",
+        "body": "We don't have a fixed fare for this transfer or tour yet. Call or message us and we'll help."
+      },
+      "too_soon": {
+        "title": "That pickup is too soon",
+        "body": "Please book at least {hours} h {minutes} min before pickup, or call us for an urgent ride."
+      },
+      "too_far": {
+        "title": "That date is too far ahead",
+        "body": "Cabs can be booked up to {days} days in advance."
+      },
+      "return_before_pickup": {
+        "title": "Check your return time",
+        "body": "The return must be after the pickup."
+      },
+      "trip_too_long": {
+        "title": "That trip is too long to book online",
+        "body": "Round trips can be up to {tripDays} days. Call us for longer tours."
+      },
+      "missing_return": {
+        "title": "When will you return?",
+        "body": "Add a return date and time for a round trip."
+      },
+      "not_found": {
+        "title": "This car isn't available",
+        "body": "It may have been removed or doesn't serve this trip. Please choose another car."
+      },
+      "booking_closed": {
+        "title": "Online cab booking opens soon",
+        "body": "Send us your trip on WhatsApp and we'll confirm a car and fare."
+      },
+      "too_small": {
+        "title": "Not enough seats",
+        "body": "This car can't seat everyone. Please choose a bigger car."
+      }
+    },
+    "review": {
+      "title": "Review your cab booking",
+      "backToResults": "Back to cars",
+      "whatsapp": "Message us on WhatsApp",
+      "pickup": "Pickup",
+      "return": "Return",
+      "passengers": "Passengers",
+      "distance": "Distance and time",
+      "inclusionsTitle": "What your fare covers",
+      "policyTitle": "Cancellation policy",
+      "policyNote": "Refunds go back to your original payment method within 5–7 working days.",
+      "payDriver": "Pay the driver",
+      "addonsTitle": "Add to your trip",
+      "couponErrors": {
+        "not_found": "We couldn't find that coupon.",
+        "inactive": "That coupon is not active.",
+        "not_started": "That coupon isn't valid yet.",
+        "expired": "That coupon has expired.",
+        "service": "That coupon isn't for cab bookings.",
+        "hotel": "That coupon isn't valid for this trip.",
+        "min_order": "Your fare is below this coupon's minimum amount.",
+        "exhausted": "That coupon has been fully used.",
+        "used": "You have already used this coupon.",
+        "first_booking": "This coupon is for your first booking only."
+      },
+      "passengerTitle": "Passenger details",
+      "fields": {
+        "name": "Full name",
+        "pickupAddress": "Pickup address",
+        "pickupHint": "Hotel name, area or a landmark the driver can find easily.",
+        "dropAddress": "Drop address (optional)",
+        "notes": "Notes for the driver (optional)",
+        "notesPlaceholder": "Train number, luggage, a child travelling…"
+      },
+      "modes": {
+        "part": "Pay part now, rest to the driver",
+        "full": "Pay the full fare now"
+      },
+      "modeHints": {
+        "part": "Pay {advance} now to confirm; give {balance} to the driver at the end of the trip",
+        "full": "Pay {total} now through Razorpay; nothing to pay the driver except extras"
+      },
+      "acceptPolicies": "I agree to the cancellation policy and understand that tolls, parking and extra kilometres may be charged as listed.",
+      "offline": "Online payment isn't available right now. Message us and we'll book this car for you.",
+      "paymentPendingHint": "Your car is held for {minutes} minutes. Complete the payment to confirm.",
+      "fareTitle": "Fare breakup"
+    },
+    "inclusions": {
+      "km": "{km} km included",
+      "hours": "{hours} hours of hire included",
+      "allowance": "Driver allowance included",
+      "allowanceDays": "Driver allowance for {days} days included",
+      "tollsIncluded": "Tolls, parking and state taxes included",
+      "tollsExtra": "Tolls, parking and state taxes paid as actuals",
+      "nightCharge": "Night charge included (pickup at night)",
+      "extraKm": "Extra km beyond that: {rate}/km",
+      "extraHour": "Extra hour beyond the package: {rate}",
+      "waitingFree": "{minutes} min free waiting at pickup",
+      "waitingCharge": "Waiting after that: {rate}/hour"
+    },
+    "cancellation": {
+      "full": "Full refund if you cancel {hours} h or more before pickup",
+      "partial": "{percent}% refund if you cancel {hours} h or more before pickup",
+      "untilPickup": "{percent}% refund if you cancel any time before pickup",
+      "none": "No refund for later cancellations or no-shows"
+    },
+    "lines": {
+      "fare": "Base fare",
+      "peak": "Peak-time surcharge",
+      "night": "Night charge",
+      "allowance": "Driver allowance ({days, plural, one {# day} other {# days}})",
+      "fee": "Convenience fee",
+      "other": "Other charges"
+    },
+    "tripStatus": {
+      "awaiting_payment": "Awaiting payment",
+      "unassigned": "Driver to be assigned",
+      "assigned": "Driver assigned",
+      "en_route": "Driver on the way",
+      "arrived": "Driver arrived",
+      "picked_up": "On trip",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "no_show": "No-show"
+    },
+    "trip": {
+      "banner": {
+        "awaiting_payment": "Waiting for payment",
+        "unassigned": "Your cab is booked",
+        "assigned": "Your driver is assigned",
+        "en_route": "Your driver is on the way",
+        "arrived": "Your driver has arrived",
+        "picked_up": "Enjoy your ride",
+        "completed": "Hope you had a good trip",
+        "cancelled": "This trip was cancelled",
+        "no_show": "The trip was marked as a no-show"
+      },
+      "bannerCompleted": "Hope you had a good trip",
+      "balanceToDriver": "Pay {amount} to the driver at the end of the trip.",
+      "pendingHint": "Your car is held until {time}. Complete the payment to confirm.",
+      "otpTitle": "Your pickup OTP",
+      "otpHint": "Share this code with your driver only when you get into the car.",
+      "otpAria": "Pickup OTP {otp}",
+      "driverTitle": "Your driver",
+      "callDriver": "Call driver",
+      "pickupAddress": "Pickup address",
+      "dropAddress": "Drop address",
+      "stops": "Stops",
+      "vehicle": "Car"
+    }
+  },
+  "driverTrip": {
+    "metaTitle": "Trip details",
+    "header": "Driver trip",
+    "expiredTitle": "This trip link has expired",
+    "expiredBody": "The link may be old or the trip was given to another driver. Please call the office.",
+    "callOffice": "Call the office",
+    "booking": "Booking {code}",
+    "pickupAt": "Pickup at",
+    "returnAt": "Return: {time}",
+    "finished": {
+      "completed": "Trip completed. Thank you!",
+      "no_show": "Marked as customer no-show.",
+      "cancelled": "This trip was cancelled."
+    },
+    "nextStep": "Next step",
+    "otpLabel": "Customer's 4-digit OTP",
+    "otpHint": "Ask the customer for the OTP shown on their booking.",
+    "actions": {
+      "en_route": "Start trip",
+      "arrived": "I have arrived",
+      "picked_up": "Customer picked up",
+      "completed": "Complete trip",
+      "no_show": "Customer no-show"
+    },
+    "done": {
+      "en_route": "Trip started. Drive safely!",
+      "arrived": "Customer told you've arrived.",
+      "picked_up": "Pickup confirmed.",
+      "completed": "Trip completed.",
+      "no_show": "Marked as no-show."
+    },
+    "errors": {
+      "not_found": "This link has expired. Please call the office.",
+      "invalid": "Please check the OTP and try again.",
+      "otp_mismatch": "That OTP doesn't match. Ask the customer again.",
+      "invalid_transition": "This trip has moved on. The page has been refreshed.",
+      "unknown": "Something went wrong. Please try again or call the office."
+    },
+    "noShowConfirm": "Mark the customer as a no-show? Do this only after waiting and trying to call.",
+    "back": "Go back",
+    "customer": "Customer",
+    "callCustomer": "Call {name}",
+    "call": "Call",
+    "passengers": "{count, plural, one {# passenger} other {# passengers}}",
+    "where": "Where",
+    "pickupAddress": "Pickup",
+    "openMaps": "Open in Google Maps",
+    "dropAddress": "Drop",
+    "km": "{km} km",
+    "stops": "Stops",
+    "cashTitle": "Cash to collect",
+    "cashHint": "Collect this from the customer at the end of the trip, plus any tolls or extras.",
+    "nothingToCollect": "Nothing to collect: the fare is paid in full (only tolls or extras, if any)."
   }
 }
