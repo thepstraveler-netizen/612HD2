@@ -64,7 +64,8 @@
     "bookable": "Book now",
     "enquiry": "Enquire",
     "partnerTitle": "Together We Grow Stronger",
-    "partnerLead": "Hotels, travel agencies, restaurants, transport providers and local shops: join the Vrindavan-focused network."
+    "partnerLead": "Hotels, travel agencies, restaurants, transport providers and local shops: join the Vrindavan-focused network.",
+    "allHotels": "All hotels"
   },
   "services": {
     "travel-hotel-booking": {
@@ -300,7 +301,9 @@
     "modeTrain": "Train",
     "modeBus": "Bus",
     "submit": "Search",
-    "submitEnquiry": "Send enquiry"
+    "submitEnquiry": "Send enquiry",
+    "rooms": "Rooms",
+    "adults": "Adults"
   },
   "offers": {
     "tabs": {
@@ -453,6 +456,181 @@
       "occupancyOrder": "Base occupancy ≤ max adults ≤ max occupancy.",
       "rangeTooLong": "Pick a range of one year or less.",
       "pickPlan": "Choose the rate plan this price is for."
+    }
+  },
+  "hotels": {
+    "search": {
+      "label": "Search hotels",
+      "destination": "City, area or property",
+      "checkIn": "Check-in",
+      "checkOut": "Check-out",
+      "rooms": "Rooms",
+      "adults": "Adults",
+      "children": "Children",
+      "submit": "Search",
+      "update": "Update"
+    },
+    "filters": {
+      "title": "Filters",
+      "clear": "Clear all",
+      "price": "Price per night",
+      "priceAbove": "Above {min}",
+      "priceUpTo": "Up to {max}",
+      "min": "Min ₹",
+      "max": "Max ₹",
+      "go": "Go",
+      "stars": "Star category",
+      "unrated": "Unrated",
+      "starCount": "{count, plural, one {# star} other {# stars}}",
+      "rating": "Guest rating",
+      "ratingAtLeast": "{rating}+",
+      "popular": "Popular filters",
+      "breakfast": "Breakfast included",
+      "couple": "Couple friendly",
+      "freeCancellation": "Free cancellation",
+      "distance": "Distance",
+      "from": "From",
+      "anyLandmark": "Any temple or landmark",
+      "withinM": "Within {m} m",
+      "withinKm": "Within {km} km",
+      "propertyType": "Property type",
+      "amenities": "Amenities"
+    },
+    "propertyTypes": {
+      "hotel": "Hotel",
+      "guest_house": "Guest house",
+      "dharamshala": "Dharamshala",
+      "ashram": "Ashram",
+      "homestay": "Homestay",
+      "resort": "Resort",
+      "apartment": "Apartment",
+      "hostel": "Hostel"
+    },
+    "mealPlans": {
+      "room_only": "Room only",
+      "breakfast": "Breakfast included",
+      "half_board": "Breakfast + lunch or dinner",
+      "full_board": "All meals included"
+    },
+    "idProofs": {
+      "aadhaar": "Aadhaar",
+      "passport": "Passport",
+      "driving_licence": "Driving licence",
+      "voter_id": "Voter ID",
+      "pan": "PAN card"
+    },
+    "card": {
+      "noPhotos": "No photos yet",
+      "prevPhoto": "Previous photo",
+      "nextPhoto": "Next photo",
+      "sponsored": "Sponsored",
+      "featured": "Featured",
+      "stars": "{count}-star property",
+      "fromLandmark": "{distance} from {landmark}",
+      "distanceM": "{m} m",
+      "distanceKm": "{km} km",
+      "coupleFriendly": "Couple friendly",
+      "freeCancellation": "Free cancellation",
+      "breakfastAvailable": "Breakfast available",
+      "from": "From",
+      "perNight": "per room per night",
+      "taxes": "+ {tax} taxes",
+      "total": "{total} total for {nights, plural, one {# night} other {# nights}}",
+      "fewLeft": "{count, plural, one {Only # room left} other {Only # rooms left}}"
+    },
+    "rating": {
+      "excellent": "Excellent",
+      "veryGood": "Very good",
+      "good": "Good",
+      "fair": "Fair",
+      "reviews": "{count, plural, one {# rating} other {# ratings}}",
+      "outOf": "Rated {rating} out of 5"
+    },
+    "unavailable": {
+      "invalid_dates": "Check the dates",
+      "inactive": "Not available",
+      "occupancy": "Doesn't fit your group",
+      "min_stay": "Longer minimum stay on these dates",
+      "max_stay": "Stay is longer than allowed",
+      "closed": "Closed on these dates",
+      "sold_out": "Sold out for these dates"
+    },
+    "listing": {
+      "metaTitle": "Hotels in Vrindavan & Mathura",
+      "metaDescription": "Compare hotels, guest houses and ashrams near Banke Bihari, Prem Mandir and ISKCON. Filter by price, rating and distance from the temple.",
+      "headingFor": "Stays matching “{q}”",
+      "headingIn": "Stays in {city}",
+      "heading": "Hotels and stays",
+      "count": "{count, plural, =0 {No properties} one {# property} other {# properties}}",
+      "stayLine": "{nights, plural, one {# night} other {# nights}}, {rooms, plural, one {# room} other {# rooms}}, {guests, plural, one {# guest} other {# guests}}",
+      "addDates": "Add dates to see exact prices",
+      "view": "View",
+      "list": "List",
+      "map": "Map",
+      "noMatchTitle": "No stays match these filters",
+      "noMatchBody": "Try removing a filter or changing the dates.",
+      "emptyTitle": "Hotels are coming soon",
+      "emptyBody": "We are adding partner hotels. Please call or WhatsApp us and we will find you a room.",
+      "pages": "Result pages"
+    },
+    "sort": {
+      "label": "Sort by",
+      "popular": "Popular",
+      "price_asc": "Price: low to high",
+      "price_desc": "Price: high to low",
+      "rating": "User rating",
+      "value": "Lowest price & best rated"
+    },
+    "detail": {
+      "openPhoto": "Open photo {n}",
+      "allPhotos": "{count, plural, one {# photo} other {All # photos}}",
+      "photoOf": "Photo {n} of {count}",
+      "close": "Close",
+      "prevPhoto": "Previous photo",
+      "nextPhoto": "Next photo",
+      "back": "All hotels",
+      "openInMaps": "Open in Maps",
+      "about": "About this property",
+      "highlights": "Highlights",
+      "amenities": "Amenities",
+      "rooms": "Rooms and rates",
+      "addDatesForPrices": "Add your dates to see the exact price and availability.",
+      "sqft": "{size} sq ft",
+      "occupancy": "Up to {adults, plural, one {# adult} other {# adults}} and {children, plural, =0 {no children} one {# child} other {# children}}",
+      "selected": "Selected",
+      "select": "Select",
+      "policies": "House rules",
+      "checkInOut": "Check-in from {checkIn} · Check-out by {checkOut}",
+      "couplesWelcome": "Unmarried couples welcome",
+      "couplesNotAllowed": "Unmarried couples not allowed",
+      "bachelorsWelcome": "Bachelors welcome",
+      "bachelorsNotAllowed": "Bachelors not allowed",
+      "localIdsOk": "Local IDs accepted",
+      "localIdsNotOk": "Local IDs not accepted",
+      "petsOk": "Pets allowed",
+      "petsNotOk": "Pets not allowed",
+      "idProofs": "Accepted ID: {list}",
+      "food": "Food and dining",
+      "location": "Location",
+      "nearby": "Nearby temples and landmarks",
+      "reviews": "Guest reviews",
+      "reviewsSoon": "Reviews from verified stays will appear here.",
+      "bookTitle": "Book this stay",
+      "staySummary": "{nights, plural, one {# night} other {# nights}} · {rooms, plural, one {# room} other {# rooms}} · {guests, plural, one {# guest} other {# guests}}",
+      "roomCharges": "Room charges",
+      "extraGuests": "Extra guests",
+      "taxes": "Taxes (GST)",
+      "total": "Total",
+      "bookNow": "Book on WhatsApp",
+      "call": "Call us",
+      "bookingNote": "Our team confirms availability and sends a payment link. Online booking opens soon.",
+      "whatsappText": "Hello, I want to book {hotel}. Dates: {dates}. Rooms: {rooms}. Guests: {guests}. Room/plan: {plan}.",
+      "datesFlexible": "flexible",
+      "cancellation": {
+        "nonRefundable": "Non-refundable",
+        "free": "Free cancellation up to {hours} hours before check-in",
+        "partial": "{percent}% refund up to {hours} hours before check-in"
+      }
     }
   }
 }

@@ -85,7 +85,12 @@ describe("public catalog RLS", () => {
         (r) => r.key,
       ),
     );
-    expect(keys).toEqual(["business.profile", "business.social", "hotels.search_defaults", "tax.hotel_gst_slabs"]);
+    expect(keys).toEqual([
+      "business.profile",
+      "business.social",
+      "hotels.search_defaults",
+      "tax.hotel_gst_slabs",
+    ]);
   });
 });
 

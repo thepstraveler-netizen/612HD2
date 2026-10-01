@@ -22,7 +22,7 @@ insert into public.settings (key, value, is_public, description) values
    true,
    'GST slabs for room tariffs (per room per night, paise). Last slab has no maximum.'),
   ('hotels.search_defaults',
-   '{"city": "vrindavan", "page_size": 12, "max_nights": 30, "max_rooms": 8, "price_buckets_paise": [[0, 150000], [150000, 250000], [250000, 500000], [500000, null]], "landmark_radii_m": [500, 1000, 2000, 5000]}',
+   '{"city": "vrindavan", "page_size": 12, "max_nights": 30, "max_rooms": 8, "price_buckets_paise": [[0, 150000], [150000, 250000], [250000, 500000], [500000, null]], "landmark_radii_m": [500, 1000, 2000, 5000], "map_tiles": {"url": "https://tile.openstreetmap.org/{z}/{x}/{y}.png", "attribution": "© OpenStreetMap contributors"}}',
    true,
    'Defaults for the hotel search and listing')
 on conflict (key) do nothing;

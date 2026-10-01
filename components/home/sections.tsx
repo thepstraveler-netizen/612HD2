@@ -1,4 +1,5 @@
-import { Check, MapPin, Star } from "lucide-react";
+import { ArrowRight, Check, MapPin, Star } from "lucide-react";
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { TempleSkyline } from "@/components/shared/motifs";
 import { SectionTitle } from "@/components/shared/section-title";
@@ -6,15 +7,26 @@ import { ServiceCard } from "@/components/shared/service-card";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import type { Banner, CatalogService, Faq, HomeSection, Testimonial } from "@/lib/catalog/types";
-import { pickLocalized } from "@/lib/i18n/localized";
+import { pickLocalized, type LocalizedJson } from "@/lib/i18n/localized";
+import { formatPaise } from "@/lib/money";
 import { getIcon } from "@/lib/icons";
 import { sectionContentSchemas } from "@/schemas/cms";
 import { FaqList } from "./faq-list";
 import { OffersCarousel } from "./offers-carousel";
 import { SearchCard } from "./search-card";
 
+export type FeaturedHotel = {
+  slug: string;
+  name: LocalizedJson;
+  place: string;
+  image: string | null;
+  fromPaise: number | null;
+  ratingAvg: number | null;
+};
+
 export type HomeData = {
   locale: string;
+  featuredHotels: FeaturedHotel[];
   services: CatalogService[];
   banners: Banner[];
   testimonials: Testimonial[];
@@ -221,6 +233,70 @@ export async function HomeSectionView({ section, data }: { section: HomeSection;
               <Link href={content.data.href}>{pickLocalized(content.data.cta_label, locale)}</Link>
             </Button>
           </div>
+        </section>
+      );
+    }
+
+    case "featured_hotels": {
+      const content = sectionContentSchemas.featured_hotels.safeParse(section.content);
+      const hotels = data.featuredHotels.slice(0, content.success ? content.data.limit : 6);
+      if (hotels.length === 0) return null;
+      return (
+        <section className="mx-auto max-w-7xl px-4 pt-16">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <SectionTitle lead={subtitle}>{title}</SectionTitle>
+            <Button asChild variant="outline">
+              <Link href="/hotels">
+                {t("home.allHotels")} <ArrowRight />
+              </Link>
+            </Button>
+          </div>
+          <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {hotels.map((hotel) => (
+              <li key={hotel.slug}>
+                <Link
+                  href={`/hotels/${hotel.slug}`}
+                  className="group block overflow-hidden rounded-2xl border bg-card shadow-sm transition hover:shadow-md"
+                >
+                  <div className="relative aspect-[16/10] bg-muted">
+                    {hotel.image ? (
+                      <Image
+                        src={hotel.image}
+                        alt=""
+                        fill
+                        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                        className="object-cover transition group-hover:scale-[1.02]"
+                      />
+                    ) : null}
+                    {hotel.ratingAvg !== null ? (
+                      <span className="absolute top-3 right-3 rounded-lg bg-brand-navy px-2 py-0.5 text-sm font-bold text-white">
+                        {hotel.ratingAvg.toFixed(1)}
+                      </span>
+                    ) : null}
+                  </div>
+                  <div className="flex items-end justify-between gap-3 p-4">
+                    <div className="min-w-0">
+                      <p className="truncate font-semibold text-heading">
+                        {pickLocalized(hotel.name, locale)}
+                      </p>
+                      <p className="flex items-center gap-1 truncate text-sm text-muted-foreground">
+                        <MapPin className="size-3.5 shrink-0" aria-hidden="true" /> {hotel.place}
+                      </p>
+                    </div>
+                    {hotel.fromPaise !== null ? (
+                      <p className="shrink-0 text-right text-xs text-muted-foreground">
+                        {t("hotels.card.from")}
+                        <br />
+                        <span className="text-base font-bold text-heading">
+                          {formatPaise(hotel.fromPaise, locale)}
+                        </span>
+                      </p>
+                    ) : null}
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </section>
       );
     }

@@ -64,7 +64,8 @@
     "bookable": "अभी बुक करें",
     "enquiry": "पूछताछ करें",
     "partnerTitle": "साथ मिलकर और मज़बूत",
-    "partnerLead": "होटल, ट्रैवल एजेंसियाँ, रेस्टोरेंट, परिवहन प्रदाता और स्थानीय दुकानें: वृंदावन-केंद्रित नेटवर्क से जुड़ें।"
+    "partnerLead": "होटल, ट्रैवल एजेंसियाँ, रेस्टोरेंट, परिवहन प्रदाता और स्थानीय दुकानें: वृंदावन-केंद्रित नेटवर्क से जुड़ें।",
+    "allHotels": "सभी होटल"
   },
   "services": {
     "travel-hotel-booking": {
@@ -300,7 +301,9 @@
     "modeTrain": "ट्रेन",
     "modeBus": "बस",
     "submit": "खोजें",
-    "submitEnquiry": "पूछताछ भेजें"
+    "submitEnquiry": "पूछताछ भेजें",
+    "rooms": "कमरे",
+    "adults": "वयस्क"
   },
   "offers": {
     "tabs": {
@@ -453,6 +456,181 @@
       "occupancyOrder": "बेस ऑक्यूपेंसी ≤ अधिकतम वयस्क ≤ अधिकतम ऑक्यूपेंसी।",
       "rangeTooLong": "एक साल या उससे कम की अवधि चुनें।",
       "pickPlan": "यह कीमत किस रेट प्लान की है, चुनें।"
+    }
+  },
+  "hotels": {
+    "search": {
+      "label": "होटल खोजें",
+      "destination": "शहर, इलाका या होटल",
+      "checkIn": "चेक-इन",
+      "checkOut": "चेक-आउट",
+      "rooms": "कमरे",
+      "adults": "वयस्क",
+      "children": "बच्चे",
+      "submit": "खोजें",
+      "update": "बदलें"
+    },
+    "filters": {
+      "title": "फ़िल्टर",
+      "clear": "सब हटाएँ",
+      "price": "प्रति रात कीमत",
+      "priceAbove": "{min} से ऊपर",
+      "priceUpTo": "{max} तक",
+      "min": "न्यूनतम ₹",
+      "max": "अधिकतम ₹",
+      "go": "लागू करें",
+      "stars": "स्टार श्रेणी",
+      "unrated": "बिना रेटिंग",
+      "starCount": "{count, plural, other {# स्टार}}",
+      "rating": "मेहमानों की रेटिंग",
+      "ratingAtLeast": "{rating}+",
+      "popular": "लोकप्रिय फ़िल्टर",
+      "breakfast": "नाश्ता शामिल",
+      "couple": "कपल-फ़्रेंडली",
+      "freeCancellation": "मुफ़्त कैंसलेशन",
+      "distance": "दूरी",
+      "from": "कहाँ से",
+      "anyLandmark": "कोई भी मंदिर या स्थान",
+      "withinM": "{m} मीटर के अंदर",
+      "withinKm": "{km} किमी के अंदर",
+      "propertyType": "प्रॉपर्टी का प्रकार",
+      "amenities": "सुविधाएँ"
+    },
+    "propertyTypes": {
+      "hotel": "होटल",
+      "guest_house": "गेस्ट हाउस",
+      "dharamshala": "धर्मशाला",
+      "ashram": "आश्रम",
+      "homestay": "होमस्टे",
+      "resort": "रिज़ॉर्ट",
+      "apartment": "अपार्टमेंट",
+      "hostel": "हॉस्टल"
+    },
+    "mealPlans": {
+      "room_only": "सिर्फ़ कमरा",
+      "breakfast": "नाश्ता शामिल",
+      "half_board": "नाश्ता + दोपहर या रात का खाना",
+      "full_board": "सभी भोजन शामिल"
+    },
+    "idProofs": {
+      "aadhaar": "आधार",
+      "passport": "पासपोर्ट",
+      "driving_licence": "ड्राइविंग लाइसेंस",
+      "voter_id": "वोटर आईडी",
+      "pan": "पैन कार्ड"
+    },
+    "card": {
+      "noPhotos": "अभी कोई फ़ोटो नहीं",
+      "prevPhoto": "पिछली फ़ोटो",
+      "nextPhoto": "अगली फ़ोटो",
+      "sponsored": "प्रायोजित",
+      "featured": "चुनिंदा",
+      "stars": "{count}-स्टार प्रॉपर्टी",
+      "fromLandmark": "{landmark} से {distance}",
+      "distanceM": "{m} मीटर",
+      "distanceKm": "{km} किमी",
+      "coupleFriendly": "कपल-फ़्रेंडली",
+      "freeCancellation": "मुफ़्त कैंसलेशन",
+      "breakfastAvailable": "नाश्ता उपलब्ध",
+      "from": "शुरुआती कीमत",
+      "perNight": "प्रति कमरा प्रति रात",
+      "taxes": "+ {tax} टैक्स",
+      "total": "{nights, plural, other {# रात}} का कुल {total}",
+      "fewLeft": "{count, plural, one {सिर्फ़ # कमरा बचा} other {सिर्फ़ # कमरे बचे}}"
+    },
+    "rating": {
+      "excellent": "शानदार",
+      "veryGood": "बहुत अच्छा",
+      "good": "अच्छा",
+      "fair": "ठीक-ठाक",
+      "reviews": "{count, plural, other {# रेटिंग}}",
+      "outOf": "5 में से {rating} रेटिंग"
+    },
+    "unavailable": {
+      "invalid_dates": "तारीखें जाँचें",
+      "inactive": "उपलब्ध नहीं",
+      "occupancy": "आपके समूह के लिए उपयुक्त नहीं",
+      "min_stay": "इन तारीखों पर न्यूनतम ठहराव ज़्यादा है",
+      "max_stay": "ठहराव अनुमति से लंबा है",
+      "closed": "इन तारीखों पर बंद",
+      "sold_out": "इन तारीखों पर फ़ुल"
+    },
+    "listing": {
+      "metaTitle": "वृंदावन और मथुरा में होटल",
+      "metaDescription": "बांके बिहारी, प्रेम मंदिर और इस्कॉन के पास होटल, गेस्ट हाउस और आश्रम की तुलना करें। कीमत, रेटिंग और मंदिर से दूरी से फ़िल्टर करें।",
+      "headingFor": "“{q}” से मिलते ठहरने के विकल्प",
+      "headingIn": "{city} में ठहरने के विकल्प",
+      "heading": "होटल और ठहरने की जगहें",
+      "count": "{count, plural, =0 {कोई प्रॉपर्टी नहीं} other {# प्रॉपर्टी}}",
+      "stayLine": "{nights, plural, other {# रात}}, {rooms, plural, other {# कमरे}}, {guests, plural, other {# मेहमान}}",
+      "addDates": "सही कीमत देखने के लिए तारीखें डालें",
+      "view": "व्यू",
+      "list": "सूची",
+      "map": "नक्शा",
+      "noMatchTitle": "इन फ़िल्टर से कोई प्रॉपर्टी नहीं मिली",
+      "noMatchBody": "कोई फ़िल्टर हटाएँ या तारीखें बदलें।",
+      "emptyTitle": "होटल जल्द आ रहे हैं",
+      "emptyBody": "हम पार्टनर होटल जोड़ रहे हैं। कॉल या व्हाट्सऐप करें, हम आपके लिए कमरा ढूँढ देंगे।",
+      "pages": "नतीजों के पेज"
+    },
+    "sort": {
+      "label": "क्रम",
+      "popular": "लोकप्रिय",
+      "price_asc": "कीमत: कम से ज़्यादा",
+      "price_desc": "कीमत: ज़्यादा से कम",
+      "rating": "यूज़र रेटिंग",
+      "value": "सबसे कम कीमत और बेहतरीन रेटिंग"
+    },
+    "detail": {
+      "openPhoto": "फ़ोटो {n} खोलें",
+      "allPhotos": "{count, plural, one {# फ़ोटो} other {सभी # फ़ोटो}}",
+      "photoOf": "{count} में से फ़ोटो {n}",
+      "close": "बंद करें",
+      "prevPhoto": "पिछली फ़ोटो",
+      "nextPhoto": "अगली फ़ोटो",
+      "back": "सभी होटल",
+      "openInMaps": "नक्शे में खोलें",
+      "about": "इस प्रॉपर्टी के बारे में",
+      "highlights": "खास बातें",
+      "amenities": "सुविधाएँ",
+      "rooms": "कमरे और रेट",
+      "addDatesForPrices": "सही कीमत और उपलब्धता देखने के लिए अपनी तारीखें डालें।",
+      "sqft": "{size} वर्ग फ़ुट",
+      "occupancy": "अधिकतम {adults, plural, other {# वयस्क}} और {children, plural, =0 {कोई बच्चा नहीं} other {# बच्चे}}",
+      "selected": "चुना गया",
+      "select": "चुनें",
+      "policies": "नियम",
+      "checkInOut": "चेक-इन {checkIn} से · चेक-आउट {checkOut} तक",
+      "couplesWelcome": "अविवाहित कपल का स्वागत है",
+      "couplesNotAllowed": "अविवाहित कपल की अनुमति नहीं",
+      "bachelorsWelcome": "बैचलर का स्वागत है",
+      "bachelorsNotAllowed": "बैचलर की अनुमति नहीं",
+      "localIdsOk": "स्थानीय आईडी मान्य",
+      "localIdsNotOk": "स्थानीय आईडी मान्य नहीं",
+      "petsOk": "पालतू जानवरों की अनुमति है",
+      "petsNotOk": "पालतू जानवरों की अनुमति नहीं",
+      "idProofs": "मान्य आईडी: {list}",
+      "food": "खाना-पीना",
+      "location": "लोकेशन",
+      "nearby": "पास के मंदिर और स्थान",
+      "reviews": "मेहमानों की समीक्षाएँ",
+      "reviewsSoon": "सत्यापित ठहराव की समीक्षाएँ यहाँ दिखेंगी।",
+      "bookTitle": "यह ठहराव बुक करें",
+      "staySummary": "{nights, plural, other {# रात}} · {rooms, plural, other {# कमरे}} · {guests, plural, other {# मेहमान}}",
+      "roomCharges": "कमरे का किराया",
+      "extraGuests": "अतिरिक्त मेहमान",
+      "taxes": "टैक्स (जीएसटी)",
+      "total": "कुल",
+      "bookNow": "व्हाट्सऐप पर बुक करें",
+      "call": "कॉल करें",
+      "bookingNote": "हमारी टीम उपलब्धता पक्की करके पेमेंट लिंक भेजेगी। ऑनलाइन बुकिंग जल्द शुरू होगी।",
+      "whatsappText": "नमस्ते, मुझे {hotel} बुक करना है। तारीखें: {dates}। कमरे: {rooms}। मेहमान: {guests}। कमरा/प्लान: {plan}।",
+      "datesFlexible": "तय नहीं",
+      "cancellation": {
+        "nonRefundable": "नॉन-रिफ़ंडेबल",
+        "free": "चेक-इन से {hours} घंटे पहले तक मुफ़्त कैंसलेशन",
+        "partial": "चेक-इन से {hours} घंटे पहले तक {percent}% रिफ़ंड"
+      }
     }
   }
 }

@@ -29,10 +29,7 @@ export type PropertyType = (typeof PROPERTY_TYPES)[number];
 
 const isoDate = z.string().refine(isIsoDate);
 const csv = <T extends z.ZodType>(item: T) =>
-  z.preprocess(
-    (v) => (typeof v === "string" ? v.split(",").filter(Boolean) : v),
-    z.array(item).max(20),
-  );
+  z.preprocess((v) => (typeof v === "string" ? v.split(",").filter(Boolean) : v), z.array(item).max(20));
 const flag = z.enum(["1", "true"]).transform(() => true);
 const int = (min: number, max: number) => z.coerce.number().int().min(min).max(max);
 
@@ -59,7 +56,9 @@ export const hotelSearchSchema = z.object({
   stars: csv(int(0, 5)).optional().catch(undefined),
   rating: z.coerce.number().min(0).max(5).optional().catch(undefined),
   type: csv(z.enum(PROPERTY_TYPES)).optional().catch(undefined),
-  amenities: csv(z.string().regex(/^[a-z0-9-]+$/)).optional().catch(undefined),
+  amenities: csv(z.string().regex(/^[a-z0-9-]+$/))
+    .optional()
+    .catch(undefined),
   breakfast: flag.optional().catch(undefined),
   couple: flag.optional().catch(undefined),
   free_cancel: flag.optional().catch(undefined),
@@ -70,6 +69,7 @@ export const hotelSearchSchema = z.object({
     .catch(undefined),
   within: int(100, 50_000).optional().catch(undefined),
   page: int(1, 500).default(1).catch(1),
+  view: z.enum(["list", "map"]).default("list").catch("list"),
 });
 
 export type HotelSearch = z.output<typeof hotelSearchSchema>;
@@ -99,7 +99,11 @@ export type HotelPolicies = z.output<typeof hotelPoliciesSchema>;
 export const cancellationRulesSchema = z
   .array(
     z.object({
-      hours_before: z.number().int().min(0).max(24 * 365),
+      hours_before: z
+        .number()
+        .int()
+        .min(0)
+        .max(24 * 365),
       refund_percent: z.number().int().min(0).max(100),
     }),
   )
@@ -112,8 +116,18 @@ export const hotelSearchDefaultsSchema = z.object({
   max_rooms: z.number().int().min(1).max(20).default(8),
   price_buckets_paise: z
     .array(z.tuple([z.number().int().min(0), z.number().int().positive().nullable()]))
-    .default([]),
+    .default([
+      [0, 150_000],
+      [150_000, 250_000],
+      [250_000, 500_000],
+      [500_000, null],
+    ]),
   landmark_radii_m: z.array(z.number().int().positive()).default([500, 1000, 2000, 5000]),
+  /** Map view tiles; any XYZ tile server. Attribution is required by most providers. */
+  map_tiles: z.object({ url: z.string().startsWith("https://"), attribution: z.string() }).default({
+    url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+    attribution: "© OpenStreetMap contributors",
+  }),
 });
 export type HotelSearchDefaults = z.output<typeof hotelSearchDefaultsSchema>;
 

@@ -14,11 +14,11 @@ type TabKey = "hotels" | "cabs" | "rides" | "packages" | "travel";
 
 /**
  * Tabbed search card (hero). Each tab has its own fields; the query string it
- * builds is what the listing pages read (hotels in phase 3, cabs in phase 5,
+ * builds is what the listing pages read (hotels since phase 3, cabs in phase 5,
  * …). Until a listing exists, the tab's target is that service's page.
  */
 const TARGET: Record<TabKey, string> = {
-  hotels: "/services/hotel-vendors",
+  hotels: "/hotels",
   cabs: "/services/car",
   rides: "/services/rickshaw",
   packages: "/services/travel-hotel-booking",
@@ -93,7 +93,7 @@ export function SearchCard({ tabs }: { tabs: TabKey[] }) {
         <TabsContent value="hotels">
           <form
             onSubmit={onSubmit("hotels")}
-            className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr_auto] lg:items-end"
+            className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1.2fr_auto] lg:items-end"
           >
             <Field label={t("destination")}>
               <Input name="q" placeholder="Vrindavan" autoComplete="off" />
@@ -104,9 +104,14 @@ export function SearchCard({ tabs }: { tabs: TabKey[] }) {
             <Field label={t("checkOut")}>
               <Input name="checkout" type="date" min={today()} />
             </Field>
-            <Field label={t("guests")}>
-              <Input name="guests" type="number" min={1} max={20} defaultValue={2} inputMode="numeric" />
-            </Field>
+            <div className="grid grid-cols-2 gap-3">
+              <Field label={t("rooms")}>
+                <Input name="rooms" type="number" min={1} max={8} defaultValue={1} inputMode="numeric" />
+              </Field>
+              <Field label={t("adults")}>
+                <Input name="adults" type="number" min={1} max={30} defaultValue={2} inputMode="numeric" />
+              </Field>
+            </div>
             <SubmitButton label={t("submit")} />
           </form>
         </TabsContent>

@@ -8,11 +8,7 @@ import { mediaUrl } from "@/lib/media";
 import { DEFAULT_GST_SLABS, gstSlabsSchema, type GstSlab } from "@/lib/pricing/tax";
 import { createPublicClient } from "@/lib/supabase/public";
 import type { LocalizedJson } from "@/lib/i18n/localized";
-import {
-  hotelPoliciesSchema,
-  hotelSearchDefaultsSchema,
-  type HotelSearchDefaults,
-} from "@/schemas/hotels";
+import { hotelPoliciesSchema, hotelSearchDefaultsSchema, type HotelSearchDefaults } from "@/schemas/hotels";
 import type { CatalogHotel, CatalogPlan, CatalogRoom, HotelCatalog, HotelImage } from "./types";
 
 /**
@@ -41,7 +37,11 @@ export const getHotelCatalog = unstable_cache(
         .eq("status", "published")
         .is("deleted_at", null)
         .order("sort_order"),
-      supabase.from("amenities").select("id, slug, name, icon, grouping").eq("is_active", true).order("sort_order"),
+      supabase
+        .from("amenities")
+        .select("id, slug, name, icon, grouping")
+        .eq("is_active", true)
+        .order("sort_order"),
       supabase.from("cities").select("id, slug, name, lat, lng").eq("is_active", true).order("sort_order"),
       supabase
         .from("areas")
@@ -250,7 +250,11 @@ const getCalendarRows = unstable_cache(
         isClosed: d.is_closed,
         minStay: d.min_stay,
       })),
-      rates: (rates?.data ?? []).map((r) => ({ ratePlanId: r.rate_plan_id, date: r.date, pricePaise: r.price_paise })),
+      rates: (rates?.data ?? []).map((r) => ({
+        ratePlanId: r.rate_plan_id,
+        date: r.date,
+        pricePaise: r.price_paise,
+      })),
     };
   },
   ["hotels:calendar"],

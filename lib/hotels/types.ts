@@ -54,9 +54,21 @@ export type CatalogHotel = {
   rules: PricingRule[];
 };
 
-export type CatalogAmenity = { id: string; slug: string; name: LocalizedJson; icon: string | null; grouping: string };
+export type CatalogAmenity = {
+  id: string;
+  slug: string;
+  name: LocalizedJson;
+  icon: string | null;
+  grouping: string;
+};
 
-export type CatalogCity = { id: string; slug: string; name: LocalizedJson; lat: number | null; lng: number | null };
+export type CatalogCity = {
+  id: string;
+  slug: string;
+  name: LocalizedJson;
+  lat: number | null;
+  lng: number | null;
+};
 
 export type CatalogArea = {
   id: string;

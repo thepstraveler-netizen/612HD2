@@ -93,7 +93,11 @@ function hotel(slug: string, overrides: Partial<CatalogHotel> = {}, price = 200_
 
 const catalog: HotelCatalog = {
   hotels: [
-    hotel("radha-kunj", { ratingAvg: 4.6, ratingCount: 50, isCoupleFriendly: true, amenityIds: ["a-wifi"] }, 300_000),
+    hotel(
+      "radha-kunj",
+      { ratingAvg: 4.6, ratingCount: 50, isCoupleFriendly: true, amenityIds: ["a-wifi"] },
+      300_000,
+    ),
     hotel("yamuna-view", { ratingAvg: 3.8, ratingCount: 200, starRating: 4 }, 150_000),
     hotel("gokul-ashram", { propertyType: "ashram", ratingAvg: 4.2, lat: 27.5, lng: 77.6 }, 80_000),
     hotel("mathura-inn", { cityId: "mathura", ratingAvg: 4.9, isSponsored: true }, 500_000),
@@ -129,7 +133,13 @@ const slugs = (raw: Record<string, string>, c = ctx()) =>
 
 describe("parseHotelSearch", () => {
   it("drops invalid values one by one instead of failing", () => {
-    const s = parseHotelSearch({ rooms: "99", sort: "nope", stars: "3,x", checkin: "2026-02-30", adults: "3" });
+    const s = parseHotelSearch({
+      rooms: "99",
+      sort: "nope",
+      stars: "3,x",
+      checkin: "2026-02-30",
+      adults: "3",
+    });
     expect(s.rooms).toBe(1);
     expect(s.sort).toBe("popular");
     expect(s.stars).toBeUndefined();
@@ -166,8 +176,18 @@ describe("searchHotels", () => {
   });
 
   it("sorts by price both ways", () => {
-    expect(slugs({ sort: "price_asc" })).toEqual(["gokul-ashram", "yamuna-view", "radha-kunj", "mathura-inn"]);
-    expect(slugs({ sort: "price_desc" })).toEqual(["mathura-inn", "radha-kunj", "yamuna-view", "gokul-ashram"]);
+    expect(slugs({ sort: "price_asc" })).toEqual([
+      "gokul-ashram",
+      "yamuna-view",
+      "radha-kunj",
+      "mathura-inn",
+    ]);
+    expect(slugs({ sort: "price_desc" })).toEqual([
+      "mathura-inn",
+      "radha-kunj",
+      "yamuna-view",
+      "gokul-ashram",
+    ]);
   });
 
   it("puts 4+ rated hotels first, cheapest first, for value sort", () => {
@@ -186,19 +206,39 @@ describe("searchHotels", () => {
   });
 
   it("filters by nightly price in rupees", () => {
-    expect(slugs({ price_min: "1000", price_max: "3000", sort: "price_asc" })).toEqual(["yamuna-view", "radha-kunj"]);
+    expect(slugs({ price_min: "1000", price_max: "3000", sort: "price_asc" })).toEqual([
+      "yamuna-view",
+      "radha-kunj",
+    ]);
   });
 
   it("filters by distance from a landmark", () => {
-    const result = searchHotels(catalog, parseHotelSearch({ landmark: "banke-bihari", within: "1000" }), ctx());
-    expect(result.results.map((r) => r.hotel.slug).sort()).toEqual(["mathura-inn", "radha-kunj", "yamuna-view"]);
+    const result = searchHotels(
+      catalog,
+      parseHotelSearch({ landmark: "banke-bihari", within: "1000" }),
+      ctx(),
+    );
+    expect(result.results.map((r) => r.hotel.slug).sort()).toEqual([
+      "mathura-inn",
+      "radha-kunj",
+      "yamuna-view",
+    ]);
     expect(result.results[0].distanceM).toBeLessThan(1000);
     expect(result.landmark?.slug).toBe("banke-bihari");
   });
 
   it("prices the stay and moves sold-out hotels last", () => {
     const calendar = indexCalendar(
-      [{ roomId: "gokul-ashram-room", date: "2026-10-05", units: 0, soldUnits: 0, isClosed: false, minStay: null }],
+      [
+        {
+          roomId: "gokul-ashram-room",
+          date: "2026-10-05",
+          units: 0,
+          soldUnits: 0,
+          isClosed: false,
+          minStay: null,
+        },
+      ],
       [],
       [],
     );

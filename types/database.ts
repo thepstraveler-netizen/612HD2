@@ -322,7 +322,12 @@ export type Database = {
           deleted_at: string | null;
         } & Timestamps
       >;
-      vendor_members: Simple<{ vendor_id: string; user_id: string; role: "owner" | "staff"; created_at: string }>;
+      vendor_members: Simple<{
+        vendor_id: string;
+        user_id: string;
+        role: "owner" | "staff";
+        created_at: string;
+      }>;
       hotels: Simple<
         {
           id: string;
@@ -424,7 +429,13 @@ export type Database = {
         } & Timestamps
       >;
       hotel_media: Simple<
-        { hotel_id: string; media_id: string; room_id: string | null; sort_order: number; created_at: string },
+        {
+          hotel_id: string;
+          media_id: string;
+          room_id: string | null;
+          sort_order: number;
+          created_at: string;
+        },
         [MediaFk<"hotel_media_media_id_fkey", "media_id">]
       >;
       hotel_amenities: Simple<{ hotel_id: string; amenity_id: string }>;
@@ -460,14 +471,7 @@ export type Database = {
       vendor_kind: "hotel" | "restaurant" | "store" | "transport" | "pharmacy" | "agency" | "other";
       vendor_status: "pending" | "active" | "suspended";
       hotel_property_type:
-        | "hotel"
-        | "guest_house"
-        | "dharamshala"
-        | "ashram"
-        | "homestay"
-        | "resort"
-        | "apartment"
-        | "hostel";
+        "hotel" | "guest_house" | "dharamshala" | "ashram" | "homestay" | "resort" | "apartment" | "hostel";
       meal_plan: "room_only" | "breakfast" | "half_board" | "full_board";
       price_adjustment: "percent" | "flat" | "fixed";
     };

@@ -60,7 +60,8 @@ export const getHomeSections = unstable_cache(
       .from("cms_sections")
       .select("key, type, title, subtitle, content")
       .eq("page", "home")
-      .order("sort_order");
+      .order("sort_order")
+      .order("key");
     if (error) fail("sections", error);
     return data;
   },

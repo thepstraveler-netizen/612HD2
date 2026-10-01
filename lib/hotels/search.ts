@@ -97,8 +97,7 @@ function planFilter(search: HotelSearch): (plan: RatePlan) => boolean {
     (!search.free_cancel || offersFreeCancellation(plan));
 }
 
-const popularity = (h: CatalogHotel) =>
-  (h.isSponsored ? 4 : 0) + (h.isFeatured ? 2 : 0);
+const popularity = (h: CatalogHotel) => (h.isSponsored ? 4 : 0) + (h.isFeatured ? 2 : 0);
 
 function compare(a: HotelResult, b: HotelResult, sort: HotelSearch["sort"]): number {
   // Hotels that can't take the stay always go last.
@@ -127,7 +126,11 @@ function compare(a: HotelResult, b: HotelResult, sort: HotelSearch["sort"]): num
   }
 }
 
-export function searchHotels(catalog: HotelCatalog, search: HotelSearch, ctx: SearchContext): HotelSearchResult {
+export function searchHotels(
+  catalog: HotelCatalog,
+  search: HotelSearch,
+  ctx: SearchContext,
+): HotelSearchResult {
   const stay = stayFromSearch(search, ctx.defaults, ctx.today);
   const city = search.city ? catalog.cities.find((c) => c.slug === search.city) : undefined;
   const landmark = search.landmark ? (catalog.areas.find((a) => a.slug === search.landmark) ?? null) : null;
@@ -152,7 +155,10 @@ export function searchHotels(catalog: HotelCatalog, search: HotelSearch, ctx: Se
     let distanceM: number | null = null;
     if (landmark?.lat != null && landmark.lng != null) {
       if (hotel.lat === null || hotel.lng === null) continue;
-      distanceM = distanceMeters({ lat: landmark.lat, lng: landmark.lng }, { lat: hotel.lat, lng: hotel.lng });
+      distanceM = distanceMeters(
+        { lat: landmark.lat, lng: landmark.lng },
+        { lat: hotel.lat, lng: hotel.lng },
+      );
       if (search.within !== undefined && distanceM > search.within) continue;
     }
 
