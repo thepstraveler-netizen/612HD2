@@ -7,7 +7,8 @@ import { formatPaise } from "@/lib/money";
 import { cn } from "@/lib/utils";
 
 /**
- * Month view of one room: units left, stop-sell and min stay per date, and
+ * Month view of one room: units left, sold and held (by unpaid bookings,
+ * until their hold expires), stop-sell and min stay per date, and
  * each plan's nightly price as guests would pay it (overrides and pricing
  * rules applied by the same engine the public pages use).
  */
@@ -25,6 +26,7 @@ export async function HotelCalendarGrid({
   today: IsoDate;
 }) {
   const t = await getTranslations("hotelsAdmin");
+  const tb = await getTranslations("bookingsAdmin.calendar");
   const locale = await getLocale();
   const dates = dateRange(from, to);
   const leading = isoWeekday(from) - 1;
@@ -71,8 +73,16 @@ export async function HotelCalendarGrid({
                   </span>
                 )}
               </div>
-              {day?.soldUnits ? (
-                <div className="text-muted-foreground">{t("calendar.sold", { count: day.soldUnits })}</div>
+              {day?.soldUnits || day?.heldUnits ? (
+                <div className="text-muted-foreground">
+                  {day.soldUnits ? t("calendar.sold", { count: day.soldUnits }) : null}
+                  {day.soldUnits && day.heldUnits ? " · " : null}
+                  {day.heldUnits ? (
+                    <span className="text-accent-amber" title={tb("heldTitle")}>
+                      {tb("held", { count: day.heldUnits })}
+                    </span>
+                  ) : null}
+                </div>
               ) : null}
               {day?.minStay && day.minStay > 1 ? (
                 <div className="text-muted-foreground">

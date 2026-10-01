@@ -7,9 +7,16 @@ import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { saveInvoiceSettings, savePaymentSettings } from "@/lib/bookings/admin-actions";
 import { saveBusinessProfile, setFeatureFlag } from "@/lib/cms/actions";
+import {
+  invoiceSettingsFormSchema,
+  paymentSettingsFormSchema,
+  type InvoiceSettingsFormInput,
+  type PaymentSettingsFormInput,
+} from "@/schemas/booking-admin";
 import { businessProfileSchema, type BusinessProfile } from "@/schemas/cms";
-import { TextInputField, useUnsavedChangesWarning } from "./form-fields";
+import { SwitchField, TextInputField, useUnsavedChangesWarning } from "./form-fields";
 import { useSave } from "./use-save";
 
 export function BusinessProfileForm({ defaultValues }: { defaultValues: BusinessProfile }) {
@@ -94,5 +101,141 @@ export function FeatureFlagList({ flags, canWrite }: { flags: FlagRow[]; canWrit
         ))}
       </ul>
     </section>
+  );
+}
+
+/** `payments.defaults`: money in rupees and GST in %, stored as paise and basis points. */
+export function PaymentSettingsForm({ defaultValues }: { defaultValues: PaymentSettingsFormInput }) {
+  const t = useTranslations();
+  const form = useForm<PaymentSettingsFormInput>({
+    resolver: zodResolver(paymentSettingsFormSchema, undefined, { raw: true }),
+    defaultValues,
+  });
+  const { pending, onSubmit } = useSave(form, savePaymentSettings, {
+    listHref: "/admin/settings",
+    isNew: false,
+  });
+  useUnsavedChangesWarning(form.formState.isDirty);
+  return (
+    <FormProvider {...form}>
+      <form
+        onSubmit={onSubmit}
+        className="grid max-w-3xl gap-4 rounded-2xl border bg-card p-4 sm:p-6"
+        noValidate
+      >
+        <div className="space-y-1">
+          <h2 className="text-lg font-semibold">{t("bookingsAdmin.settings.payments.title")}</h2>
+          <p className="text-sm text-muted-foreground">{t("bookingsAdmin.settings.payments.lead")}</p>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <TextInputField<PaymentSettingsFormInput>
+            name="advance_percent"
+            label={t("bookingsAdmin.settings.payments.advancePercent")}
+            help={t("bookingsAdmin.settings.payments.advanceHelp")}
+            type="number"
+          />
+          <TextInputField<PaymentSettingsFormInput>
+            name="hold_minutes"
+            label={t("bookingsAdmin.settings.payments.holdMinutes")}
+            help={t("bookingsAdmin.settings.payments.holdHelp")}
+            type="number"
+          />
+          <TextInputField<PaymentSettingsFormInput>
+            name="convenience_fee"
+            label={t("bookingsAdmin.settings.payments.convenienceFee")}
+            help={t("bookingsAdmin.settings.payments.convenienceFeeHelp")}
+          />
+          <TextInputField<PaymentSettingsFormInput>
+            name="fee_tax_percent"
+            label={t("bookingsAdmin.settings.payments.feeTax")}
+          />
+        </div>
+        <SwitchField<PaymentSettingsFormInput>
+          name="part_payment_enabled"
+          label={t("bookingsAdmin.settings.payments.partPayment")}
+        />
+        <SwitchField<PaymentSettingsFormInput>
+          name="pay_at_hotel_enabled"
+          label={t("bookingsAdmin.settings.payments.payAtHotel")}
+        />
+        <SwitchField<PaymentSettingsFormInput>
+          name="customer_cancellation_enabled"
+          label={t("bookingsAdmin.settings.payments.customerCancellation")}
+        />
+        <div className="flex justify-end">
+          <Button type="submit" disabled={pending}>
+            {t("cms.actions.save")}
+          </Button>
+        </div>
+      </form>
+    </FormProvider>
+  );
+}
+
+/** `business.invoice`: seller details and numbering printed on GST invoices. */
+export function InvoiceSettingsForm({ defaultValues }: { defaultValues: InvoiceSettingsFormInput }) {
+  const t = useTranslations();
+  const form = useForm<InvoiceSettingsFormInput>({
+    resolver: zodResolver(invoiceSettingsFormSchema, undefined, { raw: true }),
+    defaultValues,
+  });
+  const { pending, onSubmit } = useSave(form, saveInvoiceSettings, {
+    listHref: "/admin/settings",
+    isNew: false,
+  });
+  useUnsavedChangesWarning(form.formState.isDirty);
+  return (
+    <FormProvider {...form}>
+      <form
+        onSubmit={onSubmit}
+        className="grid max-w-3xl gap-4 rounded-2xl border bg-card p-4 sm:p-6"
+        noValidate
+      >
+        <div className="space-y-1">
+          <h2 className="text-lg font-semibold">{t("bookingsAdmin.settings.invoice.title")}</h2>
+          <p className="text-sm text-muted-foreground">{t("bookingsAdmin.settings.invoice.lead")}</p>
+        </div>
+        <TextInputField<InvoiceSettingsFormInput>
+          name="legal_name"
+          label={t("bookingsAdmin.settings.invoice.legalName")}
+        />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <TextInputField<InvoiceSettingsFormInput>
+            name="state"
+            label={t("bookingsAdmin.settings.invoice.state")}
+          />
+          <TextInputField<InvoiceSettingsFormInput>
+            name="state_code"
+            label={t("bookingsAdmin.settings.invoice.stateCode")}
+            placeholder="09"
+          />
+          <TextInputField<InvoiceSettingsFormInput>
+            name="prefix"
+            label={t("bookingsAdmin.settings.invoice.prefix")}
+            help={t("bookingsAdmin.settings.invoice.prefixHelp")}
+            placeholder="PST"
+          />
+          <TextInputField<InvoiceSettingsFormInput>
+            name="sac_accommodation"
+            label={t("bookingsAdmin.settings.invoice.sacAccommodation")}
+            placeholder="996311"
+          />
+          <TextInputField<InvoiceSettingsFormInput>
+            name="sac_services"
+            label={t("bookingsAdmin.settings.invoice.sacServices")}
+            placeholder="998552"
+          />
+        </div>
+        <TextInputField<InvoiceSettingsFormInput>
+          name="terms"
+          label={t("bookingsAdmin.settings.invoice.terms")}
+        />
+        <div className="flex justify-end">
+          <Button type="submit" disabled={pending}>
+            {t("cms.actions.save")}
+          </Button>
+        </div>
+      </form>
+    </FormProvider>
   );
 }

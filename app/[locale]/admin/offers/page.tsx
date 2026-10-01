@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import { OffersSubnav } from "@/components/admin/coupon-subnav";
 import { DataTable } from "@/components/admin/data-table";
 import { AdminPageHeader } from "@/components/admin/page-header";
 import { requirePermission } from "@/lib/auth/guards";
@@ -22,7 +23,9 @@ export default async function AdminOffersPage() {
         lead={t("cms.offersLead")}
         newHref={canWrite ? "/admin/offers/new" : undefined}
         newLabel={t("cms.actions.new")}
-      />
+      >
+        <OffersSubnav active="banners" />
+      </AdminPageHeader>
       <DataTable
         rows={data ?? []}
         editHref={canWrite ? "/admin/offers" : undefined}
