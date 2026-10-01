@@ -1,5 +1,27 @@
 # Changelog
 
+## Phase 5 · Cabs
+
+### Added
+
+- Database: cab places, car categories and models, per-km fare rules, routes and tours with per-category fares, local hire packages, add-ons, peak pricing rules, drivers, vehicles, fleet documents, trips and trip events. RLS on every table (catalog is public; fleet is cab staff only; a trip is visible to its customer, booking staff, cab staff and the assigned driver's login) and audit on all of them. Trips are written only by server functions: `create_cab_booking`, `assign_trip`, `set_trip_status`, plus a trigger that keeps each trip in step with its booking's payment, cancellation and expiry.
+- Starter catalog (review before launch): 14 places, 5 categories (hatchback, sedan, SUV, Innova Crysta, Tempo Traveller), 18 routes (one way from Vrindavan, station and airport transfers, Braj darshan and Vrindavan temple tours), local 4 h/40 km, 8 h/80 km and 12 h/120 km, roof carrier and child seat add-ons, `cabs.defaults` settings, confirmation and driver-assigned message templates.
+- Fare engine (`lib/cabs`): fixed route fares, per-km one way and round trip with minimum km, driver allowance per day, night charge, peak multipliers, add-ons, coupons, 5% GST under SAC 996601, part payment (advance with a minimum, rest to the driver), booking window checks, and distance from the route or a straight-line estimate.
+- `/cabs`: search with Outstation (one way / round trip), Local, Airport & station transfers and Sightseeing tabs; popular routes. Results with distance and time, filters by car type, model and fuel, "model or similar" cards with seats, luggage, AC, fuel, km included and extra km rate. Review page with inclusions and exclusions, cancellation rules, add-ons, coupon, Part pay or Full pay and the fare breakup, paid through Razorpay.
+- My Trips for cabs: trip status, driver and vehicle once assigned, the 4-digit pickup OTP, balance to pay the driver, invoice and self-service cancellation per the cab refund rules.
+- Driver trip link `/driver/trip/<token>` (no login): pickup details, tap to call, maps links, cash to collect, and Start → Arrived → Picked up (customer's OTP) → Complete, or no-show. Reassigning a trip retires the old link.
+- Admin → Cabs: dispatch board (unassigned / assigned / in progress; assign driver and vehicle with upgrades; status steps; copy driver link), trips list and timeline, routes and route fares, fare rules grid, local packages, places, categories and models, add-ons, peak pricing, drivers and vehicles with documents and expiry alerts. Settings → Cabs.
+- Notifications: cab confirmation (email in English and Hindi, SMS) and driver assigned (email, SMS, WhatsApp) with the OTP.
+- Demo seed: two demo drivers, two demo vehicles, a weekend peak rule and coupon DEMOCAB5.
+- Tests: 12 database tests (RLS, booking, payment and cancel sync, expiry, assignment, OTP, driver token never readable, audit), unit tests for fares, trip planning, admin helpers, expiry alerts and UI helpers, 7 Playwright tests for the cab pages.
+
+### Changed
+
+- Coupon lookup is shared between hotels and cabs (`lib/coupons/check.ts`); self-service cancellation and booking notifications handle cab bookings; the Razorpay order step is shared (`openPaymentOrder`).
+- The "Cabs" links in the header and home search open `/cabs`. The `/driver` portal moved into a route group so trip links work without signing in.
+- Invoices for cab bookings show the trip in place of the hotel.
+- Media uploads are allowed for `cabs.write` (category photos).
+
 ## Phase 4 · Booking & payments
 
 ### Added
