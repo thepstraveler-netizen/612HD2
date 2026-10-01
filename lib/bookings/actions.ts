@@ -23,6 +23,7 @@ import {
   cancelWithRefund,
   createHotelBooking,
   expireStaleBookings,
+  type Booking,
   type BookingDbError,
 } from "./service";
 import { customerCanCancel, type BookingStatus } from "./state";
@@ -179,7 +180,7 @@ export type CancelResult =
   | { ok: true; refundPaise: number }
   | { ok: false; error: "signin" | "not_found" | "not_allowed" | "refund_failed" };
 
-/** Self-service cancellation of a confirmed stay, refunded per the plan's policy. */
+/** Self-service cancellation of a confirmed stay or cab, refunded per the agreed policy. */
 export async function cancelMyBooking(input: unknown): Promise<CancelResult> {
   const session = await getSession();
   if (!session) return { ok: false, error: "signin" };
@@ -191,26 +192,22 @@ export async function cancelMyBooking(input: unknown): Promise<CancelResult> {
     .select("*")
     .eq("code", parsed.data.code)
     .maybeSingle();
-  if (!booking || booking.user_id !== session.user.id || !booking.check_in)
-    return { ok: false, error: "not_found" };
+  if (!booking || booking.user_id !== session.user.id) return { ok: false, error: "not_found" };
 
   const settings = await getPaymentSettings();
-  const snapshot = booking.snapshot as {
-    hotel?: { checkInTime?: string };
-    plan?: { isRefundable?: boolean; cancellationRules?: { hours_before: number; refund_percent: number }[] };
-  };
-  const checkInAt = checkInInstant(booking.check_in, snapshot.hotel?.checkInTime ?? "12:00");
+  const terms = cancellationTerms(booking);
   const now = new Date();
   if (
+    !terms ||
     !settings.customer_cancellation_enabled ||
-    !customerCanCancel(booking.status as BookingStatus, checkInAt, now)
+    !customerCanCancel(booking.status as BookingStatus, terms.startsAt, now)
   ) {
     return { ok: false, error: "not_allowed" };
   }
   const refund = quoteRefund({
-    rules: snapshot.plan?.cancellationRules ?? [],
-    isRefundable: snapshot.plan?.isRefundable ?? false,
-    checkInAt,
+    rules: terms.rules,
+    isRefundable: terms.isRefundable,
+    checkInAt: terms.startsAt,
     now,
     totalPaise: booking.total_paise,
     paidPaise: booking.paid_paise,
@@ -220,7 +217,7 @@ export async function cancelMyBooking(input: unknown): Promise<CancelResult> {
     const { refundedPaise } = await cancelWithRefund({
       bookingId: booking.id,
       actor: session.user.id,
-      reason: "Cancelled by guest",
+      reason: booking.service === "cab" ? "Cancelled by customer" : "Cancelled by guest",
       refundPaise: refund.refundPaise,
     });
     revalidatePath("/[locale]/account", "layout");
@@ -235,6 +232,37 @@ export async function cancelMyBooking(input: unknown): Promise<CancelResult> {
           : "refund_failed",
     };
   }
+}
+
+type CancellationRule = { hours_before: number; refund_percent: number };
+
+/**
+ * When the booked service starts and the refund rules the customer agreed
+ * to, from the booking snapshot: a hotel's check-in and rate plan rules, or
+ * a cab's pickup time and the cab rules in force when it was booked.
+ */
+function cancellationTerms(
+  booking: Booking,
+): { startsAt: Date; rules: CancellationRule[]; isRefundable: boolean } | null {
+  if (booking.service === "cab") {
+    const snapshot = booking.snapshot as {
+      trip?: { pickupAt?: string };
+      cancellationRules?: CancellationRule[];
+    };
+    const pickupAt = snapshot.trip?.pickupAt ? new Date(snapshot.trip.pickupAt) : null;
+    if (!pickupAt || Number.isNaN(pickupAt.getTime())) return null;
+    return { startsAt: pickupAt, rules: snapshot.cancellationRules ?? [], isRefundable: true };
+  }
+  if (!booking.check_in) return null;
+  const snapshot = booking.snapshot as {
+    hotel?: { checkInTime?: string };
+    plan?: { isRefundable?: boolean; cancellationRules?: CancellationRule[] };
+  };
+  return {
+    startsAt: checkInInstant(booking.check_in, snapshot.hotel?.checkInTime ?? "12:00"),
+    rules: snapshot.plan?.cancellationRules ?? [],
+    isRefundable: snapshot.plan?.isRefundable ?? false,
+  };
 }
 
 export type ResumeResult =
