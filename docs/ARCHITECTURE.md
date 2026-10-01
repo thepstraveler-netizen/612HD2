@@ -90,9 +90,17 @@ next-intl with `localePrefix: "as-needed"`: English at `/`, Hindi at `/hi`. All 
 ## Catalog and CMS
 
 - Public reads: `lib/catalog/queries.ts` (cookie-less anon client inside `unstable_cache`, tag `catalog`). Falls back to `lib/catalog/fallback.ts` only when Supabase env vars are missing.
-- Writes: `lib/cms/actions.ts` server actions → `assertPermission` → zod (`schemas/cms.ts`) → write as the user (RLS) → audit trigger → `revalidateTag("catalog")`.
+- Writes: `lib/cms/actions.ts` server actions → `lib/admin/mutate.ts` (`assertPermission` → zod (`schemas/cms.ts`) → write as the user (RLS) → audit trigger → `revalidateTag("catalog")`).
 - Admin UI: `components/admin/*` (DataTable, form fields, image uploader) and routes under `app/[locale]/admin/{cms,offers,settings}`; edit routes take `[id]` = uuid or `new`.
 - Media: browser uploads to the `media` bucket, `registerMedia` records the row; `mediaUrl()` builds the public URL.
+
+## Hotels
+
+- Data: `hotels` → `hotel_rooms` → `hotel_rate_plans`; per-date `hotel_inventory` / `hotel_rates`; `hotel_pricing_rules`; `hotel_media`, `hotel_amenities`. Visibility goes through `can_read_hotel()`.
+- Pure logic: `lib/availability/engine.ts` (rates, occupancy, quotes), `lib/pricing/tax.ts` (GST slabs), `lib/hotels/search.ts` (filter/sort/page), `lib/hotels/calendar-edit.ts`, `lib/hotels/csv.ts`, `lib/dates.ts`, `lib/money.ts`, `lib/geo.ts`.
+- Reads: `lib/hotels/queries.ts` (catalog cached under `catalog`, calendar under `hotel-calendar`); admin reads in `lib/hotels/admin.ts`.
+- Writes: `lib/hotels/actions.ts` through `lib/admin/mutate.ts` with `hotels.write`.
+- UI: `components/hotels/*` (public), `components/admin/hotel-*` (admin), routes `app/[locale]/(public)/hotels` and `app/[locale]/admin/hotels`, CSV at `/api/admin/hotels/export`.
 
 ## Design system
 

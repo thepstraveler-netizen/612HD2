@@ -1,5 +1,23 @@
 # Changelog
 
+## Phase 3 · Hotels
+
+### Added
+
+- Database: vendors and vendor members, hotels, room types, rate plans, per-date inventory and rate overrides, seasonal and weekday pricing rules, hotel photos and amenities. RLS (public sees published hotels only; staff with `hotels.read` and the hotel's vendor members see drafts; `hotels.write` edits) and audit triggers on every table.
+- Settings: GST slabs for rooms, hotel search defaults (price buckets, landmark radii, page size, map tiles); 16 amenities; a "Stays near the temples" home section; the header Hotels tab now opens `/hotels`.
+- Availability and pricing engine (`lib/availability`): occupancy split across rooms, min/max stay, stop-sell, sold out, extra adult/child charges, GST per room-night, cheapest offer.
+- `/hotels`: search by city/area/property, dates, rooms and guests; sort by popularity, price both ways, rating, or lowest price & best rated; filters for price (buckets and custom), star category, guest rating, property type, amenities, breakfast, couple friendly, free cancellation and distance from a temple or landmark; list or map view; deal banner; sponsored and featured tags; photo carousels; pagination. All in the URL, English and Hindi.
+- `/hotels/[slug]`: photo mosaic with full-screen lightbox, about, highlights, amenities, rooms with every rate plan priced for your dates, house rules, food, map and nearby temples, rating, and a booking card with the full price breakdown (WhatsApp booking until Phase 4). SEO metadata and schema.org Hotel data.
+- Admin → Hotels: list with CSV export; hotel form (details, location, tags, policies, amenities, payment add-ons, vendor and commission, SEO); photo gallery; rooms and rate plans; month calendar per room with bulk edit by date range and weekday (open/close, units, min stay, price override); seasonal pricing rules.
+- Demo seed: six demo hotels around Banke Bihari, Prem Mandir, ISKCON, Nidhivan and Krishna Janmabhoomi, with Kartik, Holi, Janmashtami and weekend pricing.
+- Tests: 13 availability, 13 hotel search, 24 admin helper and 9 database tests; 12 Playwright tests for the hotel pages.
+
+### Changed
+
+- Admin mutations share one helper, `lib/admin/mutate.ts`.
+- Home search card's Hotels tab searches `/hotels` with rooms and adults.
+
 ## Phase 2 · Catalog core
 
 ### Added

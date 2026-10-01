@@ -1,4 +1,4 @@
-import { BadgeCheck, Coffee, Heart, MapPin, Star } from "lucide-react";
+import { BadgeCheck, Coffee, Heart, MapPin } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "@/i18n/navigation";

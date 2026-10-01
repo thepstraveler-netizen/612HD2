@@ -99,3 +99,35 @@ Forms use react-hook-form with `zodResolver(schema, undefined, { raw: true })` f
 ### D-024 · Hosted Supabase project and function grants
 
 The hosted project `ps-traveler` (Free plan, Mumbai `ap-south-1`) was created and migrated through the Supabase connector, so its migration history has connector timestamps instead of the file names. Before running `supabase db push` against it, mark the existing files as applied with `supabase migration repair --status applied <version>`. `enable_audit()` uses `create or replace trigger` (Postgres 14+), so it never needs a destructive statement. `20261002000600_function_grants.sql` revokes API access to trigger-only SECURITY DEFINER functions, which the Supabase security advisor flagged.
+
+### D-025 · Hotel availability: room-type allotment with optional per-date overrides
+
+Each room type sells `total_units` every night. A `hotel_inventory` row exists only for dates that differ: fewer or more units, stop-sell (`is_closed`), a minimum stay on arrival, and `sold_units` (written by bookings in Phase 4). Nightly price is resolved in one place, `lib/availability/engine.ts`: a `hotel_rates` override for that plan and date wins; otherwise the best matching `hotel_pricing_rules` row (highest priority, then most specific scope plan > room > hotel, then latest start) adjusts the plan's base price by percent, flat amount or fixed price; otherwise the base price. The same pure functions price the listing, the detail page and (Phase 4) the server-side booking check.
+
+### D-026 · GST on rooms comes from an admin-editable slab table
+
+`tax.hotel_gst_slabs` holds the accommodation slabs by tariff per room per night (from 22 Sep 2025: up to ₹1,000 exempt, ₹1,001–7,500 at 5%, above at 18%). The slab is chosen per room-night on the room rate plus extra-guest charges. A rate change is a settings edit, not a deploy.
+
+### D-027 · Hotel search runs in memory over the cached catalog
+
+Published hotels with rooms, plans, rules, photos and amenities are read once and cached under the `catalog` tag; per-date inventory and rate overrides for the searched stay are cached for 60 s under `hotel-calendar`. Filtering, pricing, sorting and paging happen in the pure `searchHotels` (unit tested). This is fast and simple at a few hundred properties; if the catalog grows past that, move filtering into a Postgres function with the same inputs. All listing state lives in the URL; invalid values are dropped one by one instead of failing the page.
+
+### D-028 · "Lowest price & best rated" and sold-out ordering
+
+The value sort puts hotels rated 4.0 or more first, cheapest first, then the rest by price. Hotels that cannot take the requested stay (sold out, stop-sell, minimum stay) stay in the results with the reason shown, always after bookable ones; hotels that cannot host the party at all are left out. "Popular" ranks sponsored, then featured, then by rating count.
+
+### D-029 · Distance from temples uses the areas table; map uses free tiles
+
+Landmarks are the existing `areas` rows (temples, stations) with coordinates, so distance filtering and "nearby" lists need no extra table or API: straight-line (haversine) distance. The map view uses Leaflet with an XYZ tile server stored in `hotels.search_defaults.map_tiles` (OpenStreetMap by default, with attribution). OSM's public tiles are fine for low traffic; switch the URL to a provider's key-based tiles before heavy traffic. "Open in Maps" links need no key.
+
+### D-030 · Until online booking opens, "Book" goes to WhatsApp
+
+Checkout and payments arrive in Phase 4. Until then the detail page's booking card shows the exact price breakdown and a WhatsApp link pre-filled with hotel, dates, room, plan and guests (plus a call button), using the business profile numbers.
+
+### D-031 · Demo hotels on the hosted project
+
+Six fictional hotels (names start with "Demo ·") and one draft were loaded into the hosted project from `supabase/seed.sql` so the listing, filters and admin calendar can be tried before real partners are added. Archive or delete them from Admin → Hotels before launch. Hotel-visibility helper functions (`can_read_hotel`, `room_hotel_id`, `plan_hotel_id`, `is_vendor_member`) stay executable by `anon`/`authenticated` because RLS policies call them; they return booleans or ids only.
+
+### D-032 · Bulk CSV export now, import later
+
+Admin → Hotels exports one row per rate plan (formula-injection safe). Bulk CSV import needs a review step for partner data and arrives with partner onboarding in Phase 9.

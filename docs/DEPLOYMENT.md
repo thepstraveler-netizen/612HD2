@@ -103,6 +103,16 @@ This creates the user with a confirmed email (or promotes an existing one) and g
 - [ ] Admin → Audit log lists each of those changes.
 - [ ] Storage → buckets shows `media` (public), `documents` and `prescriptions` (private).
 
+## 8. Phase 3 smoke test
+
+- [ ] `/hotels` lists the six demo hotels; pick dates and prices change to the stay total with GST.
+- [ ] Try each sort, the price, rating, couple-friendly and "within 1 km of Banke Bihari" filters, and the Map view.
+- [ ] Search 14–15 Nov 2026: Janmabhoomi Inn shows sold out and sorts last.
+- [ ] Open a hotel, pick a rate plan, and check the booking card's breakdown; "Book on WhatsApp" opens a filled-in message.
+- [ ] Admin → Hotels: edit a hotel, upload photos, add a room with two plans, then close a few dates and set a price in the calendar; the public page reflects it within a minute.
+- [ ] Admin → Hotels → Export CSV downloads the rate plans.
+- [ ] Before launch, archive the "Demo ·" hotels.
+
 ## Later phases (prepare when you reach them)
 
 - **Phase 4:** Razorpay keys (`NEXT_PUBLIC_RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`), webhook at `https://<domain>/api/webhooks/razorpay` with `RAZORPAY_WEBHOOK_SECRET`; Vercel Cron for inventory-lock expiry protected by `CRON_SECRET`; Resend/MSG91/WhatsApp keys.
