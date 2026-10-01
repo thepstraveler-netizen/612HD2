@@ -1,0 +1,66 @@
+import { KeyRound, Luggage } from "lucide-react";
+import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
+import { EmptyState } from "@/components/shared/empty-state";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Link } from "@/i18n/navigation";
+import { requireUser } from "@/lib/auth/guards";
+import { ROLE_LABELS, type RoleKey } from "@/lib/permissions/constants";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("account");
+  return { title: t("title"), robots: { index: false } };
+}
+
+export default async function AccountPage() {
+  const session = await requireUser("/account");
+  const t = await getTranslations("account");
+  const name = session.profile?.full_name ?? session.user.email ?? "";
+
+  return (
+    <div className="space-y-6">
+      <div className="space-y-1">
+        <h1 className="text-[length:var(--text-title)] font-bold">{t("greeting", { name })}</h1>
+        <p className="text-muted-foreground">{t("lead")}</p>
+      </div>
+      <div className="grid gap-6 md:grid-cols-[2fr_1fr]">
+        <Card>
+          <CardHeader>
+            <CardTitle>{t("trips")}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <EmptyState icon={Luggage} title={t("tripsEmpty")} />
+          </CardContent>
+        </Card>
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("roles")}</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-wrap gap-2">
+              {session.roles.map((role) => (
+                <Badge key={role} variant="secondary">
+                  {ROLE_LABELS[role as RoleKey] ?? role}
+                </Badge>
+              ))}
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("security")}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Button asChild variant="outline" className="w-full">
+                <Link href="/account/update-password">
+                  <KeyRound /> {t("changePassword")}
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}

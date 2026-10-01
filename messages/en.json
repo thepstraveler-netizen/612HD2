@@ -1,0 +1,265 @@
+{
+  "metadata": {
+    "title": "The P & S Traveler Group",
+    "description": "Connecting Travel, Hospitality & Local Services in Vrindavan. Hotels, cabs, local rides, food, essentials and medicine delivery in one trusted platform."
+  },
+  "brand": {
+    "name": "The P & S Traveler Group",
+    "short": "P&S Traveler",
+    "strapline": "Travel · Hotels · Local Services",
+    "tagline": "Connecting Travel, Hospitality & Local Services in Vrindavan",
+    "hero": "Your One Stop Travel & Service Partner",
+    "footerLine": "Together for a Better Vrindavan",
+    "location": "Vrindavan",
+    "locationTag": "Land of Love & Devotion"
+  },
+  "nav": {
+    "main": "Main navigation",
+    "hotels": "Hotels",
+    "cabs": "Cabs",
+    "bikes": "Bikes",
+    "rickshaw": "Rickshaw",
+    "food": "Food",
+    "essentials": "Essentials",
+    "medicine": "Medicine",
+    "packages": "Packages",
+    "travel": "Flights / Trains / Buses",
+    "partner": "Partner With Us",
+    "menu": "Open menu",
+    "wishlist": "Wishlist",
+    "login": "Log in",
+    "signup": "Sign up",
+    "account": "My account",
+    "admin": "Admin panel",
+    "vendor": "Vendor dashboard",
+    "driver": "Driver trips",
+    "logout": "Log out"
+  },
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "hi": "हिन्दी"
+  },
+  "theme": {
+    "toggle": "Toggle theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "home": {
+    "heroLead": "Hotels, cabs, local rides, food, essentials and medicine delivery across Vrindavan, Mathura and the Braj region, all in one trusted place.",
+    "ctaExplore": "Explore services",
+    "ctaPartner": "Partner with us",
+    "pillarsTitle": "Why travellers choose us",
+    "pillars": {
+      "travel": "Travel Made Easy",
+      "stay": "Stay Comfortable",
+      "local": "Travel Local",
+      "serving": "Serving Vrindavan"
+    },
+    "aboutTitle": "About Us",
+    "about": "The P & S Traveler Group is a Vrindavan-based travel, hotel and local services company, dedicated to making your journey, stay and daily needs easier, faster and more convenient. We bring together travel, hospitality, transportation, delivery and digital marketing services under one trusted platform.",
+    "servicesTitle": "Our Services",
+    "servicesLead": "Book, order or enquire. Everything you need in Vrindavan, from one place.",
+    "bookable": "Book now",
+    "enquiry": "Enquire",
+    "partnerTitle": "Together We Grow Stronger",
+    "partnerLead": "Hotels, travel agencies, restaurants, transport providers and local shops: join the Vrindavan-focused network."
+  },
+  "services": {
+    "travel-hotel-booking": {
+      "name": "Travel & Hotel Booking",
+      "description": "Flight, train, bus, hotel and tour packages."
+    },
+    "travel-agent": {
+      "name": "Travel Agent & Data",
+      "description": "Customer management, travel planning and coordination."
+    },
+    "hotel-photography": {
+      "name": "Hotel Photography",
+      "description": "Quality photos and videos for better visibility."
+    },
+    "calling-centre": {
+      "name": "Calling Centre",
+      "description": "Enquiry, booking assistance, follow-ups and customer support."
+    },
+    "hotel-vendors": {
+      "name": "Hotel Vendor Network",
+      "description": "Best hotels, verified partners and attractive options."
+    },
+    "ota-handling": {
+      "name": "OTA Handling",
+      "description": "Inventory, rates, availability, listings and more."
+    },
+    "bike": { "name": "Bike Pick & Drop", "description": "Fast and reliable bike service across Vrindavan." },
+    "rickshaw": {
+      "name": "Rickshaw / E-Rickshaw Pick & Drop",
+      "description": "Local transport for your short and long rides."
+    },
+    "car": {
+      "name": "Car Pick & Drop",
+      "description": "Comfortable and safe car service for all your travel needs."
+    },
+    "food": { "name": "24×7 Food Delivery", "description": "Your favourite food, anytime, anywhere." },
+    "essentials": {
+      "name": "24×7 Essentials Delivery",
+      "description": "Groceries, daily-use items and travel essentials."
+    },
+    "medicine": {
+      "name": "Medicine Delivery Assistance",
+      "description": "Genuine medicine delivery through trusted partners."
+    },
+    "instagram-marketing": {
+      "name": "Instagram Posts & Reels Marketing",
+      "description": "Grow your brand with creative content and digital reach."
+    },
+    "lead-generation": {
+      "name": "Calling + Instagram + Lead Generation",
+      "description": "More visibility. More leads. More business."
+    }
+  },
+  "servicePage": {
+    "back": "All services",
+    "comingSoon": "Booking and enquiries for this service open soon.",
+    "kindBookable": "Bookable service",
+    "kindEnquiry": "Business service · enquiry"
+  },
+  "partner": {
+    "title": "Partner With Us",
+    "lead": "We are open to collaborating with hotels and resorts, travel agencies, restaurant and food businesses, transport providers, local shops and other service partners.",
+    "comingSoon": "Partner applications open soon."
+  },
+  "footer": {
+    "quickLinks": "Quick links",
+    "services": "Services",
+    "company": "Company",
+    "about": "About us",
+    "contact": "Contact",
+    "rights": "All rights reserved."
+  },
+  "auth": {
+    "loginTitle": "Welcome back",
+    "loginLead": "Log in to manage your trips and orders.",
+    "signupTitle": "Create your account",
+    "signupLead": "Book hotels, cabs and local services in minutes.",
+    "forgotTitle": "Reset your password",
+    "forgotLead": "We will email you a link to set a new password.",
+    "updateTitle": "Set a new password",
+    "google": "Continue with Google",
+    "or": "or",
+    "tabPassword": "Password",
+    "tabMagic": "Email link",
+    "fullName": "Full name",
+    "email": "Email",
+    "password": "Password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "submitLogin": "Log in",
+    "submitSignup": "Create account",
+    "submitMagic": "Email me a login link",
+    "submitForgot": "Send reset link",
+    "submitUpdate": "Update password",
+    "forgotLink": "Forgot password?",
+    "noAccount": "New here?",
+    "haveAccount": "Already have an account?",
+    "magicSent": "Check your inbox. We sent you a login link.",
+    "signupSent": "Check your inbox to confirm your email address.",
+    "resetSent": "If an account exists for that email, a reset link is on its way.",
+    "passwordUpdated": "Your password has been updated.",
+    "callbackError": "That link is invalid or has expired. Please try again.",
+    "errors": {
+      "required": "This field is required.",
+      "invalidEmail": "Enter a valid email address.",
+      "passwordTooShort": "Use at least 8 characters.",
+      "passwordTooLong": "Use at most 72 characters.",
+      "passwordsDontMatch": "Passwords do not match.",
+      "nameTooShort": "Enter your full name.",
+      "invalidCredentials": "Email or password is incorrect.",
+      "emailNotConfirmed": "Please confirm your email address first.",
+      "rateLimited": "Too many attempts. Please wait a minute and try again.",
+      "notConfigured": "Sign-in is not configured yet.",
+      "generic": "Something went wrong. Please try again."
+    }
+  },
+  "account": {
+    "title": "My account",
+    "greeting": "Namaste, {name}",
+    "lead": "Your trips, orders and saved details will appear here.",
+    "roles": "Your roles",
+    "trips": "My trips",
+    "tripsEmpty": "No trips yet. Your hotel and cab bookings will show up here.",
+    "security": "Security",
+    "changePassword": "Change password"
+  },
+  "admin": {
+    "title": "Admin",
+    "dashboardLead": "Every module below is permission-gated. Screens arrive phase by phase.",
+    "yourRoles": "Signed in as",
+    "openSite": "View site",
+    "audit": "Audit log",
+    "auditLead": "Every create, update and delete on audited tables, newest first.",
+    "auditEmpty": "No audit entries yet.",
+    "auditWhen": "When",
+    "auditActor": "Actor",
+    "auditAction": "Action",
+    "auditTable": "Table",
+    "auditRecord": "Record",
+    "auditFields": "Changed fields",
+    "comingInPhase": "This module is built in phase {phase} of the build plan.",
+    "groups": {
+      "overview": "Overview",
+      "catalog": "Catalog",
+      "sales": "Sales",
+      "people": "People",
+      "content": "Content",
+      "system": "System"
+    },
+    "modules": {
+      "dashboard": "Dashboard",
+      "hotels": "Hotels",
+      "cabs": "Cabs",
+      "rides": "Bike / Rickshaw / Car",
+      "food": "Food & Essentials",
+      "medicine": "Medicine",
+      "packages": "Packages",
+      "leads": "Leads CRM",
+      "bookings": "Bookings & Orders",
+      "payments": "Payments & Refunds",
+      "offers": "Offers & Coupons",
+      "cms": "Content / CMS",
+      "vendors": "Vendors & Partners",
+      "customers": "Customers",
+      "reviews": "Reviews",
+      "notifications": "Notifications",
+      "settings": "Settings",
+      "reports": "Reports & Exports"
+    }
+  },
+  "vendor": {
+    "title": "Vendor dashboard",
+    "lead": "Manage your listings, orders and settlements. Arrives with the partner programme in phase 9.",
+    "listings": "Listings",
+    "orders": "Orders",
+    "settlements": "Settlements"
+  },
+  "driver": {
+    "title": "My trips",
+    "lead": "Assigned trips and status updates appear here from phase 5.",
+    "empty": "No trips assigned right now."
+  },
+  "forbidden": {
+    "title": "You don't have access to this page",
+    "lead": "Ask an administrator to grant you the right role.",
+    "blocked": "This account has been suspended. Please contact support.",
+    "home": "Go to home"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "lead": "The page you are looking for does not exist or has moved.",
+    "home": "Go to home"
+  },
+  "common": {
+    "skipToContent": "Skip to content",
+    "loading": "Loading…"
+  }
+}
