@@ -585,6 +585,8 @@ $$;
 
 create trigger bookings_sync_trip after update of status on public.bookings
   for each row execute function public.sync_trip_with_booking();
+-- A trigger function, never an API call.
+revoke execute on function public.sync_trip_with_booking() from public, anon, authenticated;
 
 /*
  * Assigns (or reassigns) a driver and vehicle. The vehicle may be of a
