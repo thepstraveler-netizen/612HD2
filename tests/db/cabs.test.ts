@@ -184,7 +184,7 @@ describe("cab catalog", () => {
       manager,
       async (tx) => (await tx.query("select id from public.drivers")).rows.length,
     );
-    expect(staff).toBe(1);
+    expect(staff).toBe(3); // two demo drivers from seed.sql + Ramesh
   });
 
   it("lets a driver with a login read only their own record", async () => {

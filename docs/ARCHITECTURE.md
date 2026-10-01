@@ -110,6 +110,14 @@ next-intl with `localePrefix: "as-needed"`: English at `/`, Hindi at `/hi`. All 
 - Pure logic: `lib/pricing/booking.ts` (lines, discount allocation, GST, payable now), `lib/coupons/engine.ts`, `lib/refunds/policy.ts`, `lib/bookings/state.ts` (status machine, booking codes), `lib/invoices/*` (rows, totals, PDF), `lib/notifications/render.ts`.
 - Customer UI: `/hotels/[slug]/book` (`components/booking/checkout-form.tsx`), `/account/trips`, invoice PDF at `/api/invoices/[code]`. Admin UI under `app/[locale]/admin/{bookings,payments,offers/coupons,notifications}`.
 
+## Cabs
+
+- Data: catalog `cab_places`, `cab_categories` → `cab_models`, `cab_fare_rules` (per km, per category × one way / round trip), `cab_routes` → `cab_route_fares`, `cab_local_packages` → `cab_local_fares`, `cab_addons`, `cab_surcharges`; fleet `drivers`, `vehicles`, `fleet_documents`; operations `trips` (one per cab booking) and `trip_events`. Settings in `cabs.defaults`.
+- Pure logic: `lib/cabs/pricing.ts` (fare lines, peak, night, advance, timing), `lib/cabs/search.ts` (search → trip plan → offer per category), `lib/cabs/time.ts` (India time), `lib/cabs/distance.ts` (distance provider adapter).
+- Server: `lib/cabs/queries.ts` (catalog cached under `catalog`), `checkout.ts` (prices a checkout), `service.ts` (`create_cab_booking` + Razorpay order through the shared `openPaymentOrder`), `actions.ts` (preview, book, verify, driver step), `driver.ts` (trip by link token).
+- Trip lifecycle: `create_cab_booking` makes the trip `awaiting_payment`; the `bookings_sync_trip` trigger moves it to `unassigned` when the booking is confirmed and to `cancelled` when the booking is cancelled, fails or expires; `assign_trip` and `set_trip_status` (service role only) move it through assigned → en route → arrived → picked up (OTP) → completed, which completes the booking.
+- UI: `/cabs` (search, results, review), My Trips, `/driver/trip/[token]` (no login), and `app/[locale]/admin/cabs` (dispatch board, trips, catalog, fleet).
+
 ## Design system
 
 Brand and accent tokens from the poster are CSS variables in `app/globals.css`, mapped onto the shadcn semantic tokens and exposed to Tailwind (`bg-brand-navy`, `text-accent-teal`, …). Dark mode via `next-themes` (`.dark` class). Buttons and inputs default to 44px height for tap targets.
@@ -121,7 +129,8 @@ Brand and accent tokens from the poster are CSS variables in `app/globals.css`, 
 | 2     | catalog schema + seed, media/storage, CMS (home sections, banners, services table), DataTable                     |
 | 3     | `app/[locale]/admin/hotels`, `/hotels` listing + detail, availability engine in `lib/availability`                |
 | 4     | `lib/pricing`, `lib/coupons`, Razorpay (`lib/payments`, `/api/webhooks/razorpay`), inventory locks, notifications |
-| 5–8   | cabs, local rides, food/essentials/medicine, packages + leads CRM                                                 |
+| 5     | cabs: catalog, fares, fleet, dispatch board, `/cabs`, driver trip links (`lib/cabs`)                              |
+| 6–8   | local rides, food/essentials/medicine, packages + leads CRM                                                       |
 | 9–11  | partner onboarding, settlements, reviews/loyalty/PWA/SEO, hardening (CSP, rate limits, Turnstile)                 |
 
 A dedicated folder (e.g. `app/[locale]/admin/hotels/page.tsx`) takes precedence over the generic `admin/[module]` placeholder, so modules can be replaced one at a time.

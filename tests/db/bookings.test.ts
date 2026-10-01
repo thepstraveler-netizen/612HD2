@@ -388,7 +388,7 @@ describe("coupons", () => {
         (r) => r.code,
       ),
     );
-    expect(codes).toEqual(["DEMO10", "DEMOFLAT300"]);
+    expect(codes).toEqual(["DEMO10", "DEMOCAB5", "DEMOFLAT300"]);
   });
 });
 
