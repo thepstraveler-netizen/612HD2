@@ -2,15 +2,18 @@ import { getTranslations } from "next-intl/server";
 import { AdminPageHeader } from "@/components/admin/page-header";
 import {
   BusinessProfileForm,
+  CabSettingsForm,
   FeatureFlagList,
   InvoiceSettingsForm,
   PaymentSettingsForm,
 } from "@/components/admin/settings-forms";
 import { requirePermission } from "@/lib/auth/guards";
 import { invoiceSettingsFormValues, paymentSettingsFormValues } from "@/lib/bookings/admin-forms";
+import { cabSettingsFormValues } from "@/lib/cabs/admin-rows";
 import { hasPermission } from "@/lib/permissions/check";
 import { createClient } from "@/lib/supabase/server";
 import { invoiceSettingsSchema, paymentSettingsSchema } from "@/schemas/booking";
+import { cabSettingsSchema } from "@/schemas/cabs";
 import { businessProfileSchema, type BusinessProfile } from "@/schemas/cms";
 
 const EMPTY_PROFILE: BusinessProfile = {
@@ -29,7 +32,10 @@ export default async function AdminSettingsPage() {
   const [{ data: profileRow }, { data: flags }, { data: checkoutRows }] = await Promise.all([
     supabase.from("settings").select("value").eq("key", "business.profile").maybeSingle(),
     supabase.from("feature_flags").select("key, enabled, description").order("key"),
-    supabase.from("settings").select("key, value").in("key", ["payments.defaults", "business.invoice"]),
+    supabase
+      .from("settings")
+      .select("key, value")
+      .in("key", ["payments.defaults", "business.invoice", "cabs.defaults"]),
   ]);
   // Fill gaps so an older or partial row still opens in the form.
   const stored = businessProfileSchema.partial().safeParse(profileRow?.value ?? {});
@@ -39,6 +45,7 @@ export default async function AdminSettingsPage() {
   const storedValue = (key: string) => checkoutRows?.find((r) => r.key === key)?.value ?? {};
   const payments = paymentSettingsSchema.safeParse(storedValue("payments.defaults"));
   const invoice = invoiceSettingsSchema.safeParse(storedValue("business.invoice"));
+  const cabs = cabSettingsSchema.safeParse(storedValue("cabs.defaults"));
 
   return (
     <div className="space-y-6">
@@ -56,6 +63,11 @@ export default async function AdminSettingsPage() {
           defaultValues={invoiceSettingsFormValues(
             invoice.success ? invoice.data : invoiceSettingsSchema.parse({}),
           )}
+        />
+      ) : null}
+      {canWrite ? (
+        <CabSettingsForm
+          defaultValues={cabSettingsFormValues(cabs.success ? cabs.data : cabSettingsSchema.parse({}))}
         />
       ) : null}
       <FeatureFlagList flags={flags ?? []} canWrite={canWrite} />
