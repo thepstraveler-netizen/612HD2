@@ -1,5 +1,26 @@
 # Changelog
 
+## Phase 4 · Booking & payments
+
+### Added
+
+- Database: bookings, booking items (one line per room-night, add-on and fee), guests, inventory holds, coupons and redemptions, payments, payment events, refunds, invoices with per-year numbering, notification templates and logs. RLS on every table: guests read their own bookings, vendor members read their hotel's, staff need `bookings.read` / `payments.read`; nobody writes from the browser. Audit on bookings, payments, refunds, invoices, coupons and templates.
+- Booking functions in Postgres (run only by the server): hold rooms with row locks so the last room can't be sold twice, confirm on payment, release on cancel or expiry, record payments and refunds idempotently, issue invoices. Unpaid holds expire after 15 minutes (pg_cron every 5 minutes, plus a sweep on every booking).
+- Pricing (`lib/pricing/booking.ts`): room-night lines, early check-in / late checkout / breakfast add-ons, coupon discount spread across lines, GST per room-night slab, optional convenience fee with 18% GST, full / part (advance) / pay-at-hotel amounts. Everything is recomputed on the server; a changed price is shown again before charging.
+- Coupons (`lib/coupons`): percent or flat, cap, minimum order, date window, total and per-user limits, first-booking only, private codes.
+- Razorpay: order + Checkout popup (cards, UPI, netbanking, wallets), signature check on return, webhook at `/api/webhooks/razorpay` as the source of truth (deduplicated by event id), auto-capture, automatic refund if a payment lands after the hold expired, payment links.
+- `/hotels/[slug]/book`: review page with guest details, other guests, special requests, GST invoice details, add-ons, coupon, payment option and the full breakdown. "Reserve now" on the hotel page when online booking is switched on (`booking.hotels` flag).
+- My Trips (`/account/trips`): upcoming / past / cancelled, trip detail with price breakdown, payments and refunds, "Pay now" for a held booking, self-service cancellation with the refund worked out from the rate plan's policy, and a GST tax invoice PDF (`/api/invoices/[code]`).
+- Notifications: confirmation and cancellation emails (English and Hindi) through Resend with DB templates; SMS and WhatsApp templates stored and logged as skipped until Phase 11 providers are connected.
+- Settings: `payments.defaults` (advance %, convenience fee, pay at hotel, hold minutes, customer cancellation) and `business.invoice` (legal name, GSTIN state, invoice prefix, SAC codes, terms).
+- Demo seed: add-on prices on three demo hotels; coupons DEMO10, DEMOFLAT300 and DEMOFIRST.
+- Tests: 16 database tests (double booking, expiry, replayed payments and webhooks, amount mismatch, late payment, refunds, coupon limits, RLS), 33 unit tests (pricing, coupons, refunds, state machine, signatures, invoice), 4 Playwright tests.
+
+### Changed
+
+- Availability subtracts rooms on hold; the hotel calendar reads live inventory at checkout.
+- Audit trigger records the staff member who triggered a server-side booking change.
+
 ## Phase 3 · Hotels
 
 ### Added

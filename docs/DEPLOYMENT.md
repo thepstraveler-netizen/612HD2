@@ -113,8 +113,32 @@ This creates the user with a confirmed email (or promotes an existing one) and g
 - [ ] Admin → Hotels → Export CSV downloads the rate plans.
 - [ ] Before launch, archive the "Demo ·" hotels.
 
+## 9. Phase 4 setup and smoke test
+
+### Setup
+
+1. Razorpay (Dashboard → Account & Settings → API Keys; use **Test mode** first): add to Vercel
+   - `NEXT_PUBLIC_RAZORPAY_KEY_ID` (`rzp_test_…`)
+   - `RAZORPAY_KEY_SECRET` (server only)
+2. Razorpay → Webhooks → Add: URL `https://<your-domain>/api/webhooks/razorpay`, a secret you make up, events `payment.authorized`, `payment.captured`, `payment.failed`, `order.paid`, `refund.processed`, `refund.failed`, `payment_link.paid`. Put the same secret in `RAZORPAY_WEBHOOK_SECRET`.
+3. `SUPABASE_SERVICE_ROLE_KEY` must be set (bookings are written only by the server).
+4. Optional email: `RESEND_API_KEY` and `NOTIFY_FROM_EMAIL` (a sender on a domain verified in Resend). Without them bookings still work; emails are logged as skipped.
+5. Redeploy, then Admin → Settings → Feature flags → turn on `booking.hotels`.
+6. Holds expire through pg_cron (`expire-stale-bookings`, every 5 minutes), created by the migration. Check Database → Cron jobs; if pg_cron isn't enabled, enable it under Database → Extensions and re-run the last block of `20261004000100_bookings_payments.sql`. No Vercel Cron or `CRON_SECRET` is needed.
+
+### Smoke test
+
+- [ ] Signed out, "Reserve now" on a hotel goes to login and back to the review page.
+- [ ] Book a demo hotel with coupon `DEMO10`; pay with Razorpay test card `4111 1111 1111 1111` (any future date, any CVV) or UPI `success@razorpay`. The booking shows Confirmed in My Trips.
+- [ ] Download the invoice PDF; the number looks like `PST/26-27/00001` and tax is split into CGST and SGST.
+- [ ] Razorpay → Webhooks → the delivery shows 200; resending it changes nothing (one payment, one invoice).
+- [ ] Book the last room of a night in two browsers at once: the second gets "sold out".
+- [ ] Start a booking and close the popup; after 15 minutes the trip shows Expired and the room is available again.
+- [ ] Pay at hotel on Demo · Radha Kunj confirms without payment.
+- [ ] Cancel a refundable booking from My Trips; the refund appears in Razorpay and on the trip.
+- [ ] Admin → Bookings, Payments, Coupons and Notifications list the above; the audit log shows each change.
+
 ## Later phases (prepare when you reach them)
 
-- **Phase 4:** Razorpay keys (`NEXT_PUBLIC_RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`), webhook at `https://<domain>/api/webhooks/razorpay` with `RAZORPAY_WEBHOOK_SECRET`; Vercel Cron for inventory-lock expiry protected by `CRON_SECRET`; Resend/MSG91/WhatsApp keys.
 - **Phase 5–6:** Google Maps key (`NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`), restricted to your domains.
-- **Phase 11:** Sentry DSN, Upstash Redis, Cloudflare Turnstile keys.
+- **Phase 11:** SMS (MSG91) and WhatsApp keys, Sentry DSN, Upstash Redis, Cloudflare Turnstile keys.

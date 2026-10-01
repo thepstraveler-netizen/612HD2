@@ -131,3 +131,41 @@ Six fictional hotels (names start with "Demo ·") and one draft were loaded into
 ### D-032 · Bulk CSV export now, import later
 
 Admin → Hotels exports one row per rate plan (formula-injection safe). Bulk CSV import needs a review step for partner data and arrives with partner onboarding in Phase 9.
+
+## Phase 4 · Booking & payments
+
+### D-033 · Customers never write booking tables; trusted server code does
+
+`bookings`, `booking_items`, `payments`, `refunds`, `invoices` and `inventory_locks` have read policies only. The Next.js server authorises the caller, recomputes the price from the database, and then calls SECURITY DEFINER functions (`create_hotel_booking`, `record_payment`, `cancel_booking`, `record_refund`, …) with the service-role key. Those functions are not executable by `anon`/`authenticated`, run in one transaction each and re-check totals, inventory and coupon limits under row locks. Staff actions pass their user id as `p_actor`; the functions set `app.actor_id`, which the audit trigger now records when there is no JWT subject. Phase 4 therefore needs `SUPABASE_SERVICE_ROLE_KEY` on the server; without it, checkout stays closed and the site falls back to WhatsApp booking.
+
+### D-034 · Holds with a TTL instead of a long-lived lock
+
+A booking holds its rooms in `inventory_locks` (one row per room-night, default 15 minutes, `payments.defaults.hold_minutes`) and in `hotel_inventory.held_units`. Reservation locks the night rows in date order, re-derives held units from live locks (so an expired hold frees the room immediately) and only then checks `units − sold − held`. That makes double booking impossible under concurrency. `expire_stale_bookings()` marks unpaid bookings expired every 5 minutes through pg_cron (Supabase) and is also called before each new booking. A payment that arrives after the hold expired still confirms if the room is free; otherwise the booking fails and the payment is refunded automatically.
+
+### D-035 · Razorpay webhook is the source of truth
+
+The browser callback (`verifyHotelPayment`) checks the checkout signature and fetches the payment from Razorpay to confirm quickly, but the webhook at `/api/webhooks/razorpay` applies the same payment too. Webhook events are stored once per `x-razorpay-event-id` (redeliveries are acknowledged and skipped); payments are applied idempotently on the order/payment id, and the captured amount must equal the order amount. Authorised-only payments are captured by the server. Razorpay is called with `fetch` and basic auth; no SDK.
+
+### D-036 · Price lines are stored and GST is applied per room-night after discount
+
+The server builds one line per room per night plus add-ons and the convenience fee (`lib/pricing/booking.ts`). A coupon is split across discountable lines in proportion (largest remainder, exact to the paisa); each room-night's GST slab is decided on its discounted value; add-ons take the stay's highest room-night rate (they are part of the stay); the fee is taxed at its own rate (`fee_tax_bps`, 18%) and never discounted. The booking stores these lines, so invoices and refunds always match what was charged. The browser sends the total it showed; if the server's total differs, the booking is refused with the new price instead of charging something else.
+
+### D-037 · Payment options come from the hotel and settings
+
+Full online payment is offered when Razorpay keys are set. Part payment is offered when the hotel has a `part_payment_percent` (or, if `part_payment_enabled` is on, the global `advance_percent`); the advance is rounded up to whole rupees. Pay at hotel needs both the hotel's switch and the global `pay_at_hotel_enabled`; those bookings confirm immediately with nothing paid and staff record the cash/UPI later. Online booking as a whole stays behind the `booking.hotels` feature flag; WhatsApp remains as a secondary option.
+
+### D-038 · Checkout needs an account
+
+Guests sign in (email, Google or email link) before the review page, so bookings, invoices and cancellations live in My Trips and coupon limits per user can be enforced. A guest-checkout path can be added later with phone OTP.
+
+### D-039 · Refunds follow the rate plan's rules, by booking value
+
+A rate plan's rules give the refundable share of the booking value when cancelling at least N hours before check-in (India time, the hotel's check-in hour). The hotel keeps the rest as the cancellation charge, and the guest gets back whatever they paid beyond that charge, so an advance is refunded only if it exceeds the charge. Guests can cancel confirmed stays themselves before check-in (switch: `customer_cancellation_enabled`); staff can override the amount. Refunds go back through Razorpay to the original payment; offline payments are recorded as refunded by staff.
+
+### D-040 · GST invoices are numbered per financial year and issued on confirmation
+
+Invoice numbers look like `PST/26-27/00001` (prefix from `business.invoice`, counter per Indian financial year, at most 16 characters). The invoice is issued when the booking is confirmed, with the seller details frozen from settings, SAC 996311 for accommodation, and CGST + SGST because accommodation is taxed where the property is. The PDF is generated on request (`/api/invoices/<code>`, RLS decides who may download) with pdf-lib and the built-in Helvetica, so it is English-only with "Rs." for the rupee sign. Who the supplier of record is (the platform as e-commerce operator or the hotel) is a tax question for the business's CA; the seller block is fully configurable.
+
+### D-041 · Notifications are templates plus provider adapters
+
+`notification_templates` holds editable text per key, channel and language with `{{placeholders}}`; every send is logged in `notification_logs`. Email goes through Resend when `RESEND_API_KEY` is set; SMS and WhatsApp adapters log "skipped" until their providers are configured. A failed notification never fails a booking.

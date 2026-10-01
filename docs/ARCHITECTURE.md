@@ -102,6 +102,14 @@ next-intl with `localePrefix: "as-needed"`: English at `/`, Hindi at `/hi`. All 
 - Writes: `lib/hotels/actions.ts` through `lib/admin/mutate.ts` with `hotels.write`.
 - UI: `components/hotels/*` (public), `components/admin/hotel-*` (admin), routes `app/[locale]/(public)/hotels` and `app/[locale]/admin/hotels`, CSV at `/api/admin/hotels/export`.
 
+## Bookings and payments
+
+- Trust model: customers have no write policies on booking tables. Server actions (`lib/bookings/actions.ts`) re-price from the database (`lib/bookings/hotel-checkout.ts`), then `lib/bookings/service.ts` calls SECURITY DEFINER functions (`create_hotel_booking`, `record_payment`, `cancel_booking`, `record_refund`, …) with the service-role client. Staff actions pass the actor, which `set_actor()` hands to the audit trigger.
+- Inventory: `inventory_locks` hold rooms for `hold_minutes`; `hotel_inventory.held_units` is re-derived from live locks, and rows are locked `FOR UPDATE` in date order so two checkouts can't both take the last room.
+- Payments: `lib/payments/razorpay.ts` (server-only REST client), `signature.ts` (HMAC, constant-time), `checkout-client.ts` (popup). The webhook `/api/webhooks/razorpay` stores each event once in `payment_events` and applies it with the same idempotent `record_payment` the browser callback uses.
+- Pure logic: `lib/pricing/booking.ts` (lines, discount allocation, GST, payable now), `lib/coupons/engine.ts`, `lib/refunds/policy.ts`, `lib/bookings/state.ts` (status machine, booking codes), `lib/invoices/*` (rows, totals, PDF), `lib/notifications/render.ts`.
+- Customer UI: `/hotels/[slug]/book` (`components/booking/checkout-form.tsx`), `/account/trips`, invoice PDF at `/api/invoices/[code]`. Admin UI under `app/[locale]/admin/{bookings,payments,offers/coupons,notifications}`.
+
 ## Design system
 
 Brand and accent tokens from the poster are CSS variables in `app/globals.css`, mapped onto the shadcn semantic tokens and exposed to Tailwind (`bg-brand-navy`, `text-accent-teal`, …). Dark mode via `next-themes` (`.dark` class). Buttons and inputs default to 44px height for tap targets.
@@ -112,7 +120,7 @@ Brand and accent tokens from the poster are CSS variables in `app/globals.css`, 
 | ----- | ----------------------------------------------------------------------------------------------------------------- |
 | 2     | catalog schema + seed, media/storage, CMS (home sections, banners, services table), DataTable                     |
 | 3     | `app/[locale]/admin/hotels`, `/hotels` listing + detail, availability engine in `lib/availability`                |
-| 4     | `lib/pricing`, `lib/coupons`, Razorpay (`lib/razorpay`, `/api/webhooks/razorpay`), inventory locks, notifications |
+| 4     | `lib/pricing`, `lib/coupons`, Razorpay (`lib/payments`, `/api/webhooks/razorpay`), inventory locks, notifications |
 | 5–8   | cabs, local rides, food/essentials/medicine, packages + leads CRM                                                 |
 | 9–11  | partner onboarding, settlements, reviews/loyalty/PWA/SEO, hardening (CSP, rate limits, Turnstile)                 |
 
