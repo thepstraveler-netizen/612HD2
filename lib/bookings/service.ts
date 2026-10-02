@@ -53,6 +53,8 @@ const DB_ERRORS = [
   "item_unavailable",
   "partner_unavailable",
   "invalid_file",
+  "package_unavailable",
+  "departure_closed",
 ] as const;
 export type BookingDbError = (typeof DB_ERRORS)[number];
 
@@ -514,7 +516,11 @@ export async function notifyBooking(
         ? "ride.confirmed"
         : isOrder
           ? "order.confirmed"
-          : key;
+          : booking.service === "package"
+            ? "package.confirmed"
+            : booking.service === "travel"
+              ? "travel.confirmed"
+              : key;
   await notify({
     key: key === "booking.confirmed" ? confirmedKey : key,
     locale: booking.locale,
