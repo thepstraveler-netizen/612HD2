@@ -1,5 +1,26 @@
 # Changelog
 
+## Phase 6 · Local rides
+
+### Added
+
+- Database: ride vehicle types, zones (a centre and radius per town), landmarks, fare rules per zone × vehicle type × mode, ride requests and ride events. RLS on every table (catalog is public; a ride is visible to its customer, booking staff, ride staff and the assigned driver's login) and audit on all of them. Rides are written only by server functions: `create_ride_booking`, `assign_ride`, `set_ride_status`, `rate_ride`, plus a trigger that keeps each ride in step with its booking. Vehicles can now be a cab or a ride vehicle, and a cycle rickshaw needs no registration.
+- Starter catalog (review before launch): bike, e-rickshaw, cycle rickshaw and car; zones for Vrindavan, Mathura, Govardhan and Barsana; 18 landmarks (temples, ghats, stations, bus stands); point-to-point and hourly fares in every zone; `rides.defaults` settings; `booking.rides` flag (off); confirmation and driver-assigned message templates.
+- Fare engine (`lib/rides`): point to point with a minimum fare and included km, hourly with a minimum of hours and km per hour included, night surcharge, GST per vehicle type, coupons, convenience fee on online payment only, zone lookup and distance estimate.
+- `/rides`: vehicle tabs, drop-to-a-place or by-the-hour, pickup and drop from landmarks or "Use my location", ride now or schedule, passengers, and one priced card per vehicle. Rides outside the towns or too long point to cabs. Review page with fare breakup, cancellation policy, coupon, and Pay the driver or Pay online (Razorpay).
+- Pay-the-driver rides are confirmed at once and need no payment gateway.
+- My Trips for rides: status, vehicle, pickup OTP, driver and vehicle once assigned, amount to pay the driver, cancellation, and a 1 to 5 star rating after the ride.
+- Driver ride link `/driver/ride/<token>` (no login): pickup and drop with maps links, tap to call, amount to collect, and Start → Arrived → Picked up (customer's OTP) → Complete, or no-show.
+- Admin → Rides: live requests board that refreshes itself (new, under way, recently finished), ride detail with timeline, assign driver and ride vehicle, status steps, driver link with WhatsApp share, vehicle types, zones, landmarks, fare grid per zone, ride vehicles. Settings → Local rides.
+- Home search card "Rides" tab and "Book a ride" buttons on the bike, rickshaw and car service pages.
+- Demo seed: a demo bike and e-rickshaw for the demo drivers.
+- Tests: 11 database tests (catalog, RLS, pay-the-driver and online bookings, expiry, hourly, assignment, OTP, rating once, driver token never readable, audit), unit tests for fares, zones, ride planning, admin helpers and UI helpers, Playwright tests for the ride pages and driver link.
+
+### Changed
+
+- Booking notifications, self-service cancellation and invoices handle ride bookings. Cab admin lists only cab vehicles.
+- The header "Bikes" and "Rickshaw" links open `/rides` (applied on the live database when this phase merges).
+
 ## Phase 5 · Cabs
 
 ### Added

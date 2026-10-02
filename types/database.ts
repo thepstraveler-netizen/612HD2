@@ -776,9 +776,12 @@ export type Database = {
       vehicles: Simple<
         {
           id: string;
-          category_id: string;
+          /** Exactly one of category_id (cab) and ride_vehicle_type_id (local ride) is set. */
+          category_id: string | null;
+          ride_vehicle_type_id: string | null;
           model_id: string | null;
-          registration_no: string;
+          /** Required for cabs; a cycle rickshaw may have none. */
+          registration_no: string | null;
           colour: string | null;
           year: number | null;
           fuel: Database["public"]["Enums"]["fuel_type"];
@@ -847,6 +850,114 @@ export type Database = {
         source: "admin" | "driver" | "system" | "customer";
         created_at: string;
       }>;
+      ride_vehicle_types: Simple<
+        {
+          id: string;
+          key: string;
+          service_slug: string;
+          name: LocalizedJson;
+          description: LocalizedJson | null;
+          icon: string;
+          seats: number;
+          instant_book: boolean;
+          tax_bps: number;
+          is_active: boolean;
+          sort_order: number;
+        } & Timestamps
+      >;
+      ride_zones: Simple<
+        {
+          id: string;
+          slug: string;
+          name: LocalizedJson;
+          lat: number;
+          lng: number;
+          radius_km: number;
+          is_active: boolean;
+          sort_order: number;
+        } & Timestamps
+      >;
+      ride_points: Simple<
+        {
+          id: string;
+          zone_id: string;
+          slug: string;
+          name: LocalizedJson;
+          kind: "temple" | "ghat" | "station" | "market" | "hotel" | "landmark";
+          lat: number;
+          lng: number;
+          is_popular: boolean;
+          is_active: boolean;
+          sort_order: number;
+        } & Timestamps
+      >;
+      ride_fare_rules: Simple<
+        {
+          id: string;
+          zone_id: string;
+          vehicle_type_id: string;
+          mode: Database["public"]["Enums"]["ride_mode"];
+          base_paise: number;
+          included_km: number;
+          per_km_paise: number;
+          min_fare_paise: number;
+          hourly_rate_paise: number;
+          min_hours: number;
+          km_per_hour: number;
+          free_waiting_minutes: number;
+          per_min_waiting_paise: number;
+          night_bps: number;
+          is_active: boolean;
+        } & Timestamps
+      >;
+      ride_requests: Simple<
+        {
+          id: string;
+          booking_id: string;
+          vehicle_type_id: string;
+          zone_id: string;
+          mode: Database["public"]["Enums"]["ride_mode"];
+          pickup_point_id: string | null;
+          pickup_lat: number;
+          pickup_lng: number;
+          pickup_address: string;
+          drop_point_id: string | null;
+          drop_lat: number | null;
+          drop_lng: number | null;
+          drop_address: string | null;
+          hours: number | null;
+          pickup_at: string;
+          passengers: number;
+          distance_km: number | null;
+          status: Database["public"]["Enums"]["ride_status"];
+          driver_id: string | null;
+          vehicle_id: string | null;
+          driver_name: string | null;
+          driver_phone: string | null;
+          vehicle_label: string | null;
+          vehicle_registration: string | null;
+          assigned_at: string | null;
+          started_at: string | null;
+          picked_up_at: string | null;
+          completed_at: string | null;
+          pickup_otp: string | null;
+          /** Service role only (column grant excludes it). */
+          driver_token: string | null;
+          driver_token_expires_at: string | null;
+          rating: number | null;
+          rating_comment: string | null;
+          rated_at: string | null;
+        } & Timestamps
+      >;
+      ride_events: Simple<{
+        id: string;
+        ride_id: string;
+        status: Database["public"]["Enums"]["ride_status"];
+        note: string | null;
+        actor: string | null;
+        source: "admin" | "driver" | "system" | "customer";
+        created_at: string;
+      }>;
     };
     Views: { [_ in never]: never };
     Functions: {
@@ -909,6 +1020,27 @@ export type Database = {
         };
         Returns: Database["public"]["Tables"]["trips"]["Row"];
       };
+      can_read_ride: { Args: { p_ride_id: string }; Returns: boolean };
+      create_ride_booking: { Args: { p_booking: Json; p_items: Json; p_ride: Json }; Returns: Json };
+      assign_ride: {
+        Args: { p_ride_id: string; p_driver_id: string; p_vehicle_id: string | null; p_actor: string };
+        Returns: Database["public"]["Tables"]["ride_requests"]["Row"];
+      };
+      set_ride_status: {
+        Args: {
+          p_ride_id: string;
+          p_status: Database["public"]["Enums"]["ride_status"];
+          p_actor: string | null;
+          p_source: "admin" | "driver" | "system";
+          p_note?: string | null;
+          p_otp?: string | null;
+        };
+        Returns: Database["public"]["Tables"]["ride_requests"]["Row"];
+      };
+      rate_ride: {
+        Args: { p_ride_id: string; p_user: string; p_rating: number; p_comment: string };
+        Returns: Database["public"]["Tables"]["ride_requests"]["Row"];
+      };
     };
     Enums: {
       service_kind: "bookable" | "enquiry";
@@ -959,6 +1091,17 @@ export type Database = {
       trip_status:
         | "awaiting_payment"
         | "unassigned"
+        | "assigned"
+        | "en_route"
+        | "arrived"
+        | "picked_up"
+        | "completed"
+        | "cancelled"
+        | "no_show";
+      ride_mode: "point_to_point" | "hourly";
+      ride_status:
+        | "awaiting_payment"
+        | "requested"
         | "assigned"
         | "en_route"
         | "arrived"

@@ -175,16 +175,25 @@ export async function listDrivers() {
   return data;
 }
 
-export async function listVehicles() {
+/** A cab vehicle: has a car category and a registration (ride vehicles are listed under Rides). */
+export type CabVehicle = Tables<"vehicles"> & { category_id: string; registration_no: string };
+
+export const isCabVehicle = <V extends { category_id: string | null; registration_no: string | null }>(
+  v: V,
+): v is V & { category_id: string; registration_no: string } =>
+  v.category_id !== null && v.registration_no !== null;
+
+export async function listVehicles(): Promise<CabVehicle[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("vehicles")
     .select("*")
     .is("deleted_at", null)
+    .not("category_id", "is", null)
     .order("is_active", { ascending: false })
     .order("registration_no");
   if (error) fail("vehicles", error);
-  return data;
+  return data.filter(isCabVehicle);
 }
 
 /** A driver with the email of their linked login, if any (profiles are read with the service role). */
@@ -211,7 +220,7 @@ export async function getDriver(id: string) {
   return { driver: data, loginEmail };
 }
 
-export async function getVehicle(id: string) {
+export async function getVehicle(id: string): Promise<CabVehicle | null> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("vehicles")
@@ -220,7 +229,7 @@ export async function getVehicle(id: string) {
     .is("deleted_at", null)
     .maybeSingle();
   if (error) fail("vehicle", error);
-  return data;
+  return data && isCabVehicle(data) ? data : null;
 }
 
 export type FleetDocument = Tables<"fleet_documents"> & { url: string | null };
@@ -382,6 +391,7 @@ export async function getAssignOptions() {
       .select("id, category_id, model_id, registration_no, colour, default_driver_id")
       .eq("is_active", true)
       .is("deleted_at", null)
+      .not("category_id", "is", null)
       .order("registration_no"),
     supabase.from("cab_models").select("id, name"),
   ]);
@@ -391,7 +401,7 @@ export async function getAssignOptions() {
   const modelName = new Map(models.data.map((m) => [m.id, m.name]));
   return {
     drivers: drivers.data,
-    vehicles: vehicles.data.map((v) => ({
+    vehicles: vehicles.data.filter(isCabVehicle).map((v) => ({
       ...v,
       label: [v.registration_no, v.model_id ? modelName.get(v.model_id) : null, v.colour]
         .filter(Boolean)

@@ -225,3 +225,14 @@ values ('{"en": "Demo · Weekend outstation peak", "hi": "डेमो · सप
 insert into public.coupons (code, description, discount_type, value, max_discount_paise, min_order_paise, services, is_public, per_user_limit)
 values ('DEMOCAB5', '{"en": "Demo · 5% off cabs (up to ₹300)", "hi": "डेमो · कैब पर 5% छूट (₹300 तक)"}', 'percent', 500, 30000, 50000, '{cab}', true, 2)
 on conflict (code) do nothing;
+
+-- Phase 6: demo ride vehicles for the shared demo drivers — remove before launch.
+insert into public.vehicles (ride_vehicle_type_id, registration_no, colour, year, fuel, default_driver_id, notes)
+select t.id, v.reg, v.colour, v.year, v.fuel::public.fuel_type, d.id, 'Demo vehicle'
+  from (values
+    ('bike', 'DEMO UP85 3003', 'Black', 2022, 'petrol', 'Demo Driver Ramesh'),
+    ('e-rickshaw', 'DEMO UP85 4004', 'Green', 2024, 'electric', 'Demo Driver Suresh')
+  ) as v(type_key, reg, colour, year, fuel, driver_name)
+  join public.ride_vehicle_types t on t.key = v.type_key
+  join public.drivers d on d.full_name = v.driver_name
+on conflict do nothing;

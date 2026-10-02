@@ -6,6 +6,7 @@ import { BookingStatusBadge } from "@/components/booking/status-badge";
 import { formatStayDate } from "@/components/booking/trip-card";
 import { TripActions } from "@/components/booking/trip-actions";
 import { CabTripDetail } from "@/components/cabs/cab-trip-detail";
+import { CUSTOMER_RIDE_COLUMNS, RideTripDetail } from "@/components/rides/ride-trip-detail";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { requireUser } from "@/lib/auth/guards";
@@ -47,6 +48,23 @@ export default async function TripPage({ params }: Props) {
       <CabTripDetail
         data={trip}
         trip={cabTrip}
+        locale={locale}
+        cancellationEnabled={settings.customer_cancellation_enabled}
+      />
+    );
+  }
+  if (trip.booking.service === "ride") {
+    const supabase = await createClient();
+    // Explicit columns: the driver link token is not readable by customers.
+    const { data: ride } = await supabase
+      .from("ride_requests")
+      .select(CUSTOMER_RIDE_COLUMNS)
+      .eq("booking_id", trip.booking.id)
+      .maybeSingle();
+    return (
+      <RideTripDetail
+        data={trip}
+        ride={ride}
         locale={locale}
         cancellationEnabled={settings.customer_cancellation_enabled}
       />

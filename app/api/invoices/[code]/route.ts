@@ -102,9 +102,9 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
           },
     placeOfSupply: place,
     stay: {
-      // Cab invoices show the trip and pickup date in place of the hotel.
+      // Cab and ride invoices show the trip and pickup date in place of the hotel.
       hotel: snapshot.trip?.label
-        ? `Cab: ${snapshot.trip.label}`
+        ? `${booking.service === "ride" ? "Ride" : "Cab"}: ${snapshot.trip.label}`
         : [snapshot.hotel?.name?.en, snapshot.hotel?.address].filter(Boolean).join(", "),
       checkIn: booking.check_in,
       checkOut: booking.check_out,

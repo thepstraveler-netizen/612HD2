@@ -160,7 +160,27 @@ This creates the user with a confirmed email (or promotes an existing one) and g
 - [ ] Cancel a paid trip from My Trips more than 24 h before pickup: full refund in Razorpay; the trip disappears from the dispatch board.
 - [ ] Drivers / Vehicles lists flag documents expiring within 30 days.
 
+## 11. Phase 6 setup and smoke test
+
+### Setup
+
+1. Apply the two Phase 6 migrations (`20261006000100_rides.sql`, `20261006000200_rides_baseline.sql`). On the live project they are already applied except the two header link updates at the end of the baseline file, which are run when this phase merges. **Check every landmark on a map and every fare in Admin → Rides before going live**; coordinates are approximate and fares are starting points.
+2. Admin → Settings → Local rides: pay-the-driver on or off, booking window, longest ride, night hours, pickup OTP, cancellation refunds. Ask your CA to confirm GST per vehicle type (Admin → Rides → Vehicle types) and the SAC.
+3. Admin → Rides → Vehicles: add bikes and rickshaws; drivers are shared with cabs (Admin → Cabs → Drivers).
+4. Admin → Settings → Feature flags → turn on `booking.rides`. Razorpay is optional: without keys only Pay the driver is offered.
+
+### Smoke test
+
+- [ ] `/rides`: pick Bike, ISKCON Temple → Banke Bihari Temple, Ride now. Each vehicle shows a fare incl. GST; a 3-person search marks the bike too small.
+- [ ] "Use my location" in the browser fills the pickup; a pickup outside the four towns says rides aren't available there and offers cabs.
+- [ ] By the hour: 3 hours from Prem Mandir prices bike, e-rickshaw, rickshaw and car.
+- [ ] Review, choose Pay the driver, book: My Trips shows the ride as confirmed with a 4-digit OTP.
+- [ ] Admin → Rides: the ride is under New requests within 20 seconds. Assign a demo driver and the demo bike; My Trips shows the driver.
+- [ ] Open the driver link on a phone (signed out): Start → Arrived → Picked up (wrong OTP refused) → Complete. The booking becomes Completed and My Trips offers a rating; rate it once.
+- [ ] Cancel another pay-the-driver ride from My Trips before the driver starts: it leaves the board.
+- [ ] With Razorpay keys: Pay online with test card `4111 1111 1111 1111`; the ride appears on the board after payment.
+
 ## Later phases (prepare when you reach them)
 
-- **Phase 6:** Google Maps key (`NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`), restricted to your domains, for live ride distances (cabs work without it, see D-046).
+- **Optional:** a Google Maps key (`NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`), restricted to your domains, for road distances; cabs and rides work without it (D-046, D-053).
 - **Phase 11:** SMS (MSG91) and WhatsApp keys, Sentry DSN, Upstash Redis, Cloudflare Turnstile keys.

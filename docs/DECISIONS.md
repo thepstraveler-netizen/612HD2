@@ -209,3 +209,31 @@ Drivers don't need an account: every assignment issues a fresh 48-character link
 ### D-051 · The customer sees driver and vehicle details copied onto the trip
 
 Driver name and phone, vehicle model and registration are copied onto the trip at assignment, so the customer can read them under RLS without access to the fleet tables (which hold licences, documents and other trips). Cancellation refund rules for cabs come from settings and are frozen into the booking snapshot at booking time.
+
+### D-052 · Local rides are their own service, not a cab trip type
+
+Bike, e-rickshaw, cycle rickshaw and in-town car rides are short, cheap and often "right now", while cabs are planned trips paid in advance. Rides get their own catalog (`ride_vehicle_types`, `ride_zones`, `ride_points`, `ride_fare_rules`) and requests (`ride_requests`, `ride_events`), booked as `bookings` rows with service `ride`. Drivers are shared with cabs; a vehicle is either a cab (car category) or a ride vehicle (ride type), never both, and a cycle rickshaw may have no registration.
+
+### D-053 · Zones are circles and pickups are landmarks or the browser's location
+
+Each town (Vrindavan, Mathura, Govardhan, Barsana) is a centre and radius, so no GIS extension or maps key is needed. Pickup and drop are a landmark from the admin list (temples, ghats, stations) or "my location" from the browser; a free location belongs to the nearest zone whose circle contains it, and anything outside every zone is refused. Fares follow the pickup's zone. Distance is straight line × a road factor (default 1.3), like cabs (D-046), and rides longer than `max_ride_km` (default 40) are sent to cabs. Starter coordinates are approximate and must be checked on a map before launch.
+
+### D-054 · Ride fares: per zone × vehicle type × mode
+
+Point to point: `max(min fare, base + max(0, km − included km) × per km)`. Hourly: `hourly rate × max(min hours, hours)` with `km per hour × hours` included. Extra km and waiting beyond the free minutes are shown as terms and settled with the driver, not charged at booking. A night surcharge (`night_bps`, e.g. +25%) applies to the fare when pickup is in the night window. Fares round to whole rupees. Coupons apply to fare and night charge, not to the convenience fee.
+
+### D-055 · GST on rides is set per vehicle type
+
+GST lives on each ride vehicle type (`tax_bps`) instead of one global rate: the starter data charges 5% on bikes and cars and 0% on e-rickshaws and cycle rickshaws (non-AC contract carriage is commonly exempt). This is a starting point; the business's CA should confirm the rates and SAC (`rides.defaults.sac`, default 996601), which are editable without code.
+
+### D-056 · Rides can be paid to the driver, and then need no gateway
+
+Customers choose Pay the driver (stored as `payment_mode = pay_at_hotel`, nothing online) or Pay online (the whole fare through Razorpay, with the convenience fee). A pay-the-driver ride is confirmed at once and goes straight to the live requests board, so rides can launch before Razorpay keys exist; `rides.defaults.pay_later_enabled` switches this off. Part payment is not offered for rides. Vehicle types marked "on request" (cycle rickshaw by default) are pay-the-driver only, so nobody prepays for a ride staff may still decline.
+
+### D-057 · Ride now picks up after the lead time
+
+"Ride now" sets pickup to now + `min_lead_minutes` (default 10), rounded up to 5 minutes; scheduled rides must be at least that far ahead and within `max_advance_days` (default 7). Dispatch, driver links and the pickup OTP work as for cabs (D-050): every assignment issues a fresh `/driver/ride/<token>` link valid until a day after pickup, never readable through the API.
+
+### D-058 · Customers rate a completed ride once
+
+After a ride is completed the customer can rate it 1 to 5 with an optional comment from My Trips, once (`rate_ride`). Ratings are visible to ride staff on the ride; driver averages and public reviews come with the reviews phase.

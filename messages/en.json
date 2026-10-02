@@ -241,6 +241,283 @@
       "notifications": "Notifications",
       "settings": "Settings",
       "reports": "Reports & Exports"
+    },
+    "rides": {
+      "title": "Local rides",
+      "nav": {
+        "board": "Live requests",
+        "types": "Vehicle types",
+        "zones": "Zones",
+        "points": "Landmarks",
+        "fares": "Fares",
+        "vehicles": "Vehicles"
+      },
+      "status": {
+        "awaiting_payment": "Awaiting payment",
+        "requested": "New request",
+        "assigned": "Assigned",
+        "en_route": "On the way",
+        "arrived": "At pickup",
+        "picked_up": "Passenger on board",
+        "completed": "Completed",
+        "cancelled": "Cancelled",
+        "no_show": "No-show"
+      },
+      "modes": {
+        "point_to_point": "Point to point",
+        "hourly": "Hourly"
+      },
+      "fields": {
+        "name": "Name",
+        "description": "Description",
+        "key": "Key",
+        "slug": "Slug",
+        "slugHelp": "Lowercase letters, numbers and dashes; used in links.",
+        "sortOrder": "Order",
+        "active": "Active",
+        "popular": "Popular",
+        "lat": "Latitude",
+        "lng": "Longitude",
+        "coords": "Coordinates",
+        "coordsHelp": "Right-click the spot in Google Maps to copy its latitude and longitude.",
+        "notes": "Notes"
+      },
+      "types": {
+        "title": "Vehicle types",
+        "lead": "Bike, e-rickshaw, rickshaw and car: what customers choose from, with seats, GST and whether a booking is confirmed at once.",
+        "new": "New vehicle type",
+        "newTitle": "New vehicle type",
+        "confirmDelete": "Delete this vehicle type and its fares? Types with rides or vehicles cannot be deleted; switch them off instead.",
+        "sections": {
+          "type": "Vehicle type"
+        },
+        "service": "Service page",
+        "icon": "Icon",
+        "seats": "Seats",
+        "gst": "GST (%)",
+        "gstHelp": "GST on the fare; often 0% for non-AC rides.",
+        "instantBook": "Instant booking",
+        "instantBookHelp": "On: confirmed at once and sent to the board. Off: staff confirm each request first.",
+        "instant": "Instant",
+        "onRequest": "On request",
+        "booking": "Booking"
+      },
+      "zones": {
+        "title": "Zones",
+        "lead": "Towns served, each a circle around a centre. A pickup belongs to the nearest zone that contains it, and each zone has its own fares.",
+        "new": "New zone",
+        "newTitle": "New zone",
+        "confirmDelete": "Delete this zone with its landmarks and fares? Zones with rides cannot be deleted; switch them off instead.",
+        "sections": {
+          "zone": "Zone"
+        },
+        "radius": "Radius (km)",
+        "radiusHelp": "Pickups within this distance of the centre belong to the zone.",
+        "centre": "Centre",
+        "points": "Landmarks"
+      },
+      "points": {
+        "title": "Landmarks",
+        "lead": "Temples, ghats, stations and markets offered as pickup and drop points.",
+        "new": "New landmark",
+        "newTitle": "New landmark",
+        "confirmDelete": "Delete this landmark? Past rides keep their address.",
+        "sections": {
+          "point": "Landmark"
+        },
+        "zone": "Zone",
+        "kind": "Kind",
+        "kinds": {
+          "temple": "Temple",
+          "ghat": "Ghat",
+          "station": "Station",
+          "market": "Market",
+          "hotel": "Hotel",
+          "landmark": "Landmark"
+        },
+        "allZones": "All zones",
+        "filter": "Show",
+        "noZones": "Add a zone first; landmarks belong to a zone."
+      },
+      "vehicles": {
+        "title": "Ride vehicles",
+        "lead": "Bikes, rickshaws and cars used for local rides. Drivers are shared with cabs.",
+        "new": "New vehicle",
+        "newTitle": "New ride vehicle",
+        "confirmDelete": "Remove this vehicle? Past rides keep their details.",
+        "sections": {
+          "vehicle": "Vehicle",
+          "papers": "Papers",
+          "other": "Other"
+        },
+        "type": "Vehicle type",
+        "registration": "Registration",
+        "registrationHelp": "Optional: a cycle rickshaw may have none.",
+        "colour": "Colour",
+        "fuel": "Fuel",
+        "defaultDriver": "Usual driver",
+        "noDriver": "No usual driver",
+        "unregistered": "No registration"
+      },
+      "fares": {
+        "title": "Ride fares",
+        "lead": "Per zone: a fare for each vehicle type, point to point and hourly. Amounts in rupees.",
+        "zone": "Zone",
+        "noSetup": "Add at least one zone and one vehicle type first.",
+        "vehicleType": "Vehicle type",
+        "mode": "Mode",
+        "fare": "Fare",
+        "base": "Base ₹",
+        "includedKm": "Included km",
+        "perKm": "Per km ₹",
+        "minFare": "Minimum ₹",
+        "hourly": "Per hour ₹",
+        "minHours": "Min hours",
+        "kmPerHour": "Km per hour",
+        "extraKm": "Extra km ₹",
+        "freeWaiting": "Free wait (min)",
+        "waitingPerMin": "Wait ₹/min",
+        "night": "Night +%",
+        "formula": {
+          "point_to_point": "Fare = the larger of the minimum and base + (km beyond the included km) × per km. Night rides add the night %.",
+          "hourly": "Fare = per hour × hours (at least the minimum hours), with km per hour included; extra km and waiting are paid to the driver."
+        },
+        "emptyHelp": "Leave the base, per km and minimum (or the hourly rate) empty for a vehicle type that is not offered in this zone; its fare is removed on save."
+      },
+      "board": {
+        "lead": "Ride requests by pickup time (India time), refreshed every 20 seconds. Open a ride to assign a driver and follow it.",
+        "empty": "No rides to show. New ride bookings appear here.",
+        "emptyGroup": "Nothing here.",
+        "groups": {
+          "requested": "New requests",
+          "active": "Under way",
+          "finished": "Recently finished"
+        },
+        "late": "Pickup time has passed",
+        "ride": "Ride",
+        "customer": "Customer",
+        "payment": "Payment",
+        "driver": "Driver",
+        "noDriver": "Not assigned yet",
+        "passengers": "{count, plural, one {# passenger} other {# passengers}}",
+        "hours": "{count, plural, one {# hr} other {# hrs}}",
+        "payDriver": "Pay driver · {amount} due",
+        "paidOnline": "Paid online",
+        "onlineUnpaid": "Online · not paid",
+        "filters": {
+          "status": "Status",
+          "default": "Open and last 24 hours",
+          "groups": "Groups",
+          "statuses": "Statuses",
+          "date": "Pickup date",
+          "apply": "Show",
+          "clear": "Clear"
+        }
+      },
+      "ride": {
+        "title": "Ride",
+        "back": "Live requests",
+        "openBooking": "Open booking",
+        "ride": "Ride",
+        "route": "Route",
+        "zone": "Zone",
+        "pickupAt": "Pickup",
+        "pickupAddress": "Pickup",
+        "hours": "Hours",
+        "dropAddress": "Drop",
+        "passengers": "Passengers",
+        "distance": "Distance",
+        "crew": "Customer, payment and driver",
+        "customer": "Customer",
+        "payment": "Payment",
+        "total": "Total",
+        "driver": "Driver",
+        "vehicle": "Vehicle",
+        "otp": "Pickup OTP",
+        "assignedAt": "Assigned",
+        "startedAt": "Started",
+        "pickedUpAt": "Picked up",
+        "completedAt": "Completed",
+        "rating": "Customer rating",
+        "ratingLabel": "Rated {rating} out of 5",
+        "timeline": "Status history",
+        "noEvents": "No status changes yet.",
+        "sources": {
+          "admin": "by staff",
+          "driver": "by the driver",
+          "system": "automatic",
+          "customer": "by the customer"
+        }
+      },
+      "actions": {
+        "assign": "Assign driver",
+        "reassign": "Reassign",
+        "assignTitle": "Assign a driver",
+        "reassignTitle": "Change driver or vehicle",
+        "assignLead": "Choose the driver; the vehicle is optional. Vehicles of the booked type are listed first.",
+        "reassignHelp": "The previous driver's ride link stops working and a new link is created.",
+        "driver": "Driver",
+        "vehicle": "Vehicle (optional)",
+        "pickDriver": "Choose a driver",
+        "pickDriverFirst": "Choose a driver.",
+        "noDrivers": "No active drivers. Add one under Cabs → Drivers.",
+        "noVehicle": "No specific vehicle",
+        "otherType": "other type",
+        "vehicleHelp": "Any ride vehicle can be chosen; the booked type is shown first.",
+        "assignedToast": "Driver assigned.",
+        "steps": {
+          "en_route": "On the way",
+          "arrived": "Arrived",
+          "picked_up": "Picked up",
+          "completed": "Complete ride",
+          "no_show": "No-show"
+        },
+        "confirmStep": "Mark this ride as “{status}”?",
+        "stepDone": "Ride marked as “{status}”.",
+        "showLink": "Driver link",
+        "driverLink": "Driver ride link",
+        "linkCopied": "Driver link copied.",
+        "copy": "Copy",
+        "whatsapp": "WhatsApp",
+        "whatsappText": "Ride {code}: open this link for the pickup details and to update the ride. {link}"
+      },
+      "errors": {
+        "driverUnavailable": "That driver is not active any more. Pick another driver.",
+        "vehicleUnavailable": "That vehicle is not active any more. Pick another vehicle.",
+        "invalidTransition": "The ride has moved on in the meantime. The page has been refreshed.",
+        "otpMismatch": "The pickup OTP does not match.",
+        "notFound": "This item no longer exists.",
+        "inUse": "It is still in use, so it cannot be deleted. Switch it off instead.",
+        "actionFailed": "Something went wrong. Please try again.",
+        "noDriverLink": "Assign a driver first; the link is created then.",
+        "driverLinkExpired": "This driver link has expired. Reassign the driver to issue a new one."
+      },
+      "settings": {
+        "title": "Local rides",
+        "lead": "Distance estimates, booking window, night hours, paying the driver and cancellation refunds for local rides.",
+        "roadFactor": "Road distance factor",
+        "roadFactorHelp": "Straight-line distance × this ≈ road distance in town (1–3).",
+        "avgSpeed": "Average speed (km/h)",
+        "maxRideKm": "Longest ride (km)",
+        "maxRideKmHelp": "Longer trips are sent to cabs.",
+        "sac": "SAC code",
+        "leadMinutes": "Minimum notice (minutes)",
+        "leadHelp": "“Ride now” picks up this many minutes from now; later rides must be at least this far ahead.",
+        "holdMinutes": "Payment window (minutes)",
+        "holdHelp": "An unpaid online booking is released after this.",
+        "maxAdvanceDays": "Book up to (days ahead)",
+        "maxHours": "Longest hourly hire (hours)",
+        "nightStart": "Night fare from",
+        "nightEnd": "Night fare until",
+        "requireOtp": "Driver needs the customer's OTP at pickup",
+        "payLater": "Customers may pay the driver instead of paying online",
+        "cancellation": "Cancellation refunds",
+        "cancellationHelp": "Refund share by notice before pickup; the rule with the longest notice that applies is used.",
+        "hoursBefore": "Hours before pickup",
+        "refundPercent": "Refund (%)",
+        "addRule": "Add rule",
+        "removeRule": "Remove rule"
+      }
     }
   },
   "vendor": {
@@ -304,7 +581,12 @@
     "submit": "Search",
     "submitEnquiry": "Send enquiry",
     "rooms": "Rooms",
-    "adults": "Adults"
+    "adults": "Adults",
+    "vehicleCycleRickshaw": "Rickshaw",
+    "rideMode": "Ride type",
+    "rideDrop": "Drop to a place",
+    "rideHourly": "By the hour",
+    "submitRide": "See fares"
   },
   "offers": {
     "tabs": {
@@ -1109,7 +1391,8 @@
     "cancelConfirm": "Yes, cancel",
     "keepBooking": "Keep booking",
     "cancelBooking": "Cancel booking",
-    "findCabs": "Book a cab"
+    "findCabs": "Book a cab",
+    "findRides": "Book a local ride"
   },
   "bookingsAdmin": {
     "title": "Bookings & orders",
@@ -2330,5 +2613,359 @@
     "cashTitle": "Cash to collect",
     "cashHint": "Collect this from the customer at the end of the trip, plus any tolls or extras.",
     "nothingToCollect": "Nothing to collect: the fare is paid in full (only tolls or extras, if any)."
+  },
+  "rides": {
+    "landing": {
+      "metaTitle": "Local rides in Vrindavan, Mathura, Govardhan & Barsana",
+      "metaDescription": "Book a bike, e-rickshaw, rickshaw or car for short rides between temples, ghats, stations and hotels in Braj. Clear fares, pickup OTP, pay the driver or online.",
+      "eyebrow": "Vrindavan · Mathura · Govardhan · Barsana",
+      "title": "Quick local rides around Braj",
+      "subtitle": "A bike, e-rickshaw, rickshaw or car from your hotel, temple or station. See the fare before you book.",
+      "howTitle": "How it works",
+      "steps": {
+        "search": {
+          "title": "Pick your ride",
+          "body": "Choose the vehicle, pickup and drop, or book by the hour."
+        },
+        "book": {
+          "title": "Book in a minute",
+          "body": "Pay the driver at the end, or pay online if you prefer."
+        },
+        "otp": {
+          "title": "Share your OTP",
+          "body": "Give the 4-digit code to your driver only when you get on."
+        },
+        "pay": {
+          "title": "Ride and pay",
+          "body": "The fare you saw is the fare you pay, plus any waiting shown upfront."
+        }
+      },
+      "areas": "Rides within Vrindavan, Mathura, Govardhan and Barsana. For trips between towns or farther, book a cab."
+    },
+    "closed": {
+      "title": "Online ride booking opens soon",
+      "body": "You can check fares below. To book now, call or message us on WhatsApp and we'll send a driver.",
+      "whatsappText": "Namaste, I'd like to book a local ride.",
+      "whatsapp": "WhatsApp us",
+      "call": "Call us"
+    },
+    "search": {
+      "label": "Find a ride",
+      "vehicle": "Vehicle",
+      "seats": "{count, plural, one {# seat} other {# seats}}",
+      "onRequest": "Booked on request: we confirm a driver after you book.",
+      "noVehicles": "Ride vehicles aren't listed yet. Call or message us and we'll arrange one.",
+      "modeLabel": "Ride type",
+      "modes": {
+        "point_to_point": "Drop to a place",
+        "hourly": "By the hour"
+      },
+      "from": "Pickup",
+      "to": "Drop",
+      "fromPlaceholder": "Temple, ghat, station or hotel area",
+      "toPlaceholder": "Where to?",
+      "placePlaceholder": "Search a landmark",
+      "swap": "Swap pickup and drop",
+      "hours": "Hours",
+      "hoursOption": "{count, plural, one {# hour} other {# hours}}",
+      "useMyLocation": "Use my location",
+      "dropMyLocation": "Drop at my location",
+      "locating": "Finding you…",
+      "myLocation": "My location",
+      "geo": {
+        "denied": "Location access is blocked. Allow it in your browser settings, or pick a landmark from the list.",
+        "unavailable": "We couldn't find your location. Please pick a landmark from the list.",
+        "timeout": "Finding your location took too long. Try again or pick a landmark.",
+        "unsupported": "This browser can't share your location. Please pick a landmark from the list."
+      },
+      "when": "When",
+      "now": "Ride now",
+      "schedule": "Schedule",
+      "pickupAt": "Pickup date and time",
+      "nowHint": "A driver will be on the way within minutes of booking.",
+      "passengers": "People",
+      "istNote": "Times are India time (IST).",
+      "missing": {
+        "from": "Please choose where to be picked up.",
+        "to": "Please choose where you're going.",
+        "same": "Pickup and drop are the same place.",
+        "at": "Please choose a pickup date and time."
+      },
+      "submit": "See fares",
+      "clearPlace": "Clear {place}",
+      "noPlaces": "No landmark matches. Try another name or use your location.",
+      "popular": "Popular"
+    },
+    "results": {
+      "heading": "Fares for your ride",
+      "listLabel": "Vehicles for this ride",
+      "tryCabs": "Book a cab instead",
+      "hourlyTitle": "{hours} hr ride from {from}",
+      "pickupNow": "Now (about {time})",
+      "paxCount": "{count, plural, one {# person} other {# people}}",
+      "distanceTime": "About {km} km · {hours} h {minutes} min",
+      "hoursLine": "{hours} hr booking",
+      "estimateNote": "Distance and time are estimates; the fare covers the distance shown.",
+      "noneTitle": "No vehicles for this ride yet",
+      "noneBody": "None of our ride vehicles serve this area or ride type online. Call or message us and we'll help.",
+      "whatsappText": "Namaste, I'd like a {vehicle}: {ride}.",
+      "seats": "{count, plural, one {# seat} other {# seats}}",
+      "includedKm": "{km} km included",
+      "freeWaiting": "{minutes} min free waiting",
+      "nightIncluded": "Night charge included",
+      "onRequest": "On request: confirmed after booking",
+      "tooSmall": "Too small for {count, plural, one {# person} other {# people}}",
+      "from": "From",
+      "inclGst": "incl. GST",
+      "book": "Book",
+      "bookAria": "Book a {vehicle}",
+      "enquire": "WhatsApp to book",
+      "call": "Call",
+      "callAria": "Call us to book"
+    },
+    "errors": {
+      "incomplete": {
+        "title": "Tell us about your ride",
+        "body": "Choose a pickup and a drop (or hours), then see fares."
+      },
+      "unknown_point": {
+        "title": "We don't know that place",
+        "body": "Pick a landmark from the list, or use your location."
+      },
+      "out_of_area": {
+        "title": "That pickup is outside our ride area",
+        "body": "Local rides run inside Vrindavan, Mathura, Govardhan and Barsana. For other places, book a cab."
+      },
+      "same_place": {
+        "title": "Pickup and drop are too close",
+        "body": "Choose a drop a little farther away, or book by the hour."
+      },
+      "too_long": {
+        "title": "That ride is too long",
+        "body": "Local rides go up to {km} km. Book a cab for longer trips."
+      },
+      "too_soon": {
+        "title": "That pickup is too soon",
+        "body": "Scheduled rides need at least {minutes} min notice. Choose Ride now instead."
+      },
+      "too_far": {
+        "title": "That date is too far ahead",
+        "body": "Rides can be booked up to {days} days in advance."
+      },
+      "too_many_hours": {
+        "title": "Too many hours",
+        "body": "Hourly rides can be booked for up to {hours} hours."
+      },
+      "not_found": {
+        "title": "This vehicle isn't available",
+        "body": "It may not serve this ride any more. Please choose another vehicle."
+      },
+      "booking_closed": {
+        "title": "Online ride booking opens soon",
+        "body": "Message us on WhatsApp or call and we'll book your ride."
+      },
+      "too_small": {
+        "title": "Not enough seats",
+        "body": "This vehicle can't seat everyone. Please choose a bigger one."
+      },
+      "invalid": {
+        "title": "Something doesn't look right",
+        "body": "Please go back and search for your ride again."
+      }
+    },
+    "terms": {
+      "km": "Up to {km} km included",
+      "hours": "{hours} hr with up to {km} km included",
+      "extraKm": "Extra distance: {rate} per km",
+      "waitingFree": "First {minutes} min of waiting free",
+      "waitingCharge": "Waiting after that: {rate} per min",
+      "night": "Includes the night charge for this pickup time"
+    },
+    "cancellation": {
+      "full": "Full refund if you cancel {hours} h or more before pickup",
+      "partial": "{percent}% refund if you cancel {hours} h or more before pickup",
+      "untilPickup": "{percent}% refund if you cancel any time before pickup",
+      "none": "No refund for later cancellations or no-shows"
+    },
+    "lines": {
+      "fare": "Ride fare",
+      "night": "Night charge",
+      "fee": "Convenience fee",
+      "other": "Other charges"
+    },
+    "status": {
+      "awaiting_payment": "Awaiting payment",
+      "requested": "Finding a driver",
+      "assigned": "Driver assigned",
+      "en_route": "On the way",
+      "arrived": "Arrived",
+      "picked_up": "On ride",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "no_show": "No-show"
+    },
+    "trip": {
+      "banner": {
+        "awaiting_payment": "Waiting for payment",
+        "requested": "Your ride is booked",
+        "assigned": "Your driver is assigned",
+        "en_route": "Your driver is on the way",
+        "arrived": "Your driver has arrived",
+        "picked_up": "Enjoy your ride",
+        "completed": "Hope you had a good ride",
+        "cancelled": "This ride was cancelled",
+        "no_show": "The ride was marked as a no-show"
+      },
+      "onRequestHint": "We're confirming a driver for you and will message you shortly.",
+      "balanceToDriver": "Pay {amount} to the driver at the end of the ride.",
+      "pendingHint": "Your ride is held until {time}. Complete the payment to confirm.",
+      "otpTitle": "Your pickup OTP",
+      "otpHint": "Share this code with your driver only when you get on.",
+      "otpAria": "Pickup OTP {otp}",
+      "driverTitle": "Your driver",
+      "callDriver": "Call driver",
+      "pickup": "Pickup",
+      "drop": "Drop",
+      "vehicle": "Vehicle",
+      "length": "Ride",
+      "km": "About {km} km",
+      "cancel": "Cancel ride",
+      "cancelTitle": "Cancel this ride?",
+      "cancelPayLater": "Nothing was paid online, so there's nothing to refund.",
+      "cancelConfirm": "Yes, cancel ride",
+      "keep": "Keep ride",
+      "cancelled": "Ride cancelled.",
+      "holdEnded": "The hold on this ride has ended. Please book again."
+    },
+    "rating": {
+      "title": "How was your ride?",
+      "starLabel": "{count, plural, one {# star} other {# stars}}",
+      "comment": "Anything to tell us? (optional)",
+      "submit": "Send rating",
+      "thanks": "Thank you for rating your ride!",
+      "given": "Your rating",
+      "starsAria": "Rated {count} out of 5",
+      "errors": {
+        "signin": "Please sign in again.",
+        "invalid": "Please choose 1 to 5 stars.",
+        "not_found": "We couldn't find this ride.",
+        "already_rated": "You've already rated this ride.",
+        "unknown": "Something went wrong. Please try again."
+      }
+    },
+    "serviceCta": {
+      "title": "Book a ride now",
+      "body": "See the fare for your pickup and drop, then book in a minute.",
+      "button": "Book a ride"
+    },
+    "driver": {
+      "metaTitle": "Ride details",
+      "header": "Driver: ride details",
+      "expiredTitle": "This ride link has expired",
+      "expiredBody": "The link may be old or the ride was given to another driver. Please call the office.",
+      "callOffice": "Call the office",
+      "booking": "Booking {code}",
+      "pickupAt": "Pickup at",
+      "hourly": "Booked for {hours} hr",
+      "finished": {
+        "completed": "Ride completed. Thank you!",
+        "no_show": "Marked as customer no-show.",
+        "cancelled": "This ride was cancelled."
+      },
+      "waiting": "Nothing to do yet. The office will update this ride.",
+      "customer": "Customer",
+      "callCustomer": "Call {name}",
+      "call": "Call",
+      "passengers": "{count, plural, one {# person} other {# people}}",
+      "where": "Where",
+      "pickup": "Pickup",
+      "openPickupMap": "Pickup in Google Maps",
+      "drop": "Drop",
+      "dropOnMap": "See the map for the drop point",
+      "openDropMap": "Drop in Google Maps",
+      "km": "{km} km",
+      "cashTitle": "Amount to collect",
+      "cashHint": "Collect this at the end of the ride, plus any waiting or extra distance.",
+      "nothingToCollect": "Nothing to collect: the fare is paid online (only waiting or extra distance, if any).",
+      "nextStep": "Next step",
+      "otpLabel": "Customer's 4-digit OTP",
+      "otpHint": "Ask the customer for the OTP shown on their booking.",
+      "actions": {
+        "en_route": "I'm on my way",
+        "arrived": "I have arrived",
+        "picked_up": "Customer picked up",
+        "completed": "Complete ride",
+        "no_show": "Customer no-show"
+      },
+      "done": {
+        "en_route": "Marked on the way. Ride safely!",
+        "arrived": "Customer told you've arrived.",
+        "picked_up": "Pickup confirmed.",
+        "completed": "Ride completed.",
+        "no_show": "Marked as no-show."
+      },
+      "errors": {
+        "not_found": "This link has expired. Please call the office.",
+        "invalid": "Please check the OTP and try again.",
+        "otp_mismatch": "That OTP doesn't match. Ask the customer again.",
+        "invalid_transition": "This ride has moved on. The page has been refreshed.",
+        "unknown": "Something went wrong. Please try again or call the office."
+      },
+      "noShowConfirm": "Mark the customer as a no-show? Do this only after waiting and trying to call.",
+      "back": "Go back"
+    },
+    "review": {
+      "title": "Review your ride",
+      "backToRides": "Back to fares",
+      "whatsapp": "Message us on WhatsApp",
+      "onRequest": "Booked on request: we'll confirm a driver shortly after you book.",
+      "pickup": "Pickup",
+      "passengers": "People",
+      "route": "Ride",
+      "termsTitle": "What your fare covers",
+      "policyTitle": "Cancellation policy",
+      "policyNote": "Refunds of online payments go back to your original payment method within 5–7 working days.",
+      "payDriver": "Pay the driver",
+      "couponErrors": {
+        "not_found": "We couldn't find that coupon.",
+        "inactive": "That coupon is not active.",
+        "not_started": "That coupon isn't valid yet.",
+        "expired": "That coupon has expired.",
+        "service": "That coupon isn't for local rides.",
+        "hotel": "That coupon isn't valid for this ride.",
+        "min_order": "Your fare is below this coupon's minimum amount.",
+        "exhausted": "That coupon has been fully used.",
+        "used": "You have already used this coupon.",
+        "first_booking": "This coupon is for your first booking only."
+      },
+      "passengerTitle": "Your details",
+      "fields": {
+        "name": "Full name",
+        "email": "Email (optional)",
+        "pickupAddress": "Pickup point",
+        "pickupHint": "Gate, lane, shop or hotel name so the driver finds you quickly.",
+        "dropAddress": "Drop point (optional)",
+        "notes": "Notes for the driver (optional)",
+        "notesPlaceholder": "Luggage, an elderly person, a child travelling…"
+      },
+      "modes": {
+        "driver": "Pay the driver",
+        "online": "Pay online now"
+      },
+      "modeHints": {
+        "driver": "Pay in cash or UPI to the driver at the end of the ride.",
+        "online": "UPI, cards or net banking through Razorpay. A small convenience fee applies."
+      },
+      "onRequestPayment": "Vehicles booked on request are paid to the driver, so you never pay for a ride we can't confirm.",
+      "acceptPolicies": "I agree to the cancellation policy and understand that waiting and extra distance may be charged as listed.",
+      "paymentPendingHint": "Your ride is held for {minutes} minutes. Complete the payment to confirm.",
+      "fareTitle": "Fare breakup",
+      "confirmRide": "Confirm ride",
+      "confirmShort": "Confirm",
+      "driverNote": "Nothing to pay now. Pay the driver at the end of the ride.",
+      "booked": "Ride booked! Your booking ID is {code}.",
+      "requested": "Ride requested ({code}). We'll confirm a driver shortly.",
+      "bookedOnline": "Payment received. Your ride is booked."
+    }
   }
 }

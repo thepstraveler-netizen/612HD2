@@ -20,7 +20,7 @@ type TabKey = "hotels" | "cabs" | "rides" | "packages" | "travel";
 const TARGET: Record<TabKey, string> = {
   hotels: "/hotels",
   cabs: "/cabs",
-  rides: "/services/rickshaw",
+  rides: "/rides",
   packages: "/services/travel-hotel-booking",
   travel: "/services/travel-agent",
 };
@@ -152,29 +152,31 @@ export function SearchCard({ tabs }: { tabs: TabKey[] }) {
         <TabsContent value="rides">
           <form
             onSubmit={onSubmit("rides")}
-            className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1.5fr_1.5fr_1fr_auto] lg:items-end"
+            className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1.5fr_1.5fr_auto] lg:items-end"
           >
             <Field label={t("vehicle")}>
               <Select
-                name="vehicle"
+                name="v"
                 label={t("vehicle")}
                 options={[
-                  ["rickshaw", t("vehicleRickshaw")],
+                  ["e-rickshaw", t("vehicleRickshaw")],
                   ["bike", t("vehicleBike")],
+                  ["rickshaw", t("vehicleCycleRickshaw")],
                   ["car", t("vehicleCar")],
                 ]}
               />
             </Field>
-            <Field label={t("from")}>
-              <Input name="from" placeholder="Prem Mandir" autoComplete="off" />
+            <Field label={t("rideMode")}>
+              <Select
+                name="mode"
+                label={t("rideMode")}
+                options={[
+                  ["point_to_point", t("rideDrop")],
+                  ["hourly", t("rideHourly")],
+                ]}
+              />
             </Field>
-            <Field label={t("to")}>
-              <Input name="to" placeholder="Banke Bihari" autoComplete="off" />
-            </Field>
-            <Field label={t("time")}>
-              <Input name="time" type="time" />
-            </Field>
-            <SubmitButton label={t("submit")} />
+            <SubmitButton label={t("submitRide")} />
           </form>
         </TabsContent>
 
