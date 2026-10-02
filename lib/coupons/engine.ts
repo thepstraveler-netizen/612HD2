@@ -5,7 +5,7 @@
  * single-use coupon.
  */
 
-export type BookingService = "hotel" | "cab" | "ride" | "food" | "medicine" | "package" | "travel";
+export type BookingService = "hotel" | "cab" | "ride" | "food" | "essentials" | "medicine" | "package" | "travel";
 
 export type Coupon = {
   id: string;

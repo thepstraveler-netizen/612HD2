@@ -46,6 +46,13 @@ const DB_ERRORS = [
   "driver_unavailable",
   "vehicle_unavailable",
   "otp_mismatch",
+  "store_closed",
+  "zone_not_served",
+  "quote_invalid",
+  "out_of_stock",
+  "item_unavailable",
+  "partner_unavailable",
+  "invalid_file",
 ] as const;
 export type BookingDbError = (typeof DB_ERRORS)[number];
 
@@ -391,10 +398,56 @@ function formatPickup(iso: string, locale: "en" | "hi"): string {
   }).format(new Date(iso));
 }
 
+type OrderValues = {
+  store: string;
+  items: string;
+  address: string;
+  otp: string;
+  status: string;
+};
+
+export const ORDER_SERVICES: readonly Booking["service"][] = ["food", "essentials", "medicine"];
+
+/** Order status as customers read it in messages. */
+const ORDER_STATUS_TEXT: Record<string, { en: string; hi: string }> = {
+  placed: { en: "placed", hi: "प्राप्त हो गया" },
+  accepted: { en: "accepted by the store", hi: "स्टोर ने स्वीकार किया" },
+  preparing: { en: "being prepared", hi: "तैयार हो रहा है" },
+  ready: { en: "packed and ready", hi: "पैक और तैयार" },
+  out_for_delivery: { en: "out for delivery", hi: "रास्ते में है" },
+  delivered: { en: "delivered", hi: "पहुँच गया" },
+  rejected: { en: "declined by the store", hi: "स्टोर ने अस्वीकार किया" },
+  cancelled: { en: "cancelled", hi: "रद्द" },
+};
+
+async function loadOrderValues(bookingId: string, locale: "en" | "hi"): Promise<OrderValues | null> {
+  const admin = createAdminClient();
+  const { data: order } = await admin
+    .from("orders")
+    .select("id, status, address, delivery_otp, store_id")
+    .eq("booking_id", bookingId)
+    .maybeSingle();
+  if (!order) return null;
+  const [{ data: items }, { data: storeRow }] = await Promise.all([
+    admin.from("order_items").select("name, quantity").eq("order_id", order.id).order("sort_order"),
+    admin.from("stores").select("name").eq("id", order.store_id).maybeSingle(),
+  ]);
+  const store = storeRow?.name;
+  const address = order.address as { line1?: string; line2?: string | null; landmark?: string | null };
+  return {
+    store: (locale === "hi" ? store?.hi : null) || store?.en || "",
+    items: (items ?? []).map((i) => `${i.quantity} × ${i.name}`).join(", "),
+    address: [address.line1, address.line2, address.landmark].filter(Boolean).join(", "),
+    otp: order.delivery_otp ?? "",
+    status: ORDER_STATUS_TEXT[order.status]?.[locale] ?? order.status,
+  };
+}
+
 function bookingValues(
   b: Booking,
   extra: { refund?: number; amount?: number; link?: string },
   trip: CabTripValues | null,
+  order: OrderValues | null,
 ) {
   const snapshot = b.snapshot as {
     hotel?: { name?: { en?: string; hi?: string | null } };
@@ -406,8 +459,8 @@ function bookingValues(
   return {
     name: b.contact_name,
     code: b.code,
-    // Generic templates (cancelled, payment link) say "at {{hotel}}"; for cabs that is the trip.
-    hotel: hotelName || snapshot.trip?.label || "",
+    // Generic templates (cancelled, payment link) say "at {{hotel}}"; for cabs that is the trip, for orders the store.
+    hotel: hotelName || snapshot.trip?.label || order?.store || "",
     check_in: b.check_in,
     check_out: b.check_out,
     rooms: b.rooms,
@@ -423,14 +476,19 @@ function bookingValues(
     vehicle: trip?.vehicle_label || snapshot.trip?.vehicle || "",
     pickup_at: trip ? formatPickup(trip.pickup_at, locale) : "",
     pickup_address: trip?.pickup_address ?? "",
-    otp: trip?.pickup_otp ?? "",
+    otp: trip?.pickup_otp ?? order?.otp ?? "",
     driver: trip?.driver_name ?? "",
     driver_phone: trip?.driver_phone ?? "",
     registration: trip?.vehicle_registration ?? "",
+    order_url: `${site}${locale === "hi" ? "/hi" : ""}/account/trips/${b.code}`,
+    store: order?.store ?? "",
+    items: order?.items ?? "",
+    address: order?.address ?? "",
+    status: order?.status ?? "",
   };
 }
 
-/** Booking notifications. Cab and ride bookings get their own confirmation template. */
+/** Booking notifications. Cab, ride and order bookings get their own confirmation template. */
 export async function notifyBooking(
   bookingId: string,
   key: string,
@@ -447,13 +505,21 @@ export async function notifyBooking(
       : booking.service === "ride"
         ? await admin.from("ride_requests").select(tripColumns).eq("booking_id", bookingId).maybeSingle()
         : { data: null };
+  const isOrder = ORDER_SERVICES.includes(booking.service);
+  const order = isOrder ? await loadOrderValues(bookingId, booking.locale) : null;
   const confirmedKey =
-    booking.service === "cab" ? "cab.confirmed" : booking.service === "ride" ? "ride.confirmed" : key;
+    booking.service === "cab"
+      ? "cab.confirmed"
+      : booking.service === "ride"
+        ? "ride.confirmed"
+        : isOrder
+          ? "order.confirmed"
+          : key;
   await notify({
     key: key === "booking.confirmed" ? confirmedKey : key,
     locale: booking.locale,
     to: { email: booking.contact_email, phone: booking.contact_phone, userId: booking.user_id },
-    values: bookingValues(booking, extra, trip),
+    values: bookingValues(booking, extra, trip, order),
     bookingId,
   });
 }

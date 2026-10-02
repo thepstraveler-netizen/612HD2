@@ -23,11 +23,14 @@ import {
   cancelWithRefund,
   createHotelBooking,
   expireStaleBookings,
+  ORDER_SERVICES,
   type Booking,
   type BookingDbError,
 } from "./service";
 import { customerCanCancel, type BookingStatus } from "./state";
 import { getPaymentSettings } from "./settings";
+import { getDeliverySettings } from "@/lib/delivery/queries";
+import { customerCanCancel as customerCanCancelOrder } from "@/lib/delivery/status";
 
 /**
  * Customer checkout actions. Inputs are re-parsed here; the price is always
@@ -198,6 +201,7 @@ export async function cancelMyBooking(input: unknown): Promise<CancelResult> {
   if (!booking || booking.user_id !== session.user.id) return { ok: false, error: "not_found" };
 
   const settings = await getPaymentSettings();
+  if (ORDER_SERVICES.includes(booking.service)) return cancelMyOrder(booking, session.user.id);
   const terms = cancellationTerms(booking);
   const now = new Date();
   if (
@@ -247,6 +251,36 @@ export async function cancelMyBooking(input: unknown): Promise<CancelResult> {
         error instanceof BookingError && error.code === "invalid_transition"
           ? "not_allowed"
           : "refund_failed",
+    };
+  }
+}
+
+/**
+ * Food, essentials and medicine orders: cancellable by the customer until
+ * the store accepts (setting `delivery.defaults.cancel_until`), with
+ * everything paid refunded.
+ */
+async function cancelMyOrder(booking: Booking, userId: string): Promise<CancelResult> {
+  const [{ data: order }, settings] = await Promise.all([
+    createAdminClient().from("orders").select("status").eq("booking_id", booking.id).maybeSingle(),
+    getDeliverySettings(),
+  ]);
+  if (!order || !customerCanCancelOrder(order.status, settings)) return { ok: false, error: "not_allowed" };
+  try {
+    const { refundedPaise } = await cancelWithRefund({
+      bookingId: booking.id,
+      actor: userId,
+      reason: "Cancelled by customer",
+      refundPaise: Math.max(0, booking.paid_paise - booking.refunded_paise),
+    });
+    revalidatePath("/[locale]/account", "layout");
+    return { ok: true, refundPaise: refundedPaise };
+  } catch (error) {
+    console.error("[bookings] order cancel failed", error);
+    return {
+      ok: false,
+      error:
+        error instanceof BookingError && error.code === "invalid_transition" ? "not_allowed" : "refund_failed",
     };
   }
 }

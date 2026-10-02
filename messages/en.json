@@ -1422,6 +1422,7 @@
       "cab": "Cab",
       "ride": "Ride",
       "food": "Food",
+      "essentials": "Essentials",
       "medicine": "Medicine",
       "package": "Package",
       "travel": "Travel"

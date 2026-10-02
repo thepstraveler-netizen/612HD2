@@ -5,6 +5,14 @@ import { invoiceRows, invoiceTotals, type InvoiceDocument } from "@/lib/invoices
 import { renderInvoicePdf } from "@/lib/invoices/pdf";
 import { createClient } from "@/lib/supabase/server";
 
+const SERVICE_LABEL: Partial<Record<string, string>> = {
+  cab: "Cab",
+  ride: "Ride",
+  food: "Food order",
+  essentials: "Essentials order",
+  medicine: "Medicine order",
+};
+
 /**
  * GST invoice PDF for a booking. Read with the caller's own session, so
  * row-level security decides access: the guest, staff with bookings or
@@ -102,9 +110,9 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
           },
     placeOfSupply: place,
     stay: {
-      // Cab and ride invoices show the trip and pickup date in place of the hotel.
+      // Cab, ride and order invoices show the trip or store in place of the hotel.
       hotel: snapshot.trip?.label
-        ? `${booking.service === "ride" ? "Ride" : "Cab"}: ${snapshot.trip.label}`
+        ? `${SERVICE_LABEL[booking.service] ?? "Cab"}: ${snapshot.trip.label}`
         : [snapshot.hotel?.name?.en, snapshot.hotel?.address].filter(Boolean).join(", "),
       checkIn: booking.check_in,
       checkOut: booking.check_out,
