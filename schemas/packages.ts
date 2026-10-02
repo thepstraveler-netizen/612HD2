@@ -153,6 +153,8 @@ export const travelEnquirySchema = z
 export const serviceEnquirySchema = z.object({
   kind: z.enum(["service", "general", "hotel", "cab"]),
   serviceSlug: z.union([z.literal(""), slug]).default(""),
+  /** A plan picked on a B2B service page (optional). */
+  planId: z.union([z.literal(""), z.uuid()]).default(""),
   ...contact,
 });
 

@@ -319,6 +319,14 @@ export type Database = {
           gstin: string | null;
           commission_bps: number;
           status: Database["public"]["Enums"]["vendor_status"];
+          pan: string | null;
+          address: string | null;
+          city: string | null;
+          bank_details: Json | null;
+          agreement_version: string | null;
+          agreement_accepted_at: string | null;
+          notes: string | null;
+          application_id: string | null;
           deleted_at: string | null;
         } & Timestamps
       >;
@@ -1319,6 +1327,126 @@ export type Database = {
           paid_at: string | null;
         } & Timestamps
       >;
+      service_plans: Simple<
+        {
+          id: string;
+          service_id: string;
+          name: LocalizedJson;
+          summary: LocalizedJson | null;
+          price_paise: number | null;
+          price_suffix: LocalizedJson | null;
+          features: LocalizedJson[];
+          is_popular: boolean;
+          sort_order: number;
+          is_published: boolean;
+        } & Timestamps
+      >;
+      service_portfolio: Simple<
+        {
+          id: string;
+          service_id: string;
+          media_id: string | null;
+          title: LocalizedJson;
+          caption: LocalizedJson | null;
+          client_name: string | null;
+          link_url: string | null;
+          sort_order: number;
+          is_published: boolean;
+        } & Timestamps,
+        [MediaFk<"service_portfolio_media_id_fkey", "media_id">]
+      >;
+      partner_applications: Simple<
+        {
+          id: string;
+          number: number;
+          user_id: string;
+          business_type: Database["public"]["Enums"]["partner_business_type"];
+          business_name: string;
+          contact_name: string;
+          phone: string;
+          email: string;
+          city: string;
+          address: string;
+          gstin: string | null;
+          pan: string | null;
+          website: string | null;
+          details: Json;
+          message: string | null;
+          documents: Json;
+          agreement_version: string;
+          agreement_name: string;
+          agreement_accepted_at: string;
+          status: Database["public"]["Enums"]["partner_application_status"];
+          review_note: string | null;
+          reviewed_by: string | null;
+          reviewed_at: string | null;
+          vendor_id: string | null;
+          locale: "en" | "hi";
+        } & Timestamps
+      >;
+      vendor_documents: Simple<
+        {
+          id: string;
+          vendor_id: string;
+          kind: string;
+          file_path: string;
+          file_name: string;
+          mime_type: string;
+          size_bytes: number;
+          expires_on: string | null;
+          status: Database["public"]["Enums"]["vendor_document_status"];
+          note: string | null;
+          uploaded_by: string | null;
+          verified_by: string | null;
+          verified_at: string | null;
+        } & Timestamps
+      >;
+      vendor_payouts: Simple<
+        {
+          id: string;
+          number: number;
+          vendor_id: string;
+          period_end: string;
+          entries_count: number;
+          gross_paise: number;
+          commission_paise: number;
+          amount_paise: number;
+          status: Database["public"]["Enums"]["payout_status"];
+          provider: string;
+          method: "bank_transfer" | "upi" | "cash" | "cheque" | "adjusted" | "other" | null;
+          reference: string | null;
+          notes: string | null;
+          created_by: string | null;
+          paid_by: string | null;
+          paid_at: string | null;
+          cancelled_at: string | null;
+        } & Timestamps
+      >;
+      vendor_ledger_entries: Simple<
+        {
+          id: string;
+          vendor_id: string;
+          booking_id: string | null;
+          kind: Database["public"]["Enums"]["ledger_entry_kind"];
+          entry_date: string;
+          gross_paise: number;
+          platform_collected_paise: number;
+          vendor_collected_paise: number;
+          commission_paise: number;
+          commission_tax_paise: number;
+          tcs_paise: number;
+          tds_paise: number;
+          adjustment_paise: number;
+          net_paise: number;
+          commission_bps: number;
+          commission_tax_bps: number;
+          tcs_bps: number;
+          tds_bps: number;
+          note: string | null;
+          payout_id: string | null;
+          created_by: string | null;
+        } & Timestamps
+      >;
     };
     Views: { [_ in never]: never };
     Functions: {
@@ -1487,6 +1615,46 @@ export type Database = {
         };
         Returns: string;
       };
+      submit_partner_application: { Args: { p: Json }; Returns: Json };
+      review_partner_application: {
+        Args: {
+          p_id: string;
+          p_status: Database["public"]["Enums"]["partner_application_status"];
+          p_note: string | null;
+          p_actor: string;
+        };
+        Returns: Database["public"]["Tables"]["partner_applications"]["Row"];
+      };
+      approve_partner_application: {
+        Args: { p_id: string; p_commission_bps: number | null; p_actor: string };
+        Returns: string;
+      };
+      booking_settlement_vendor: { Args: { p_booking_id: string }; Returns: string | null };
+      sync_vendor_ledger: { Args: { p_booking_id: string }; Returns: undefined };
+      add_vendor_adjustment: {
+        Args: { p_vendor_id: string; p_amount: number; p_note: string; p_actor: string };
+        Returns: string;
+      };
+      create_vendor_payout: {
+        Args: { p_vendor_id: string; p_period_end: string; p_actor: string };
+        Returns: Database["public"]["Tables"]["vendor_payouts"]["Row"];
+      };
+      mark_vendor_payout_paid: {
+        Args: {
+          p_id: string;
+          p_method: string;
+          p_reference: string | null;
+          p_notes: string | null;
+          p_actor: string;
+        };
+        Returns: Database["public"]["Tables"]["vendor_payouts"]["Row"];
+      };
+      update_vendor_profile: { Args: { p_vendor_id: string; p: Json; p_actor: string }; Returns: undefined };
+      add_vendor_document: { Args: { p_vendor_id: string; p: Json; p_actor: string }; Returns: string };
+      cancel_vendor_payout: {
+        Args: { p_id: string; p_actor: string };
+        Returns: Database["public"]["Tables"]["vendor_payouts"]["Row"];
+      };
     };
     Enums: {
       service_kind: "bookable" | "enquiry";
@@ -1582,6 +1750,19 @@ export type Database = {
         | "follow_up"
         | "system";
       quote_status: "draft" | "sent" | "paid" | "expired" | "cancelled";
+      partner_business_type:
+        | "hotel"
+        | "travel_agency"
+        | "restaurant"
+        | "transport"
+        | "shop"
+        | "pharmacy"
+        | "service_provider"
+        | "other";
+      partner_application_status: "submitted" | "under_review" | "approved" | "rejected";
+      vendor_document_status: "pending" | "verified" | "rejected";
+      ledger_entry_kind: "booking" | "adjustment" | "manual";
+      payout_status: "pending" | "paid" | "cancelled";
     };
     CompositeTypes: { [_ in never]: never };
   };
