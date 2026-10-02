@@ -3,8 +3,8 @@ import { routing } from "@/i18n/routing";
 /** Path prefixes that need a signed-in user. Role checks happen in each layout. */
 export const PROTECTED_PREFIXES = ["/account", "/admin", "/vendor", "/driver"] as const;
 
-/** Public pages under a protected prefix: a driver's trip link works without a login. */
-export const PUBLIC_EXCEPTIONS = ["/driver/trip"] as const;
+/** Public pages under a protected prefix: a driver's trip or ride link works without a login. */
+export const PUBLIC_EXCEPTIONS = ["/driver/trip", "/driver/ride"] as const;
 
 /** Pages a signed-in user should be bounced away from. */
 export const GUEST_ONLY_PATHS = ["/login", "/signup", "/forgot-password"] as const;

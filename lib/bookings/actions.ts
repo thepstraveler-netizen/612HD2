@@ -180,7 +180,10 @@ export type CancelResult =
   | { ok: true; refundPaise: number }
   | { ok: false; error: "signin" | "not_found" | "not_allowed" | "refund_failed" };
 
-/** Self-service cancellation of a confirmed stay or cab, refunded per the agreed policy. */
+/**
+ * Self-service cancellation of a confirmed stay, cab or ride, refunded per
+ * the agreed policy. A ride paid to the driver has nothing to refund.
+ */
 export async function cancelMyBooking(input: unknown): Promise<CancelResult> {
   const session = await getSession();
   if (!session) return { ok: false, error: "signin" };
@@ -204,6 +207,17 @@ export async function cancelMyBooking(input: unknown): Promise<CancelResult> {
   ) {
     return { ok: false, error: "not_allowed" };
   }
+  if (booking.service === "ride") {
+    // Like cabs, a ride can be cancelled online only until the driver sets off.
+    const { data: ride } = await supabase
+      .from("ride_requests")
+      .select("status")
+      .eq("booking_id", booking.id)
+      .maybeSingle();
+    if (ride && !["awaiting_payment", "requested", "assigned"].includes(ride.status)) {
+      return { ok: false, error: "not_allowed" };
+    }
+  }
   const refund = quoteRefund({
     rules: terms.rules,
     isRefundable: terms.isRefundable,
@@ -217,7 +231,10 @@ export async function cancelMyBooking(input: unknown): Promise<CancelResult> {
     const { refundedPaise } = await cancelWithRefund({
       bookingId: booking.id,
       actor: session.user.id,
-      reason: booking.service === "cab" ? "Cancelled by customer" : "Cancelled by guest",
+      reason:
+        booking.service === "cab" || booking.service === "ride"
+          ? "Cancelled by customer"
+          : "Cancelled by guest",
       refundPaise: refund.refundPaise,
     });
     revalidatePath("/[locale]/account", "layout");
@@ -239,17 +256,19 @@ type CancellationRule = { hours_before: number; refund_percent: number };
 /**
  * When the booked service starts and the refund rules the customer agreed
  * to, from the booking snapshot: a hotel's check-in and rate plan rules, or
- * a cab's pickup time and the cab rules in force when it was booked.
+ * a cab's or ride's pickup time and the rules in force when it was booked.
  */
 function cancellationTerms(
   booking: Booking,
 ): { startsAt: Date; rules: CancellationRule[]; isRefundable: boolean } | null {
-  if (booking.service === "cab") {
+  if (booking.service === "cab" || booking.service === "ride") {
     const snapshot = booking.snapshot as {
       trip?: { pickupAt?: string };
+      ride?: { pickupAt?: string };
       cancellationRules?: CancellationRule[];
     };
-    const pickupAt = snapshot.trip?.pickupAt ? new Date(snapshot.trip.pickupAt) : null;
+    const iso = booking.service === "ride" ? snapshot.ride?.pickupAt : snapshot.trip?.pickupAt;
+    const pickupAt = iso ? new Date(iso) : null;
     if (!pickupAt || Number.isNaN(pickupAt.getTime())) return null;
     return { startsAt: pickupAt, rules: snapshot.cancellationRules ?? [], isRefundable: true };
   }

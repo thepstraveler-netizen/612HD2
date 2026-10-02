@@ -24,6 +24,12 @@ describe("protected paths", () => {
     expect(isProtectedPath("/services/car")).toBe(false);
   });
 
+  it("keeps the driver's trip and ride links public", () => {
+    expect(isProtectedPath("/driver/trip/abc")).toBe(false);
+    expect(isProtectedPath("/driver/ride/abc")).toBe(false);
+    expect(isProtectedPath("/driver/rides")).toBe(true);
+  });
+
   it("detects guest-only pages", () => {
     expect(isGuestOnlyPath("/login")).toBe(true);
     expect(isGuestOnlyPath("/account")).toBe(false);

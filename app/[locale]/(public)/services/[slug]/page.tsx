@@ -1,15 +1,17 @@
-import { ArrowLeft, Check } from "lucide-react";
+import { ArrowLeft, Check, ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { FaqList } from "@/components/home/faq-list";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { getFaqs, getService, getServices } from "@/lib/catalog/queries";
 import { pickLocalized } from "@/lib/i18n/localized";
 import { getIcon } from "@/lib/icons";
+import { getRideCatalog } from "@/lib/rides/queries";
 import { ACCENT_CLASSES } from "@/lib/services";
 import { cn } from "@/lib/utils";
 
@@ -40,7 +42,9 @@ export default async function ServicePage({ params }: { params: Params }) {
   if (!service) notFound();
   setRequestLocale(locale);
   const t = await getTranslations();
-  const faqs = await getFaqs(service.id);
+  const [faqs, rideCatalog] = await Promise.all([getFaqs(service.id), getRideCatalog()]);
+  // Bike, rickshaw and car pages link to the ride booking for their vehicle type.
+  const rideType = rideCatalog.types.find((type) => type.serviceSlug === service.slug);
   const accent = ACCENT_CLASSES[service.accent];
   const Icon = getIcon(service.icon);
   const description = service.description ? pickLocalized(service.description, locale) : null;
@@ -102,9 +106,23 @@ export default async function ServicePage({ params }: { params: Params }) {
         </ul>
       ) : null}
 
-      <p className="rounded-xl bg-secondary p-4 text-sm text-secondary-foreground">
-        {t("servicePage.comingSoon")}
-      </p>
+      {rideType ? (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border bg-card p-4">
+          <div>
+            <p className="font-bold">{t("rides.serviceCta.title")}</p>
+            <p className="text-sm text-muted-foreground">{t("rides.serviceCta.body")}</p>
+          </div>
+          <Button asChild size="lg">
+            <Link href={{ pathname: "/rides", query: { v: rideType.key } }}>
+              {t("rides.serviceCta.button")} <ChevronRight />
+            </Link>
+          </Button>
+        </div>
+      ) : (
+        <p className="rounded-xl bg-secondary p-4 text-sm text-secondary-foreground">
+          {t("servicePage.comingSoon")}
+        </p>
+      )}
 
       {faqs.length ? (
         <section className="space-y-3">
