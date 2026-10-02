@@ -133,6 +133,14 @@ next-intl with `localePrefix: "as-needed"`: English at `/`, Hindi at `/hi`. All 
 - Server: `queries.ts` (zones, stores, menus cached under `catalog`; live menu for checkout), `checkout.ts`, `service.ts` (`create_order`, `set_order_status` via `moveOrder`, `assign_delivery_partner`), `actions.ts` (cart preview, place order, verify payment, rate, address book, prescription upload, accept or decline a quote).
 - Order lifecycle: cash-on-delivery orders are confirmed at once and become `placed`; online orders start `awaiting_payment` and the `bookings_sync_order` trigger moves them on payment, or cancels them and returns stock on expiry or cancellation. The store moves them accepted → preparing → ready → out for delivery; the rider delivers with the customer's OTP, which completes the booking.
 
+## Packages, travel enquiries and leads
+
+- Data: `packages`, `package_itinerary_days`, `package_pricing_tiers`, `package_departures`, `package_bookings` (one per package booking); `leads`, `lead_activities`, `quotes`. Settings in `packages.defaults`, `leads.defaults` (staff only) and `travel.defaults`.
+- Pure logic: `lib/packages/pricing.ts` (tier pick, price lines, tier coverage checks, departure rules), `lib/leads/status.ts` (pipeline moves, follow-up states, summaries), `lib/leads/quote.ts` (quote pricing, pay-now amount), `lib/leads/attribution.ts` (UTM / referrer → source).
+- Server: `lib/packages/queries.ts` (catalog cached under `catalog`; live package for checkout), `checkout.ts`, `service.ts` (`create_package_booking`, Razorpay order for the advance), `actions.ts`; `lib/leads/capture.ts` (`create_lead` + notifications), `actions.ts` (public `submitEnquiry`), `crm.ts` (pipeline and lead reads), `crm-actions.ts` (assign, status, activities, follow-ups, quotes, offline payment), `quote-page.ts` (no-login quote page).
+- External inventory: `lib/travel/provider.ts` (`TravelInventoryProvider`; `manual` today).
+- Quote lifecycle: draft → sent (`send_quote` writes an unpaid `package` / `travel` booking with the quote's lines; a Razorpay Payment Link is attached) → paid (the `bookings_sync_quote` trigger marks the quote paid and the lead Won when the booking confirms) or expired / cancelled with the booking.
+
 ## Design system
 
 Brand and accent tokens from the poster are CSS variables in `app/globals.css`, mapped onto the shadcn semantic tokens and exposed to Tailwind (`bg-brand-navy`, `text-accent-teal`, …). Dark mode via `next-themes` (`.dark` class). Buttons and inputs default to 44px height for tap targets.
@@ -147,7 +155,7 @@ Brand and accent tokens from the poster are CSS variables in `app/globals.css`, 
 | 5     | cabs: catalog, fares, fleet, dispatch board, `/cabs`, driver trip links (`lib/cabs`)                              |
 | 6     | local rides: zones, landmarks, fares, live requests board, `/rides`, driver ride links (`lib/rides`)              |
 | 7     | food, essentials, medicine: stores, menus, cart, orders board, vendor dashboard, prescriptions (`lib/delivery`)   |
-| 8     | packages + leads CRM                                                                                              |
+| 8     | packages, flight / train / bus enquiries, leads CRM, quotes with payment links (`lib/packages`, `lib/leads`)      |
 | 9–11  | partner onboarding, settlements, reviews/loyalty/PWA/SEO, hardening (CSP, rate limits, Turnstile)                 |
 
 A dedicated folder (e.g. `app/[locale]/admin/hotels/page.tsx`) takes precedence over the generic `admin/[module]` placeholder, so modules can be replaced one at a time.

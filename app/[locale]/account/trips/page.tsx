@@ -105,6 +105,9 @@ export default async function TripsPage({ params }: { params: Promise<{ locale: 
               <Button asChild variant="outline">
                 <Link href="/rides">{t("findRides")}</Link>
               </Button>
+              <Button asChild variant="outline">
+                <Link href="/packages">{t("findPackages")}</Link>
+              </Button>
             </div>
           }
         />

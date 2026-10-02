@@ -7,6 +7,7 @@ import { formatStayDate } from "@/components/booking/trip-card";
 import { TripActions } from "@/components/booking/trip-actions";
 import { CabTripDetail } from "@/components/cabs/cab-trip-detail";
 import { CUSTOMER_ORDER_COLUMNS, OrderTripDetail } from "@/components/delivery/order-trip-detail";
+import { PackageTripDetail, QuoteTripDetail } from "@/components/packages/package-trip-detail";
 import { CUSTOMER_RIDE_COLUMNS, RideTripDetail } from "@/components/rides/ride-trip-detail";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
@@ -18,6 +19,7 @@ import { getDeliverySettings } from "@/lib/delivery/queries";
 import { cancellationText } from "@/lib/hotels/policy-text";
 import { pickLocalized } from "@/lib/i18n/localized";
 import { formatPaise } from "@/lib/money";
+import { packageSnapshot } from "@/lib/packages/ui";
 import { checkInInstant, quoteRefund } from "@/lib/refunds/policy";
 import { createClient } from "@/lib/supabase/server";
 
@@ -104,6 +106,19 @@ export default async function TripPage({ params }: Props) {
         locale={locale}
       />
     );
+  }
+  if (trip.booking.service === "package" || trip.booking.service === "travel") {
+    // Booked online on the package checkout, or paid from an agent's quote.
+    if (packageSnapshot(trip.booking.snapshot)) {
+      const supabase = await createClient();
+      const { data: row } = await supabase
+        .from("package_bookings")
+        .select("travellers, pickup_point")
+        .eq("booking_id", trip.booking.id)
+        .maybeSingle();
+      return <PackageTripDetail data={trip} row={row} locale={locale} />;
+    }
+    return <QuoteTripDetail data={trip} locale={locale} />;
   }
   const t = await getTranslations("trips");
   const th = await getTranslations("hotels");

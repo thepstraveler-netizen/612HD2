@@ -1,6 +1,7 @@
 import "server-only";
 import { assertPermission } from "@/lib/auth/guards";
 import { getServices } from "@/lib/catalog/queries";
+import { publicEnv } from "@/lib/env";
 import { pickLocalized } from "@/lib/i18n/localized";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { LeadActivityKind, LeadFilters, LeadStatus, QuoteStatus } from "@/schemas/leads";
@@ -227,6 +228,8 @@ export type QuoteView = {
   bookingId: string | null;
   bookingCode: string | null;
   paymentLinkUrl: string | null;
+  /** The customer's no-login quote page, once sent (same URL the customer was sent). */
+  pageUrl: string | null;
   sentAt: string | null;
   paidAt: string | null;
   createdAt: string;
@@ -252,6 +255,13 @@ export type LeadDetail = LeadCard & {
   activities: LeadActivityView[];
   quotes: QuoteView[];
 };
+
+/** /quote/<token> on the public site, in the lead's language (as in sendQuote). */
+function quotePageUrl(token: string | null, locale: "en" | "hi"): string | null {
+  if (!token) return null;
+  const site = publicEnv().NEXT_PUBLIC_SITE_URL.replace(/\/$/, "");
+  return `${site}${locale === "hi" ? "/hi" : ""}/quote/${token}`;
+}
 
 export async function getLeadDetail(id: string): Promise<LeadDetail | null> {
   await assertPermission("leads.read");
@@ -329,6 +339,7 @@ export async function getLeadDetail(id: string): Promise<LeadDetail | null> {
       bookingId: q.booking_id,
       bookingCode: q.booking_id ? (codes.get(q.booking_id) ?? null) : null,
       paymentLinkUrl: q.payment_link_url,
+      pageUrl: quotePageUrl(q.token, lead.locale),
       sentAt: q.sent_at,
       paidAt: q.paid_at,
       createdAt: q.created_at,

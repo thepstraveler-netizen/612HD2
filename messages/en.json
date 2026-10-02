@@ -1392,7 +1392,8 @@
     "keepBooking": "Keep booking",
     "cancelBooking": "Cancel booking",
     "findCabs": "Book a cab",
-    "findRides": "Book a local ride"
+    "findRides": "Book a local ride",
+    "findPackages": "Explore tour packages"
   },
   "bookingsAdmin": {
     "title": "Bookings & orders",
@@ -4075,5 +4076,1000 @@
     "placedAt": "Ordered on",
     "cancelHint": "You can cancel until the store accepts. Anything paid is refunded in full.",
     "cashOnDelivery": "To pay on delivery"
+  },
+  "leadsAdmin": {
+    "title": "Leads",
+    "lead": "Every enquiry from the website, WhatsApp, calls and walk-ins, from first contact to a paid quote.",
+    "newLead": "New lead",
+    "view": {
+      "label": "View",
+      "board": "Board",
+      "list": "List",
+      "overdue": "{count, plural, =0 {No overdue follow-ups} one {# overdue follow-up} other {# overdue follow-ups}}",
+      "dueToday": "Due today"
+    },
+    "filters": {
+      "search": "Search",
+      "searchPlaceholder": "Name, phone, email or LD-00042",
+      "status": "Status",
+      "kind": "Enquiry for",
+      "source": "Source",
+      "assignee": "Assigned to",
+      "due": "Follow-up",
+      "any": "Any",
+      "anyone": "Anyone",
+      "me": "Me",
+      "unassigned": "Unassigned",
+      "staff": "Team",
+      "dueToday": "Due by end of today",
+      "apply": "Apply",
+      "clear": "Clear filters",
+      "results": "{count, plural, =0 {No leads} one {# lead} other {# leads}}"
+    },
+    "board": {
+      "emptyColumn": "No leads here.",
+      "unassigned": "Unassigned",
+      "showingNewest": "Showing the newest {count}. Use the list view to see them all."
+    },
+    "list": {
+      "empty": "No leads match these filters."
+    },
+    "columns": {
+      "lead": "Lead",
+      "summary": "Asked for",
+      "status": "Status",
+      "source": "Source",
+      "assignee": "Assigned to",
+      "value": "Value",
+      "followUp": "Follow-up",
+      "created": "Received"
+    },
+    "pagination": {
+      "label": "Pages",
+      "page": "Page {page} of {pages}",
+      "prev": "Previous",
+      "next": "Next"
+    },
+    "status": {
+      "new": "New",
+      "contacted": "Contacted",
+      "quoted": "Quoted",
+      "won": "Won",
+      "lost": "Lost"
+    },
+    "kinds": {
+      "package": "Tour package",
+      "flight": "Flight",
+      "train": "Train",
+      "bus": "Bus",
+      "hotel": "Hotel",
+      "cab": "Cab",
+      "service": "Service",
+      "general": "General enquiry"
+    },
+    "sources": {
+      "website": "Website",
+      "whatsapp": "WhatsApp",
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "google": "Google",
+      "calling": "Phone call",
+      "walk_in": "Walk-in",
+      "referral": "Referral",
+      "other": "Other"
+    },
+    "activity": {
+      "note": "Note",
+      "call": "Call",
+      "whatsapp": "WhatsApp",
+      "email": "Email",
+      "sms": "SMS",
+      "status": "Status changed",
+      "assignment": "Assignment",
+      "quote": "Quote",
+      "follow_up": "Follow-up",
+      "system": "System"
+    },
+    "callOutcomes": {
+      "connected": "Connected",
+      "no_answer": "No answer",
+      "busy": "Busy",
+      "wrong_number": "Wrong number",
+      "callback": "Asked to call back"
+    },
+    "followUp": {
+      "overdue": "Overdue",
+      "today": "Today",
+      "upcoming": "Next"
+    },
+    "moves": {
+      "label": "Move",
+      "contacted": "Mark contacted",
+      "won": "Mark won",
+      "lost": "Mark lost",
+      "reopen": "Reopen",
+      "confirmWon": "Mark this lead as won? Use this when the customer booked without an online quote payment.",
+      "moved": "Moved to {status}."
+    },
+    "lost": {
+      "title": "Mark lead as lost",
+      "lead": "The lead leaves the open pipeline and its follow-up is cleared. You can reopen it later.",
+      "reason": "Reason",
+      "other": "Other reason…",
+      "otherLabel": "Write the reason",
+      "otherPlaceholder": "For example: going with a relative's car",
+      "confirm": "Mark as lost"
+    },
+    "newLeadForm": {
+      "title": "New lead",
+      "lead": "For enquiries that come in by phone, WhatsApp or at the counter.",
+      "name": "Customer name",
+      "phone": "Mobile number",
+      "email": "Email (optional)",
+      "kind": "Enquiry for",
+      "source": "Source",
+      "message": "What they asked for",
+      "messagePlaceholder": "Dates, places, number of people, budget…",
+      "assignToMe": "Assign to me",
+      "submit": "Create lead",
+      "created": "Lead {reference} created."
+    },
+    "detail": {
+      "backToList": "All leads",
+      "created": "Received {date}",
+      "assignee": "Assigned to",
+      "unassigned": "Unassigned",
+      "assigned": "Assignment updated.",
+      "wonOn": "Won on {date}.",
+      "lostOn": "Lost on {date}",
+      "booking": "Booking",
+      "asked": "What they asked for",
+      "kind": "Enquiry for",
+      "from": "From",
+      "to": "To",
+      "departOn": "Departure",
+      "returnOn": "Return",
+      "startDate": "Start date",
+      "travellers": "Travellers",
+      "travellersValue": "{adults} adults, {children} children",
+      "travelClass": "Class",
+      "package": "Package",
+      "openPackage": "Open package",
+      "service": "Service",
+      "message": "Message",
+      "contactTitle": "Contact",
+      "phone": "Phone",
+      "email": "Email",
+      "language": "Language",
+      "lastContacted": "Last contacted",
+      "never": "Not yet",
+      "account": "Account",
+      "hasAccount": "Signed in when enquiring",
+      "sourceTitle": "Where they came from",
+      "source": "Source",
+      "referrer": "Referrer",
+      "landingPage": "Landing page"
+    },
+    "contact": {
+      "call": "Call",
+      "whatsapp": "WhatsApp",
+      "email": "Email",
+      "quickReplies": "Quick replies",
+      "replies": {
+        "intro": "Introduction",
+        "followUp": "Follow-up",
+        "quoteSent": "Quote reminder"
+      },
+      "blankChat": "Open chat without a message",
+      "opened": "WhatsApp opened with the “{reply}” message.",
+      "openPrompt": "The message is ready. Tap to open it in WhatsApp.",
+      "openWhatsapp": "Open WhatsApp",
+      "sendEmail": "Send by email",
+      "logWhatsapp": "Log as WhatsApp",
+      "logEmail": "Log as email",
+      "logged": "Added to the timeline.",
+      "dismiss": "Dismiss"
+    },
+    "followUpCard": {
+      "title": "Follow-up",
+      "next": "Next follow-up:",
+      "none": "None set",
+      "picks": {
+        "hour": "In 1 hour",
+        "tomorrow": "Tomorrow 10 am",
+        "threeDays": "In 3 days"
+      },
+      "custom": "Pick a date and time",
+      "set": "Set",
+      "clear": "Clear follow-up",
+      "saved": "Follow-up set.",
+      "cleared": "Follow-up cleared.",
+      "pastTime": "Pick a time in the future."
+    },
+    "timeline": {
+      "title": "Activity",
+      "empty": "Nothing logged yet.",
+      "minutes": "{minutes} min",
+      "assignedTo": "Assigned to {name}",
+      "unassigned": "Unassigned",
+      "via": "via {source}",
+      "followUpSet": "Next follow-up: {date}",
+      "system": "System"
+    },
+    "logForm": {
+      "kind": "Log",
+      "outcome": "Call outcome",
+      "pickOutcome": "Choose…",
+      "minutes": "Minutes (optional)",
+      "body": "Details",
+      "callNotes": "Call notes (optional)",
+      "placeholders": {
+        "note": "Anything the team should know",
+        "call": "What was discussed",
+        "whatsapp": "What you sent or what they replied",
+        "email": "Subject or summary of the email",
+        "sms": "What the SMS said"
+      },
+      "followUp": "Next follow-up (optional)",
+      "submit": "Add to timeline",
+      "logged": "Added to the timeline."
+    },
+    "quotes": {
+      "title": "Quotes",
+      "empty": "No quotes yet.",
+      "newQuote": "New quote",
+      "number": "Quote #{number}",
+      "status": {
+        "draft": "Draft",
+        "sent": "Sent",
+        "paid": "Paid",
+        "expired": "Expired",
+        "cancelled": "Withdrawn"
+      },
+      "createdOn": "Created {date}",
+      "sentOn": "Sent {date}",
+      "paidOn": "Paid {date}",
+      "total": "Total",
+      "inclGst": "incl. {tax} GST",
+      "payNow": "Pay now",
+      "advance": "advance",
+      "validUntil": "Valid until",
+      "booking": "Booking",
+      "lines": "{count, plural, one {# line} other {# lines}}",
+      "copyQuoteLink": "Copy quote link",
+      "copyPayLink": "Copy payment link",
+      "openQuote": "Open quote page",
+      "copied": "Link copied.",
+      "edit": "Edit draft",
+      "send": "Send",
+      "withdraw": "Withdraw",
+      "recordPayment": "Record payment",
+      "confirmSend": "Send this quote to the customer? An unpaid booking is created, a payment link is opened and any earlier quote that is still out is withdrawn.",
+      "confirmWithdraw": "Withdraw this draft?",
+      "confirmWithdrawSent": "Withdraw this quote? Its booking is cancelled and the payment link stops working.",
+      "sent": "Quote sent to the customer.",
+      "withdrawn": "Quote withdrawn.",
+      "sentTitle": "Quote sent. Share the links if the customer asks again:",
+      "dismiss": "Dismiss",
+      "warnings": {
+        "paymentsDisabled": "Online payments are not set up, so there is no payment link. The quote was sent; record the payment here once the customer pays.",
+        "linkFailed": "The quote was sent, but the payment link could not be created. Collect the payment by hand and record it here."
+      },
+      "paidNote": "Quote #{number} is paid: the lead is won and the booking is confirmed.",
+      "closedNote": "This lead is closed. Reopen it to send a new quote.",
+      "payment": {
+        "title": "Record a payment",
+        "lead": "Money received outside the payment link (cash, UPI to the office, bank transfer). Quote total {total}, pay now {payNow}. The booking is confirmed and the lead marked won.",
+        "amount": "Amount received (₹)",
+        "amountHelp": "Up to the quote total.",
+        "method": "Paid by",
+        "methods": {
+          "cash": "Cash",
+          "upi": "UPI",
+          "bank_transfer": "Bank transfer",
+          "card": "Card",
+          "other": "Other"
+        },
+        "reference": "Reference (optional)",
+        "referenceHelp": "UPI transaction ID, receipt number or bank reference.",
+        "submit": "Record payment",
+        "recorded": "Payment recorded. The booking is confirmed."
+      }
+    },
+    "builder": {
+      "title": "New quote",
+      "editTitle": "Edit draft quote",
+      "quoteTitle": "Quote title",
+      "titlePlaceholder": "For example: Vrindavan 3 nights for 4",
+      "lines": "Lines",
+      "description": "Description",
+      "descriptionPlaceholder": "Hotel, 2 nights, deluxe room",
+      "qty": "Qty",
+      "unitPrice": "Unit price ₹ (before GST)",
+      "gstPercent": "GST %",
+      "sac": "SAC",
+      "removeLine": "Remove line",
+      "addLine": "Add line",
+      "payNow": "Customer pays now",
+      "full": "Full amount",
+      "advance": "Advance",
+      "advanceAmount": "Advance amount",
+      "rupees": "In rupees, less than the total.",
+      "validHours": "Valid for (hours)",
+      "validHelp": "The quote and its payment link expire after this.",
+      "notes": "Notes for the customer",
+      "notesPlaceholder": "What is included, pickup times…",
+      "terms": "Terms",
+      "termsPlaceholder": "Cancellation and payment terms",
+      "subtotal": "Subtotal",
+      "gst": "GST",
+      "total": "Total",
+      "payNowAmount": "Pay now",
+      "advanceMissing": "Enter the advance amount.",
+      "advanceHigh": "The advance must be less than the total.",
+      "incomplete": "Some lines are incomplete and are not counted yet.",
+      "previewHelp": "Preview only; the totals are worked out again when the quote is saved.",
+      "cancel": "Cancel",
+      "saveDraft": "Save draft",
+      "saveAndSend": "Save and send",
+      "saved": "Draft saved."
+    },
+    "errors": {
+      "forbidden": "You do not have permission to do this.",
+      "invalid": "Some details are missing or incorrect.",
+      "required": "This is required.",
+      "notFound": "This lead or quote no longer exists.",
+      "invalidTransition": "That change is not possible from the current status.",
+      "reasonRequired": "Give a reason.",
+      "assigneeInvalid": "That person cannot work leads.",
+      "leadClosed": "This lead is closed. Reopen it first.",
+      "quoteExpired": "This draft has passed its validity. Edit it to set a new validity, then send.",
+      "totalsMismatch": "The totals did not add up. Check the lines and try again.",
+      "advanceRequired": "Enter the advance amount.",
+      "advanceTooHigh": "The advance must be less than the total.",
+      "overpaid": "The amount is more than the booking total.",
+      "rateLimited": "Too many leads for this number in the last hour. Try again later.",
+      "paymentFailed": "The payment provider did not respond. Try again.",
+      "noTemplate": "That message template is not set up yet.",
+      "actionFailed": "Something went wrong. Please try again.",
+      "invalidPhone": "Enter a valid mobile number.",
+      "invalidEmail": "Enter a valid email address."
+    }
+  },
+  "packagesAdmin": {
+    "title": "Packages",
+    "lead": "Tour packages: details and photos, day-wise itinerary, prices by group size and departure dates with seats.",
+    "new": "New package",
+    "newTitle": "New package",
+    "view": "View",
+    "results": "{count, plural, =0 {No packages} one {# package} other {# packages}}",
+    "durationShort": "{days}D / {nights}N",
+    "noTiers": "No prices yet",
+    "noDepartures": "No upcoming date",
+    "anyDate": "Any date",
+    "viewOnSite": "View on site",
+    "bookingsCount": "{count, plural, =0 {No live bookings} one {# live booking} other {# live bookings}}",
+    "saveFirst": "Create the package first; the itinerary, prices and departures are added after that.",
+    "columns": {
+      "title": "Package",
+      "status": "Status",
+      "mode": "Booking",
+      "duration": "Duration",
+      "from": "From (per person)",
+      "next": "Next departure",
+      "bookings": "Live bookings",
+      "featured": "Featured",
+      "sort": "Sort order"
+    },
+    "status": {
+      "live": "Live",
+      "hidden": "Hidden",
+      "archived": "Archived"
+    },
+    "modes": {
+      "enquiry": "Enquiry only",
+      "book": "Book online",
+      "enquiryHelp": "Visitors send an enquiry; the travel desk follows up from the Leads CRM.",
+      "bookHelp": "Visitors can also book online and pay the advance (when online package booking is switched on in Settings → Feature flags). Prices must cover every group size before it goes live."
+    },
+    "filters": {
+      "search": "Search",
+      "searchPlaceholder": "Name, slug or place",
+      "status": "Status",
+      "current": "Live and hidden",
+      "mode": "Booking",
+      "any": "Any",
+      "category": "Category",
+      "apply": "Apply",
+      "clear": "Clear filters"
+    },
+    "sections": {
+      "nav": "Package sections",
+      "details": "Details",
+      "photos": "Photos",
+      "content": "Highlights and inclusions",
+      "booking": "Booking and tax",
+      "visibility": "Visibility",
+      "itinerary": "Itinerary",
+      "pricing": "Prices",
+      "departures": "Departures"
+    },
+    "fields": {
+      "title": "Package name",
+      "summary": "Short summary",
+      "description": "Description",
+      "slug": "Slug",
+      "slugHelp": "Lowercase letters, numbers and dashes; used in the web address.",
+      "category": "Category",
+      "categoryHelp": "One word for filters, e.g. braj, pilgrimage or heritage.",
+      "destinations": "Places covered",
+      "destinationsHelp": "Separate with commas.",
+      "startCity": "Starts from",
+      "days": "Days",
+      "nights": "Nights",
+      "nightsHelp": "Usually one less than the days.",
+      "highlights": "Highlights",
+      "inclusions": "Included",
+      "exclusions": "Not included",
+      "terms": "Package terms",
+      "bookingMode": "How visitors book",
+      "advance": "Online advance (%)",
+      "advanceHelp": "Leave empty to use the default from Settings → Packages & leads.",
+      "minPax": "Smallest group",
+      "maxPax": "Largest group",
+      "gst": "GST (%)",
+      "gstHelp": "Tour operator services: usually 5%.",
+      "sac": "SAC code",
+      "fixedDepartures": "Fixed group departures",
+      "fixedDeparturesHelp": "On: travellers pick one of the dates below, with limited seats. Off: a private tour on any date they choose.",
+      "sortOrder": "Sort order",
+      "featured": "Featured",
+      "active": "Live on the site",
+      "activeHelp": "Hidden packages stay here and keep their bookings; archive a package to remove it from this list."
+    },
+    "photos": {
+      "cover": "Cover photo",
+      "gallery": "Gallery",
+      "galleryHelp": "Up to {max} photos, shown in this order. Changes are saved with the package.",
+      "upload": "Add photos",
+      "empty": "No gallery photos yet.",
+      "moveUp": "Move earlier",
+      "moveDown": "Move later",
+      "remove": "Remove photo"
+    },
+    "lists": {
+      "empty": "Nothing added yet.",
+      "add": "Add line",
+      "remove": "Remove line",
+      "highlightPlaceholder": "Evening aarti at Prem Mandir",
+      "inclusionPlaceholder": "AC car with driver",
+      "exclusionPlaceholder": "Temple donations"
+    },
+    "actions": {
+      "save": "Save",
+      "archive": "Archive",
+      "restore": "Restore",
+      "archived": "Package archived",
+      "restored": "Package restored (hidden)",
+      "confirmArchive": "Archive this package? It leaves the site at once; bookings and enquiries keep their link to it."
+    },
+    "itinerary": {
+      "lead": "One entry per day. Days are shown in order on the package page.",
+      "day": "Day",
+      "titleEn": "Title (English)",
+      "titleHi": "Title (Hindi)",
+      "titlePlaceholder": "Vrindavan temples",
+      "descriptionEn": "What happens (English)",
+      "descriptionHi": "What happens (Hindi)",
+      "meals": "Meals included",
+      "overnight": "Night stay at",
+      "add": "Add day",
+      "confirmDelete": "Delete this day from the itinerary?",
+      "missing": "No itinerary yet for day {days}.",
+      "extra": "Day {days} is beyond the package length; change the days above or remove it."
+    },
+    "meals": {
+      "breakfast": "Breakfast",
+      "lunch": "Lunch",
+      "dinner": "Dinner"
+    },
+    "tiers": {
+      "lead": "Price per traveller, before GST, by group size. Together the tiers must cover groups of {min} to {max}.",
+      "covered": "Every group size from {min} to {max} has a price. From {from} per person.",
+      "minPax": "From (people)",
+      "maxPax": "To (people)",
+      "adultPrice": "Adult price (₹)",
+      "childPrice": "Child price (₹)",
+      "childPlaceholder": "Same as adult",
+      "add": "Add tier",
+      "help": "The tier that holds the whole group (adults and children) applies. Leave the child price empty to charge children the adult price.",
+      "range": "{min}–{max} people",
+      "group": "Group size",
+      "sameAsAdult": "Same as adult",
+      "lastTierInUse": "This is the only price of a live package open for online booking. Add another tier first, or switch the package to enquiry only."
+    },
+    "departures": {
+      "lead": "Dates a group leaves, with seats and an optional peak-date supplement per traveller. Seats booked count confirmed bookings and unpaid holds that have not expired.",
+      "privateTour": "This is a private tour on any date (fixed group departures are off), so these dates are not offered to visitors.",
+      "noneUpcoming": "No upcoming active departure: visitors can only send an enquiry until you add a date.",
+      "date": "Date",
+      "seatsTotal": "Seats",
+      "noLimit": "No limit",
+      "supplement": "Supplement (₹)",
+      "noteEn": "Note (English)",
+      "noteHi": "Note (Hindi)",
+      "notePlaceholder": "Holi special",
+      "active": "Open",
+      "add": "Add date",
+      "confirmDelete": "Delete this departure date?",
+      "past": "Past",
+      "off": "Closed",
+      "seats": "{booked} booked · {left} of {total} left",
+      "bookedUnlimited": "{booked} booked · no seat limit",
+      "booked": "Booked",
+      "left": "Seats left",
+      "bookedInUse": "This date has live bookings, so it cannot be deleted. Switch off Open to stop new bookings; booked travellers keep their date."
+    },
+    "errors": {
+      "tiersEmpty": "Add at least one price tier.",
+      "tiersOverlap": "Two tiers cover the same group size. Change the ranges so they do not overlap.",
+      "tiersGap": "Some group sizes have no price. Visitors with those group sizes cannot book online.",
+      "tiersRange": "A tier ends before it starts.",
+      "tiersNeededToBook": "To go live for online booking, the price tiers must cover every group size from the smallest to the largest group. Save it as enquiry only or hidden first.",
+      "notFound": "This item no longer exists.",
+      "inUse": "It is still in use, so it cannot be deleted."
+    },
+    "settings": {
+      "title": "Packages & leads",
+      "packages": {
+        "title": "Tour packages",
+        "lead": "Online advance, seat hold, booking cut-off, group limit and the cancellation policy shown on every package.",
+        "advance": "Online advance (%)",
+        "advanceHelp": "Used when a package has no advance of its own.",
+        "holdMinutes": "Seat hold (minutes)",
+        "holdHelp": "How long an unpaid booking keeps its seats.",
+        "bookUntil": "Online booking closes (days before)",
+        "bookUntilHelp": "Enquiries stay open after that.",
+        "maxTravellers": "Most travellers per booking",
+        "maxTravellersHelp": "Larger groups send an enquiry.",
+        "cancellation": "Cancellation policy"
+      },
+      "leads": {
+        "title": "Leads CRM",
+        "lead": "Who gets new enquiries, spam limits, follow-up timing, quote defaults, lead sources and lost reasons.",
+        "autoAssign": "New leads go to",
+        "assign": {
+          "least_loaded": "The agent with the fewest open leads",
+          "none": "Nobody (stay unassigned)"
+        },
+        "throttle": "Enquiries per phone per hour",
+        "throttleHelp": "More than this from one number is refused.",
+        "firstFollowUp": "First follow-up due after (hours)",
+        "firstFollowUpHelp": "0 = at once.",
+        "quoteHours": "Quote valid for (hours)",
+        "quoteHoursHelp": "The payment link stops working after this.",
+        "quoteGst": "Default GST on quote lines (%)",
+        "quoteGstHelp": "Agents can change it per line.",
+        "quoteSac": "Default SAC on quote lines",
+        "sources": "Lead sources",
+        "sourcesHelp": "One per line: lowercase letters, numbers, - or _ (e.g. walk_in).",
+        "lostReasons": "Lost reasons",
+        "lostReasonsHelp": "One per line; agents pick one when a lead is lost."
+      },
+      "travel": {
+        "title": "Flights, trains and buses",
+        "lead": "The travel enquiry form: group limit, classes per mode and the notice above the form.",
+        "provider": "Fares and tickets",
+        "providerHelp": "manual = visitors send an enquiry and the travel desk sends a quote. Live inventory is not connected.",
+        "maxTravellers": "Most travellers per enquiry",
+        "flightClasses": "Flight classes",
+        "trainClasses": "Train classes",
+        "busClasses": "Bus types",
+        "classesHelp": "Separate with commas.",
+        "notice": "Notice on the travel form"
+      }
+    }
+  },
+  "packages": {
+    "duration": "{days, plural, one {# day} other {# days}} · {nights, plural, one {# night} other {# nights}}",
+    "categories": {
+      "braj": "Braj",
+      "pilgrimage": "Pilgrimage",
+      "heritage": "Heritage",
+      "spiritual": "Spiritual",
+      "family": "Family",
+      "weekend": "Weekend",
+      "adventure": "Adventure"
+    },
+    "meals": {
+      "breakfast": "Breakfast",
+      "lunch": "Lunch",
+      "dinner": "Dinner"
+    },
+    "listing": {
+      "metaTitle": "Tour packages from Vrindavan",
+      "metaDescription": "Braj yatras, temple tours and heritage trips with stays, transport and guides, at clear per-person prices.",
+      "eyebrow": "Tour packages",
+      "title": "Yatras and tours, planned for you",
+      "subtitle": "Temple circuits, Braj parikramas and heritage trips with stay, transport and a guide. Book online or send us an enquiry.",
+      "filtersTitle": "Filter by type",
+      "all": "All tours",
+      "count": "{count, plural, =0 {No tours} one {# tour} other {# tours}}",
+      "searchFor": "Showing tours for “{q}”.",
+      "clearSearch": "Clear",
+      "noneTitle": "No tours match this filter.",
+      "showAll": "Show all tours",
+      "emptyTitle": "New tours are on the way",
+      "emptyBody": "Message us and we'll plan a yatra around your dates and group.",
+      "whatsapp": "Message us on WhatsApp",
+      "customTitle": "Want a tour made just for you?",
+      "customBody": "Tell us your dates, group size and the places you want to see. Our team builds the plan and sends you a quote.",
+      "customWhatsappText": "Hello, I'd like a custom tour. Dates: … Travellers: … Places: …",
+      "travelCta": "Book flights, trains or buses"
+    },
+    "card": {
+      "featured": "Featured",
+      "rating": "Rated {rating} out of 5",
+      "anyDate": "Any date you choose",
+      "nextDeparture": "Next departure {date}",
+      "datesOnRequest": "Dates on request",
+      "from": "From",
+      "perPerson": "per person",
+      "priceOnRequest": "Price on request",
+      "bookOnline": "Book online",
+      "enquire": "Enquire"
+    },
+    "detail": {
+      "back": "All tours",
+      "startsFrom": "starts from {city}",
+      "bookingPanel": "Book or enquire",
+      "perPersonPlusGst": "per person, plus GST",
+      "enquiryOnly": "Send us your dates and group size, and we'll confirm availability and the final price.",
+      "enquireCta": "Send an enquiry",
+      "whatsapp": "Ask on WhatsApp",
+      "whatsappText": "Hello, I'm interested in the tour “{title}”.",
+      "about": "About this tour",
+      "highlights": "Highlights",
+      "itinerary": "Day-by-day plan",
+      "day": "Day {day}",
+      "noMeals": "Meals on your own",
+      "overnight": "Night in {place}",
+      "includedTitle": "What's included",
+      "inclusions": "Included",
+      "exclusions": "Not included",
+      "prices": "Price per person",
+      "groupSize": "Group size",
+      "adultPrice": "Adult",
+      "childPrice": "Child",
+      "travellersExact": "{count, plural, one {# traveller} other {# travellers}}",
+      "travellersRange": "{min}–{max} travellers",
+      "pricesNote": "The price for the whole group comes from the row that fits everyone travelling. GST of {gst}% is added at checkout.",
+      "departures": "Departures",
+      "noDepartures": "No dates are open right now. Send an enquiry and we'll tell you about the next one.",
+      "bookUntil": "Online booking closes {days, plural, =0 {on the day of departure} one {# day before departure} other {# days before departure}}; enquiries stay open.",
+      "anyDateNote": "A private tour on the date you choose, starting {days, plural, =0 {from today} one {from tomorrow} other {# days from today}} for online booking.",
+      "policy": "Cancellation policy",
+      "terms": "Terms",
+      "enquireTitle": "Ask about this tour",
+      "enquireBody": "No sign-in needed. We usually reply within a few hours."
+    },
+    "book": {
+      "title": "Book this tour",
+      "departure": "Choose a departure",
+      "supplement": "+{amount} per person (peak date)",
+      "soldOut": "Sold out",
+      "closed": "Booking closed",
+      "seatsLeft": "{count, plural, one {# seat left} other {# seats left}}",
+      "open": "Available",
+      "noDepartures": "No departures are open for online booking. Send an enquiry instead.",
+      "startDate": "Start date",
+      "startDateHint": "Earliest start for online booking: {date}",
+      "adults": "Adults",
+      "children": "Children",
+      "decrease": "Fewer {label}",
+      "increase": "More {label}",
+      "minTravellers": "This tour needs at least {count, plural, one {# traveller} other {# travellers}}.",
+      "groupHint": "Up to {max} travellers online. Bigger group? Send an enquiry.",
+      "continue": "Continue",
+      "note": "You'll see the full price with GST before you pay."
+    },
+    "checkout": {
+      "title": "Review your tour booking",
+      "backToPackage": "Back to the tour",
+      "whatsapp": "Message us on WhatsApp",
+      "dates": "Dates",
+      "travellers": "Travellers",
+      "travellersValue": "{adults, plural, one {# adult} other {# adults}}{children, plural, =0 {} one {, # child} other {, # children}}",
+      "change": "Change date or travellers",
+      "priceTitle": "Price breakup",
+      "balanceLater": "Balance before the tour",
+      "contactTitle": "Contact details",
+      "travellersTitle": "Travellers",
+      "travellersHint": "Names and ages help us plan rooms and seats. You can add them later too.",
+      "fields": {
+        "name": "Full name",
+        "travellerName": "Traveller {n} name",
+        "travellerAge": "Traveller {n} age",
+        "age": "Age",
+        "pickupPoint": "Pickup point (optional)",
+        "pickupHint": "Hotel, railway station or a landmark where we should meet you.",
+        "specialRequests": "Special requests (optional)",
+        "specialRequestsPlaceholder": "Senior travellers, dietary needs, a wheelchair…"
+      },
+      "modes": {
+        "part": "Pay {percent}% advance now",
+        "full": "Pay the full amount now"
+      },
+      "modeHints": {
+        "part": "Pay {advance} now to confirm; {balance} is paid before the tour starts",
+        "full": "Pay {total} now through Razorpay"
+      },
+      "acceptPolicies": "I agree to the cancellation policy and the tour terms, and every traveller will carry a valid photo ID.",
+      "offline": "Online payment isn't available right now. Message us and we'll book this tour for you.",
+      "paymentPendingHint": "Your seats are held for {minutes} minutes. Complete the payment to confirm."
+    },
+    "lines": {
+      "adult": "{count, plural, one {# adult} other {# adults}}",
+      "child": "{count, plural, one {# child} other {# children}}",
+      "supplement": "Peak date supplement ({count, plural, one {# traveller} other {# travellers}})",
+      "fee": "Convenience fee"
+    },
+    "errors": {
+      "not_found": {
+        "title": "This tour isn't available",
+        "body": "It may have been removed. Please choose another tour."
+      },
+      "booking_closed": {
+        "title": "Online booking opens soon",
+        "body": "Send us an enquiry or a WhatsApp message and we'll book it for you."
+      },
+      "enquiry_only": {
+        "title": "This tour is booked by enquiry",
+        "body": "Send us your dates and group size from the tour page and we'll confirm."
+      },
+      "departure_required": {
+        "title": "Choose a departure",
+        "body": "Pick one of the open dates on the tour page."
+      },
+      "departure_closed": {
+        "title": "That date is closed for online booking",
+        "body": "Please pick a later date, or send an enquiry and we'll try to fit you in."
+      },
+      "sold_out": {
+        "title": "Not enough seats left",
+        "body": "This departure can't take your whole group any more. Please pick another date."
+      },
+      "too_many": {
+        "title": "That's a big group",
+        "body": "Large groups are booked by our team. Send an enquiry and we'll plan it with you."
+      },
+      "group_size": {
+        "title": "This group size can't be booked online",
+        "body": "Change the number of travellers, or send an enquiry."
+      },
+      "no_tier": {
+        "title": "No price for this group size",
+        "body": "Send an enquiry and we'll quote for your group."
+      },
+      "package_unavailable": {
+        "title": "This tour isn't taking bookings",
+        "body": "Please send an enquiry and our team will help."
+      },
+      "closed": {
+        "title": "That date is closed",
+        "body": "Please pick another date."
+      },
+      "invalid": {
+        "title": "Choose your tour details",
+        "body": "Pick a date and the number of travellers on the tour page."
+      },
+      "unknown": {
+        "title": "Something went wrong",
+        "body": "Please try again, or message us and we'll help."
+      }
+    },
+    "trip": {
+      "bannerConfirmed": "Your tour is confirmed",
+      "bannerCompleted": "Hope you had a wonderful yatra",
+      "balanceDue": "{amount} is due before the tour starts. Our team will remind you.",
+      "pendingHint": "Your seats are held until {time}. Complete the payment to confirm.",
+      "balanceLabel": "Balance due",
+      "dates": "Tour dates",
+      "pickup": "Pickup point",
+      "destinations": "Places",
+      "cancelHint": "To cancel or change this tour, call or message us with your booking ID.",
+      "viewPackage": "View tour details"
+    }
+  },
+  "travel": {
+    "metaTitle": "Flight, train and bus tickets",
+    "metaDescription": "Tell us your route and dates; our travel desk sends the best fares and a secure payment link.",
+    "eyebrow": "Travel desk",
+    "title": "Flights, trains and buses to Braj and beyond",
+    "subtitle": "Share where and when you're travelling. We find the fares, you approve the quote, then pay online.",
+    "modeLabel": "Travel by",
+    "modes": {
+      "flight": "Flight",
+      "train": "Train",
+      "bus": "Bus"
+    },
+    "modeHints": {
+      "flight": "Nearest airports: Agra, Delhi and Jewar. We can add a cab to Vrindavan.",
+      "train": "Mathura Junction is the closest major station to Vrindavan.",
+      "bus": "AC and sleeper buses to Mathura and Vrindavan from nearby cities."
+    },
+    "formTitle": "{mode} enquiry",
+    "howTitle": "How it works",
+    "how": {
+      "one": {
+        "title": "Send your trip",
+        "body": "Route, dates and travellers. It takes a minute."
+      },
+      "two": {
+        "title": "Get a quote",
+        "body": "Our travel desk replies with fares and timings, usually the same day."
+      },
+      "three": {
+        "title": "Approve and pay",
+        "body": "Open the quote link and pay securely. Tickets follow on WhatsApp or email."
+      }
+    },
+    "packagesCta": {
+      "title": "Planning a full yatra?",
+      "body": "See our tour packages with stay, transport and a guide.",
+      "button": "See tour packages"
+    },
+    "trip": {
+      "reference": "Enquiry {reference} · Quote #{number}",
+      "route": "Route",
+      "date": "Travel date",
+      "travellers": "Travellers",
+      "travellersValue": "{adults, plural, one {# adult} other {# adults}}{children, plural, =0 {} one {, # child} other {, # children}}",
+      "notes": "Notes from our team",
+      "terms": "Terms",
+      "pay": "Pay now",
+      "help": "Questions about this booking? Call or message us with your booking ID."
+    }
+  },
+  "enquiry": {
+    "title": "Enquiry form",
+    "submit": "Send enquiry",
+    "privacy": "We use your details only to reply to this enquiry.",
+    "fields": {
+      "name": "Your name",
+      "phone": "Mobile number",
+      "email": "Email (optional)",
+      "message": "Message (optional)",
+      "messagePlaceholder": {
+        "package": "Hotel preference, senior travellers, pickup city…",
+        "travel": "Preferred timings, flexible dates, seat preference…",
+        "service": "Tell us what you need and when."
+      },
+      "startDate": "Preferred start date",
+      "adults": "Adults",
+      "children": "Children",
+      "from": "From",
+      "fromPlaceholder": "City or station",
+      "to": "To",
+      "toPlaceholder": "City or station",
+      "departOn": "Departure date",
+      "returnOn": "Return date (optional)",
+      "travelClass": "Class",
+      "anyClass": "Any class",
+      "website": "Leave this field empty"
+    },
+    "classes": {
+      "economy": "Economy",
+      "premium_economy": "Premium economy",
+      "business": "Business",
+      "first": "First",
+      "SL": "Sleeper (SL)",
+      "3A": "AC 3-tier (3A)",
+      "2A": "AC 2-tier (2A)",
+      "1A": "AC first class (1A)",
+      "CC": "AC chair car (CC)",
+      "EC": "Executive chair car (EC)",
+      "2S": "Second sitting (2S)",
+      "seater": "Seater",
+      "sleeper": "Sleeper",
+      "ac_seater": "AC seater",
+      "ac_sleeper": "AC sleeper"
+    },
+    "fieldErrors": {
+      "invalid": "Please check this field.",
+      "required": "This is required.",
+      "invalidPhone": "Enter a valid mobile number.",
+      "invalidEmail": "Enter a valid email.",
+      "invalidDate": "Choose a valid date.",
+      "sameCity": "From and to can't be the same.",
+      "returnBeforeDepart": "The return must be on or after the departure date.",
+      "checkForm": "Please fix the highlighted fields."
+    },
+    "errors": {
+      "invalid": "Something in the form needs fixing.",
+      "rate_limited": "We already have your recent enquiry. Our team will call you soon.",
+      "not_found": "This tour is no longer available. Please choose another.",
+      "unavailable": "Enquiries can't be sent right now. Please call or message us on WhatsApp.",
+      "unknown": "Something went wrong. Please try again."
+    },
+    "success": {
+      "title": "Thank you! Your enquiry is with us.",
+      "reference": "Your reference:",
+      "nextTitle": "What happens next",
+      "next": {
+        "package": {
+          "one": "Our tour team checks availability for your dates.",
+          "two": "We call or WhatsApp you to fine-tune the plan.",
+          "three": "You get a quote link to confirm and pay online."
+        },
+        "travel": {
+          "one": "Our travel desk checks fares and timings for your route.",
+          "two": "We send you a quote, usually the same day.",
+          "three": "Approve it from the link and pay securely; tickets follow on WhatsApp or email."
+        },
+        "service": {
+          "one": "The right person in our team reads your request.",
+          "two": "We call or WhatsApp you to understand the details.",
+          "three": "You get a clear quote before any work starts."
+        }
+      },
+      "again": "Send another enquiry"
+    },
+    "serviceTitle": "Send an enquiry",
+    "serviceBody": "No sign-in needed. Tell us what you need and we'll get back to you.",
+    "serviceCta": {
+      "packages": {
+        "title": "Tour packages",
+        "body": "Braj yatras and temple tours with stay, transport and a guide.",
+        "button": "See tour packages"
+      },
+      "travel": {
+        "title": "Flights, trains and buses",
+        "body": "Send your route and dates; our travel desk sends the best fares.",
+        "button": "Plan your travel"
+      }
+    }
+  },
+  "quotePage": {
+    "metaTitle": "Your quote",
+    "reference": "Enquiry {reference} · Quote #{number}",
+    "preparedFor": "Prepared for {name}",
+    "whatsapp": "Message us on WhatsApp",
+    "call": "Call us",
+    "whatsappText": "Hello, I have a question about quote #{number} for enquiry {reference}.",
+    "paid": {
+      "title": "Payment received. Thank you!",
+      "amount": "Paid {amount}.",
+      "booking": "Booking ID",
+      "balance": "Balance of {amount} to be paid as agreed with our team.",
+      "full": "Paid in full.",
+      "viewTrip": "View in My trips"
+    },
+    "payable": {
+      "advance": "Advance to pay now",
+      "full": "Amount to pay",
+      "balance": "Balance {amount} later, as agreed",
+      "validUntil": "Valid until {date}",
+      "pay": "Pay {amount}",
+      "manual": "Our team will share the payment details with you directly.",
+      "secure": "Payments are processed securely by Razorpay. You'll come back to this page after paying."
+    },
+    "expired": {
+      "title": "This quote has expired",
+      "body": "Prices and availability may have changed. Message or call us and we'll send a fresh quote."
+    },
+    "cancelled": {
+      "title": "This quote is no longer active",
+      "body": "It may have been replaced by a newer quote. Message or call us if you need help."
+    },
+    "linesTitle": "Quote details",
+    "lineMeta": "{quantity} × {unit} · GST {gst}% ({tax})",
+    "subtotal": "Subtotal",
+    "gst": "GST",
+    "total": "Total",
+    "payNow": "Pay now",
+    "notes": "Notes",
+    "terms": "Terms",
+    "questions": "Questions about this quote?"
   }
 }

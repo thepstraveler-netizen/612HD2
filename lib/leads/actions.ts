@@ -40,14 +40,16 @@ function details(e: Enquiry): Record<string, Json> {
 }
 
 export async function submitEnquiry(input: unknown): Promise<EnquiryResult> {
+  // Bots fill the hidden field; answer as if it worked.
+  if (input && typeof input === "object" && "website" in input && input.website) {
+    return { ok: true, reference: "LD-00000" };
+  }
   const parsed = enquirySchema.safeParse(input);
   if (!parsed.success) {
     const issue = parsed.error.issues[0];
     return { ok: false, error: "invalid", field: issue?.path.join(".") };
   }
   const e = parsed.data;
-  // Bots fill the hidden field; answer as if it worked.
-  if (e.website) return { ok: true, reference: "LD-00000" };
   if (!hasServiceRole()) return { ok: false, error: "unavailable" };
 
   const session = await getSession();
