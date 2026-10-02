@@ -545,3 +545,33 @@ describe("vendor self-service", () => {
     expect(docs).toEqual([{ status: "pending" }]);
   });
 });
+
+describe("cash on delivery", () => {
+  it("counts cash brought in by a platform rider as collected by the platform", async () => {
+    const vendor = await newVendor(1000);
+    const { rows } = await db.query<{ id: string }>(
+      `insert into public.bookings (code, service, status, vendor_id, contact_name, contact_phone, subtotal_paise,
+         tax_paise, total_paise, payable_now_paise, payment_mode, price_breakdown, confirmed_at)
+       values ('PSTCOD0001', 'food', 'confirmed', $1, 'Food Guest', '+919876543210', 50000, 0, 50000, 0,
+         'pay_at_hotel', '{}', now()) returning id`,
+      [vendor],
+    );
+    const booking = rows[0].id;
+    const { rows: store } = await db.query<{ id: string; zone: string }>(
+      `select s.id, z.id as zone from public.stores s, public.delivery_zones z limit 1`,
+    );
+    const { rows: rider } = await db.query<{ id: string }>(
+      "select id from public.delivery_partners where vendor_id is null limit 1",
+    );
+    await db.query(
+      `insert into public.orders (booking_id, store_id, vendor_id, kind, zone_id, address, partner_id, delivery_otp)
+       select $1, s.id, $2, s.kind, $3, '{"line1": "Gali 1", "area": "Raman Reti"}', $4, '1234'
+         from public.stores s where s.id = $5`,
+      [booking, vendor, store[0].zone, rider[0].id, store[0].id],
+    );
+    await complete(booking);
+    const [entry] = await entries(vendor);
+    expect(entry.platform_collected_paise).toBe(50_000);
+    expect(entry.net_paise).toBe(50_000 - 5_000 - 900);
+  });
+});

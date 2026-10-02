@@ -499,6 +499,13 @@ begin
 
   t_gross := greatest(v_b.total_paise - v_b.refunded_paise, 0);
   t_platform := least(greatest(v_b.paid_paise - v_b.refunded_paise, 0), t_gross);
+  -- Cash on delivery brought in by one of the platform's own riders (no vendor) was collected by the platform.
+  if v_b.payment_mode = 'pay_at_hotel' and exists (
+    select 1 from public.orders o join public.delivery_partners dp on dp.id = o.partner_id
+     where o.booking_id = p_booking_id and dp.vendor_id is null
+  ) then
+    t_platform := t_gross;
+  end if;
   t_vendor := t_gross - t_platform;
   t_comm := round(t_gross * v_bps / 10000.0);
   t_comm_tax := round(t_comm * v_tax_bps / 10000.0);

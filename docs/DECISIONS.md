@@ -311,3 +311,33 @@ Packages are taxed at the package's rate, default 5% under SAC 998555 (tour oper
 ### D-076 · Agents message customers from their own WhatsApp
 
 Customers get an automatic acknowledgement of their enquiry and the quote with its payment link (`lead.received`, `quote.sent`; email now, SMS and WhatsApp once those providers are set up in a later phase), and agents get an email when a lead is assigned to them (`lead.assigned`). For one-to-one chats the CRM fills in quick-reply templates (`crm.intro`, `crm.follow_up`, `quote.sent`, editable in Notifications) and opens them in the agent's own WhatsApp; the agent then logs the message on the timeline. No WhatsApp Business API is needed for this.
+
+## Phase 9 · B2B services, partner onboarding and vendor settlements
+
+### D-077 · B2B services sell through plans and enquiries, not a cart
+
+The six business services (hotel photography, OTA handling, calling centre, Instagram reels marketing, lead generation, travel agent & data) get admin-editable plans (`service_plans`: name, price or "price on request", price suffix such as "per month", features, a "popular" mark) and a portfolio (`service_portfolio`: an image and / or a reel or listing link with a caption and client name). Picking a plan opens the same enquiry form as before with the plan preselected, so every request lands in the leads CRM with the plan in its details and the travel desk quotes it like any other lead (D-072). The sample plan prices in the seed are examples to edit before launch.
+
+### D-078 · Partners apply with their own account
+
+The Partner With Us form needs the applicant to sign in first (Google, email or magic link). The same account becomes the owner of the vendor when the application is approved, gets the `vendor` role and opens the partner dashboard at `/vendor`; there is no separate invite step. One open application per account. Documents are uploaded straight to the private `documents` bucket under `partners/<user id>/` with one-time signed upload URLs and are only ever served to staff and the vendor through short-lived signed links.
+
+### D-079 · What each business type is asked for is a setting
+
+`partners.defaults` lists the business types offered (the poster's list plus pharmacies and service providers), the documents required per type (for example FSSAI for restaurants, drug licence for pharmacies, RC for transport), the default commission per type (hotels and restaurants 15%, pharmacies 8%, others 10%), the upload size limit and the partner agreement with its version. The applicant accepts the agreement by typing their name; the version, name and time are kept on the application and copied to the vendor. Changing the agreement text should bump its version; an application sent against an old version is refused and the form reloads the new text.
+
+### D-080 · Approval creates the vendor in one step
+
+Approving an application (`approve_partner_application`) creates an active vendor of the matching kind with a unique slug, makes the applicant its owner, grants the vendor role and copies the documents as verified. Staff can override the commission at approval. Rejecting needs a reason, which is emailed to the applicant, who may apply again. Vendors can later update their own contact, GST / PAN and bank or UPI details and add documents from the portal (new documents wait for staff verification); name, status and commission stay with staff.
+
+### D-081 · The settlement ledger is written from completed bookings
+
+When a booking that belongs to a vendor completes (the hotel's or store's vendor, or the vendor that owns the cab or ride vehicle, else the driver), a ledger row records the gross value (total minus refunds), what the platform collected (online payments, payments staff recorded as received by P&S, and cash on delivery brought in by the platform's own riders, minus refunds), what the vendor collected directly (pay at hotel, the balance paid to a vendor's driver, cash taken by the store's own riders), the commission at the vendor's rate, GST on that commission, TCS and TDS, and the net: collected by the platform minus commission, GST, TCS and TDS. A negative net means the vendor holds money that belongs to the platform. Rates are frozen when the booking first settles. A later refund or payment changes the same row while it is unsettled, or adds an adjustment row once it has been paid out, so a payout never changes after the fact. Packages and travel quotes are the platform's own sales and have no vendor. Finance can add manual credits or debits with a reason. Staff should record a payment on a booking only when P&S itself received the money; cash a hotel or driver took stays out of the booking's payments so it counts as collected by the vendor.
+
+### D-082 · TCS and TDS are placeholders until the CA sets them
+
+`settlements.defaults` holds GST on commission (18%), TCS and TDS rates (both 0 = not withheld) and the settlement cycle (7 days). E-commerce operators may have to collect TCS under GST and deduct TDS under section 194-O on what they pay partners; the rates and thresholds depend on the business's registration and change over time, so **the business's CA should set them**. They apply to bookings that settle after the change.
+
+### D-083 · Payouts are made by hand through an adapter
+
+A payout gathers a vendor's unsettled rows up to a cut-off date (cycles end every `cycle_days` days for everyone) into one pending payout; finance pays it by bank transfer or UPI outside the app (or collects it, when the vendor owes money) and records the method and UTR, and the vendor is emailed. A pending payout can be cancelled, which releases its rows. One pending payout per vendor at a time. Money movement goes through a `PayoutProvider` interface (`lib/settlements/provider.ts`); only `manual` exists, and a Razorpay Route or RazorpayX adapter can be added later without changing the ledger. Creating, paying and cancelling payouts and adjustments need `payments.refund`, like refunds.

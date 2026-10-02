@@ -141,6 +141,13 @@ next-intl with `localePrefix: "as-needed"`: English at `/`, Hindi at `/hi`. All 
 - External inventory: `lib/travel/provider.ts` (`TravelInventoryProvider`; `manual` today).
 - Quote lifecycle: draft → sent (`send_quote` writes an unpaid `package` / `travel` booking with the quote's lines; a Razorpay Payment Link is attached) → paid (the `bookings_sync_quote` trigger marks the quote paid and the lead Won when the booking confirms) or expired / cancelled with the booking.
 
+## Partners, B2B services and settlements
+
+- Data: `service_plans` and `service_portfolio` (B2B service pages); `partner_applications` (Partner With Us), `vendor_documents`; vendors gained PAN, address, city, bank / UPI details and the accepted agreement; `vendor_ledger_entries` and `vendor_payouts`. Settings in `partners.defaults` (public) and `settlements.defaults` (staff only).
+- Applications: `submit_partner_application` (one open application per account), `review_partner_application` (under review / rejected with a reason), `approve_partner_application` (creates the vendor, owner membership, vendor role and verified documents). Vendors edit their own details and add documents through `update_vendor_profile` and `add_vendor_document`, which check membership.
+- Ledger: the `bookings_sync_vendor_ledger` trigger calls `sync_vendor_ledger` whenever a completed booking's status, payments or refunds change. `booking_settlement_vendor` picks the vendor (booking's own, else the cab / ride vehicle's, else the driver's). Payouts: `create_vendor_payout`, `mark_vendor_payout_paid`, `cancel_vendor_payout`; manual credits / debits with `add_vendor_adjustment`.
+- Server: `lib/partners` (settings, pure helpers in `status.ts`, public `actions.ts`, staff `admin-actions.ts`, vendor `vendor-actions.ts`), `lib/settlements` (settings, pure statement helpers in `statement.ts`, `admin-actions.ts`, and the `PayoutProvider` adapter in `provider.ts`, `manual` today).
+
 ## Design system
 
 Brand and accent tokens from the poster are CSS variables in `app/globals.css`, mapped onto the shadcn semantic tokens and exposed to Tailwind (`bg-brand-navy`, `text-accent-teal`, …). Dark mode via `next-themes` (`.dark` class). Buttons and inputs default to 44px height for tap targets.
@@ -156,6 +163,7 @@ Brand and accent tokens from the poster are CSS variables in `app/globals.css`, 
 | 6     | local rides: zones, landmarks, fares, live requests board, `/rides`, driver ride links (`lib/rides`)              |
 | 7     | food, essentials, medicine: stores, menus, cart, orders board, vendor dashboard, prescriptions (`lib/delivery`)   |
 | 8     | packages, flight / train / bus enquiries, leads CRM, quotes with payment links (`lib/packages`, `lib/leads`)      |
-| 9–11  | partner onboarding, settlements, reviews/loyalty/PWA/SEO, hardening (CSP, rate limits, Turnstile)                 |
+| 9     | B2B service plans and portfolio, Partner With Us, vendor portal earnings, settlements (`lib/partners`, `lib/settlements`) |
+| 10–11 | reviews/loyalty/PWA/SEO, hardening (CSP, rate limits, Turnstile)                                                  |
 
 A dedicated folder (e.g. `app/[locale]/admin/hotels/page.tsx`) takes precedence over the generic `admin/[module]` placeholder, so modules can be replaced one at a time.
