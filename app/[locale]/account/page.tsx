@@ -1,4 +1,4 @@
-import { KeyRound, Luggage } from "lucide-react";
+import { FileText, KeyRound, Luggage } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { TripCard } from "@/components/booking/trip-card";
@@ -20,6 +20,7 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
   const { locale } = await params;
   const session = await requireUser("/account");
   const t = await getTranslations("account");
+  const tm = await getTranslations("medicine.account");
   const trips = await listMyTrips(session.user.id, 3);
   const name = session.profile?.full_name ?? session.user.email ?? "";
 
@@ -64,6 +65,18 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
                   {ROLE_LABELS[role as RoleKey] ?? role}
                 </Badge>
               ))}
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>{tm("title")}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Button asChild variant="outline" className="w-full">
+                <Link href="/account/prescriptions">
+                  <FileText /> {tm("navLink")}
+                </Link>
+              </Button>
             </CardContent>
           </Card>
           <Card>

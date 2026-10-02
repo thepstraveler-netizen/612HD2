@@ -958,6 +958,226 @@ export type Database = {
         source: "admin" | "driver" | "system" | "customer";
         created_at: string;
       }>;
+      delivery_zones: Simple<
+        {
+          id: string;
+          slug: string;
+          name: LocalizedJson;
+          fee_paise: number;
+          free_above_paise: number | null;
+          eta_minutes: number;
+          is_active: boolean;
+          sort_order: number;
+        } & Timestamps
+      >;
+      stores: Simple<
+        {
+          id: string;
+          vendor_id: string;
+          kind: Database["public"]["Enums"]["store_kind"];
+          slug: string;
+          name: LocalizedJson;
+          description: LocalizedJson | null;
+          cuisines: string[];
+          image_id: string | null;
+          address: string | null;
+          phone: string | null;
+          lat: number | null;
+          lng: number | null;
+          pure_veg: boolean;
+          is_24x7: boolean;
+          hours: Json;
+          accepting_orders: boolean;
+          prep_minutes: number;
+          min_order_paise: number;
+          packaging_fee_paise: number;
+          tax_bps: number;
+          drug_licence_no: string | null;
+          rating: number | null;
+          is_featured: boolean;
+          is_active: boolean;
+          sort_order: number;
+          deleted_at: string | null;
+        } & Timestamps,
+        [MediaFk<"stores_image_id_fkey", "image_id">]
+      >;
+      store_zones: Simple<{ store_id: string; zone_id: string }>;
+      store_categories: Simple<
+        {
+          id: string;
+          store_id: string;
+          name: LocalizedJson;
+          is_active: boolean;
+          sort_order: number;
+        } & Timestamps
+      >;
+      store_items: Simple<
+        {
+          id: string;
+          store_id: string;
+          category_id: string | null;
+          name: LocalizedJson;
+          description: LocalizedJson | null;
+          image_id: string | null;
+          diet: "veg" | "egg" | "non_veg" | "na";
+          is_jain: boolean;
+          is_sattvik: boolean;
+          price_paise: number;
+          mrp_paise: number | null;
+          tax_bps: number | null;
+          hsn: string | null;
+          unit: string | null;
+          track_stock: boolean;
+          stock: number | null;
+          is_available: boolean;
+          is_bestseller: boolean;
+          sort_order: number;
+        } & Timestamps,
+        [MediaFk<"store_items_image_id_fkey", "image_id">]
+      >;
+      item_variants: Simple<
+        {
+          id: string;
+          item_id: string;
+          name: LocalizedJson;
+          price_paise: number;
+          stock: number | null;
+          is_available: boolean;
+          sort_order: number;
+        } & Timestamps
+      >;
+      item_addon_groups: Simple<
+        {
+          id: string;
+          item_id: string;
+          name: LocalizedJson;
+          min_select: number;
+          max_select: number;
+          sort_order: number;
+        } & Timestamps
+      >;
+      item_addons: Simple<
+        {
+          id: string;
+          group_id: string;
+          name: LocalizedJson;
+          price_paise: number;
+          is_available: boolean;
+          sort_order: number;
+        } & Timestamps
+      >;
+      addresses: Simple<
+        {
+          id: string;
+          user_id: string;
+          label: string;
+          contact_name: string;
+          phone: string;
+          line1: string;
+          line2: string | null;
+          landmark: string | null;
+          zone_id: string | null;
+          pincode: string | null;
+          lat: number | null;
+          lng: number | null;
+          is_default: boolean;
+        } & Timestamps
+      >;
+      delivery_partners: Simple<
+        {
+          id: string;
+          vendor_id: string | null;
+          user_id: string | null;
+          full_name: string;
+          phone: string;
+          vehicle: string | null;
+          is_active: boolean;
+          notes: string | null;
+          deleted_at: string | null;
+        } & Timestamps
+      >;
+      orders: Simple<
+        {
+          id: string;
+          booking_id: string;
+          store_id: string;
+          vendor_id: string;
+          kind: Database["public"]["Enums"]["store_kind"];
+          zone_id: string;
+          address: Json;
+          status: Database["public"]["Enums"]["order_status"];
+          prescription_id: string | null;
+          partner_id: string | null;
+          partner_name: string | null;
+          partner_phone: string | null;
+          eta_at: string | null;
+          placed_at: string | null;
+          accepted_at: string | null;
+          ready_at: string | null;
+          picked_up_at: string | null;
+          delivered_at: string | null;
+          delivery_otp: string | null;
+          /** Service role only (column grant excludes it). */
+          partner_token: string | null;
+          partner_token_expires_at: string | null;
+          rating: number | null;
+          rating_comment: string | null;
+          rated_at: string | null;
+        } & Timestamps
+      >;
+      order_items: Simple<{
+        id: string;
+        order_id: string;
+        item_id: string | null;
+        variant_id: string | null;
+        name: string;
+        variant_name: string | null;
+        addons: Json;
+        diet: string | null;
+        quantity: number;
+        unit_price_paise: number;
+        line_total_paise: number;
+        sort_order: number;
+      }>;
+      order_events: Simple<{
+        id: string;
+        order_id: string;
+        status: Database["public"]["Enums"]["order_status"];
+        note: string | null;
+        actor: string | null;
+        source: "admin" | "vendor" | "partner" | "system" | "customer";
+        created_at: string;
+      }>;
+      prescriptions: Simple<
+        {
+          id: string;
+          user_id: string;
+          patient_name: string;
+          patient_age: number | null;
+          phone: string;
+          zone_id: string;
+          address: Json;
+          files: string[];
+          notes: string | null;
+          status: Database["public"]["Enums"]["prescription_status"];
+          store_id: string | null;
+          reviewed_by: string | null;
+          review_note: string | null;
+        } & Timestamps
+      >;
+      medicine_quotes: Simple<
+        {
+          id: string;
+          prescription_id: string;
+          store_id: string;
+          lines: Json;
+          delivery_fee_paise: number;
+          note: string | null;
+          valid_until: string;
+          status: "sent" | "accepted" | "declined" | "expired" | "withdrawn";
+          created_by: string | null;
+        } & Timestamps
+      >;
     };
     Views: { [_ in never]: never };
     Functions: {
@@ -1041,6 +1261,38 @@ export type Database = {
         Args: { p_ride_id: string; p_user: string; p_rating: number; p_comment: string };
         Returns: Database["public"]["Tables"]["ride_requests"]["Row"];
       };
+      can_manage_store: { Args: { p_store_id: string }; Returns: boolean };
+      can_read_order: { Args: { p_order_id: string }; Returns: boolean };
+      create_order: {
+        Args: { p_booking: Json; p_items: Json; p_order: Json; p_order_items: Json };
+        Returns: Json;
+      };
+      set_order_status: {
+        Args: {
+          p_order_id: string;
+          p_status: Database["public"]["Enums"]["order_status"];
+          p_actor: string | null;
+          p_source: "admin" | "vendor" | "partner" | "system";
+          p_note?: string | null;
+          p_otp?: string | null;
+        };
+        Returns: Database["public"]["Tables"]["orders"]["Row"];
+      };
+      assign_delivery_partner: {
+        Args: {
+          p_order_id: string;
+          p_partner_id: string;
+          p_actor: string | null;
+          p_source?: "admin" | "vendor";
+        };
+        Returns: Database["public"]["Tables"]["orders"]["Row"];
+      };
+      rate_order: {
+        Args: { p_order_id: string; p_user: string; p_rating: number; p_comment: string };
+        Returns: Database["public"]["Tables"]["orders"]["Row"];
+      };
+      submit_prescription: { Args: { p: Json }; Returns: string };
+      my_order_otp: { Args: { p_order_id: string }; Returns: string | null };
     };
     Enums: {
       service_kind: "bookable" | "enquiry";
@@ -1075,7 +1327,7 @@ export type Database = {
         | "partially_refunded"
         | "failed"
         | "expired";
-      booking_service: "hotel" | "cab" | "ride" | "food" | "medicine" | "package" | "travel";
+      booking_service: "hotel" | "cab" | "ride" | "food" | "medicine" | "package" | "travel" | "essentials";
       payment_mode: "full" | "part" | "pay_at_hotel";
       payment_provider: "razorpay" | "offline";
       payment_status: "created" | "authorized" | "captured" | "failed" | "refunded" | "partially_refunded";
@@ -1109,6 +1361,18 @@ export type Database = {
         | "completed"
         | "cancelled"
         | "no_show";
+      store_kind: "restaurant" | "grocery" | "pharmacy";
+      order_status:
+        | "awaiting_payment"
+        | "placed"
+        | "accepted"
+        | "preparing"
+        | "ready"
+        | "out_for_delivery"
+        | "delivered"
+        | "cancelled"
+        | "rejected";
+      prescription_status: "submitted" | "reviewing" | "quoted" | "ordered" | "rejected" | "expired";
     };
     CompositeTypes: { [_ in never]: never };
   };

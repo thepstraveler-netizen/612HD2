@@ -6,6 +6,7 @@ import { BookingStatusBadge } from "@/components/booking/status-badge";
 import { formatStayDate } from "@/components/booking/trip-card";
 import { TripActions } from "@/components/booking/trip-actions";
 import { CabTripDetail } from "@/components/cabs/cab-trip-detail";
+import { CUSTOMER_ORDER_COLUMNS, OrderTripDetail } from "@/components/delivery/order-trip-detail";
 import { CUSTOMER_RIDE_COLUMNS, RideTripDetail } from "@/components/rides/ride-trip-detail";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
@@ -13,6 +14,7 @@ import { requireUser } from "@/lib/auth/guards";
 import { getPaymentSettings } from "@/lib/bookings/settings";
 import { customerCanCancel, type BookingStatus } from "@/lib/bookings/state";
 import { getMyTrip } from "@/lib/bookings/trips";
+import { getDeliverySettings } from "@/lib/delivery/queries";
 import { cancellationText } from "@/lib/hotels/policy-text";
 import { pickLocalized } from "@/lib/i18n/localized";
 import { formatPaise } from "@/lib/money";
@@ -67,6 +69,39 @@ export default async function TripPage({ params }: Props) {
         ride={ride}
         locale={locale}
         cancellationEnabled={settings.customer_cancellation_enabled}
+      />
+    );
+  }
+  if (
+    trip.booking.service === "food" ||
+    trip.booking.service === "essentials" ||
+    trip.booking.service === "medicine"
+  ) {
+    const supabase = await createClient();
+    // Explicit columns: the rider link token and the OTP are not readable directly.
+    const [{ data: order }, deliverySettings] = await Promise.all([
+      supabase.from("orders").select(CUSTOMER_ORDER_COLUMNS).eq("booking_id", trip.booking.id).maybeSingle(),
+      getDeliverySettings(),
+    ]);
+    const [{ data: orderItems }, { data: otp }] = order
+      ? await Promise.all([
+          supabase
+            .from("order_items")
+            .select("id, name, variant_name, addons, diet, quantity, unit_price_paise, line_total_paise")
+            .eq("order_id", order.id)
+            .order("sort_order"),
+          // Only the customer who placed the order gets its delivery OTP.
+          supabase.rpc("my_order_otp", { p_order_id: order.id }),
+        ])
+      : [{ data: [] }, { data: null }];
+    return (
+      <OrderTripDetail
+        data={trip}
+        order={order}
+        items={orderItems ?? []}
+        otp={otp ?? null}
+        settings={deliverySettings}
+        locale={locale}
       />
     );
   }

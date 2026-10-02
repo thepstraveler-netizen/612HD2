@@ -237,3 +237,35 @@ Customers choose Pay the driver (stored as `payment_mode = pay_at_hotel`, nothin
 ### D-058 · Customers rate a completed ride once
 
 After a ride is completed the customer can rate it 1 to 5 with an optional comment from My Trips, once (`rate_ride`). Ratings are visible to ride staff on the ride; driver averages and public reviews come with the reviews phase.
+
+### D-059 · One catalog for restaurants, essentials shops and pharmacies
+
+A `store` is a restaurant, a grocery/essentials shop or a partner pharmacy, owned by a vendor. All three share one catalog (categories, items, variants, add-on groups and add-ons) and one order model, so the vendor dashboard, admin board and checkout are written once. Items carry a diet mark (veg, egg, non-veg, or n/a for products) plus Jain and Sattvik flags, which the database refuses on egg or non-veg items. Stock is optional per item (`track_stock`) and per variant.
+
+### D-060 · Delivery is priced by zone, with a free-delivery threshold
+
+Each town is a delivery zone with a fee, an optional "free above" amount and a delivery time. A store lists the zones it serves and the customer picks the zone with their address; there is no distance pricing and no maps key. Delivery is free when items after the coupon reach the zone's threshold. The ETA shown is the store's preparation time plus the zone's delivery time, counted from when the store accepts.
+
+### D-061 · Orders are bookings; cash on delivery is confirmed at once
+
+An order is a `bookings` row (service `food`, `essentials` or `medicine`) plus one `orders` row with its items, like cab trips (D-045). Price lines, coupons, Razorpay payments, refunds, invoices and My Trips are shared. Cash on delivery is stored as `payment_mode = pay_at_hotel`, confirmed immediately and sent straight to the store, so ordering works before Razorpay keys exist; it is capped by `delivery.defaults.max_cod_paise` (default ₹3,000) and can be switched off. Online orders hold their stock for `hold_minutes` (default 15) until paid. Only ASAP delivery is offered in this phase; scheduled delivery can come later.
+
+### D-062 · Medicines only through a reviewed prescription and a licensed pharmacy
+
+There is no medicine shelf to add to a cart. The customer uploads a prescription (images or PDF, up to 5 files) to the private `prescriptions` bucket under their own folder; staff with `medicine.write` or the assigned partner pharmacy review it (opening the files through short-lived signed URLs) and send a priced quote; the customer accepts it and pays online or on delivery, and the quote becomes the order. Only a quote that is live, unexpired and matches the prescription and pharmacy can become an order (checked in `create_order`). A pharmacy store cannot be saved without a drug licence number, the platform never dispenses itself, and the medicine page shows a compliance notice (editable in Settings → Delivery) that prescription drugs are never sold without a valid prescription.
+
+### D-063 · Stock is taken when the order is placed and returned if it fails
+
+`create_order` takes tracked stock in the same transaction that creates the order, so two customers can't buy the last item. Stock goes back when the booking expires unpaid, fails, is cancelled or refunded before delivery, or when the store rejects the order (`restock_order`); a rejected order is never restocked twice. Menus are cached for at most a minute and every order clears the cache; checkout always reads the live menu.
+
+### D-064 · The store drives the order; the rider confirms delivery with the customer's OTP
+
+Order steps are Placed → Accepted → Preparing → Ready → Out for delivery → Delivered (the customer's tracker folds Ready into Preparing). The store accepts or rejects (rejection cancels the booking and refunds everything paid), prepares and marks ready; a rider is assigned by staff or the store (a platform rider, or the store's own) and gets a fresh no-login link `/delivery/order/<token>` valid for a day, never readable through the API. Delivery needs the customer's 4-digit OTP when `require_delivery_otp` is on (staff can move an order without it). Delivering completes the booking. Customers may cancel themselves only before the store accepts (`cancel_until`).
+
+### D-065 · GST on orders: store rate on food, item rate on products, 18% on delivery
+
+Restaurant food and packaging are taxed at the store's rate (default 5%, SAC 996331). Products take the item's own GST rate and HSN code when set, otherwise the store's rate. Medicine quotes carry GST and HSN per line (default 12%). The delivery fee is taxed at `delivery_tax_bps` (default 18%, SAC 996813) and the convenience fee at its own rate, online only. Coupons reduce items only, never packaging, delivery or fees. Restaurant supplies through an e-commerce operator have special GST rules (section 9(5)); **the business's CA should confirm these rates and codes**, which are all editable without code.
+
+### D-066 · Customers rate a delivered order once
+
+After delivery the customer can rate the order 1 to 5 with a comment, once (`rate_order`). Ratings show on the vendor dashboard; store ratings shown on listings are still set by staff until the reviews phase.

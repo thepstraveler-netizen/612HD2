@@ -12,7 +12,16 @@ import { rupeesToPaise } from "@/lib/money";
  * in lib/bookings/admin-forms.ts.
  */
 
-export const BOOKING_SERVICES = ["hotel", "cab", "ride", "food", "medicine", "package", "travel"] as const;
+export const BOOKING_SERVICES = [
+  "hotel",
+  "cab",
+  "ride",
+  "food",
+  "essentials",
+  "medicine",
+  "package",
+  "travel",
+] as const;
 export const NOTIFICATION_CHANNELS = ["email", "sms", "whatsapp"] as const;
 export const OFFLINE_METHODS = ["cash", "upi", "card", "bank_transfer", "other"] as const;
 export const COUPON_DISCOUNTS = ["percent", "flat"] as const;

@@ -8,14 +8,17 @@ import {
   PaymentSettingsForm,
   RideSettingsForm,
 } from "@/components/admin/settings-forms";
+import { DeliverySettingsForm } from "@/components/admin/delivery-settings-form";
 import { requirePermission } from "@/lib/auth/guards";
 import { invoiceSettingsFormValues, paymentSettingsFormValues } from "@/lib/bookings/admin-forms";
 import { cabSettingsFormValues } from "@/lib/cabs/admin-rows";
+import { deliverySettingsFormValues } from "@/lib/delivery/admin-rows";
 import { rideSettingsFormValues } from "@/lib/rides/admin-rows";
 import { hasPermission } from "@/lib/permissions/check";
 import { createClient } from "@/lib/supabase/server";
 import { invoiceSettingsSchema, paymentSettingsSchema } from "@/schemas/booking";
 import { cabSettingsSchema } from "@/schemas/cabs";
+import { deliverySettingsSchema } from "@/schemas/delivery";
 import { rideSettingsSchema } from "@/schemas/rides";
 import { businessProfileSchema, type BusinessProfile } from "@/schemas/cms";
 
@@ -38,7 +41,13 @@ export default async function AdminSettingsPage() {
     supabase
       .from("settings")
       .select("key, value")
-      .in("key", ["payments.defaults", "business.invoice", "cabs.defaults", "rides.defaults"]),
+      .in("key", [
+        "payments.defaults",
+        "business.invoice",
+        "cabs.defaults",
+        "rides.defaults",
+        "delivery.defaults",
+      ]),
   ]);
   // Fill gaps so an older or partial row still opens in the form.
   const stored = businessProfileSchema.partial().safeParse(profileRow?.value ?? {});
@@ -50,6 +59,7 @@ export default async function AdminSettingsPage() {
   const invoice = invoiceSettingsSchema.safeParse(storedValue("business.invoice"));
   const cabs = cabSettingsSchema.safeParse(storedValue("cabs.defaults"));
   const rides = rideSettingsSchema.safeParse(storedValue("rides.defaults"));
+  const delivery = deliverySettingsSchema.safeParse(storedValue("delivery.defaults"));
 
   return (
     <div className="space-y-6">
@@ -77,6 +87,13 @@ export default async function AdminSettingsPage() {
       {canWrite ? (
         <RideSettingsForm
           defaultValues={rideSettingsFormValues(rides.success ? rides.data : rideSettingsSchema.parse({}))}
+        />
+      ) : null}
+      {canWrite ? (
+        <DeliverySettingsForm
+          defaultValues={deliverySettingsFormValues(
+            delivery.success ? delivery.data : deliverySettingsSchema.parse({}),
+          )}
         />
       ) : null}
       <FeatureFlagList flags={flags ?? []} canWrite={canWrite} />

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
+import { VendorNav } from "@/components/delivery/vendor-nav";
 import { PortalShell } from "@/components/layout/portal-shell";
 import { requirePermission } from "@/lib/auth/guards";
 
@@ -12,5 +13,10 @@ export const metadata: Metadata = { robots: { index: false, follow: false } };
 export default async function VendorLayout({ children }: { children: ReactNode }) {
   await requirePermission("vendor.portal", "/vendor");
   const t = await getTranslations("vendor");
-  return <PortalShell title={t("title")}>{children}</PortalShell>;
+  return (
+    <PortalShell title={t("title")}>
+      <VendorNav />
+      {children}
+    </PortalShell>
+  );
 }

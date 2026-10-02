@@ -180,6 +180,30 @@ This creates the user with a confirmed email (or promotes an existing one) and g
 - [ ] Cancel another pay-the-driver ride from My Trips before the driver starts: it leaves the board.
 - [ ] With Razorpay keys: Pay online with test card `4111 1111 1111 1111`; the ride appears on the board after payment.
 
+## 12. Phase 7 setup and smoke test
+
+### Setup
+
+1. Apply the three Phase 7 migrations in order (`20261007000050_delivery_service.sql` on its own first, then `20261007000100_delivery.sql`, then `20261007000200_delivery_baseline.sql`). On the live project they are already applied except the three header link updates in the baseline file, which are run when this phase merges.
+2. Admin → Settings → Delivery: delivery OTP, cash on delivery and its limit, payment hold, delivery GST and SAC codes, quote validity, when customers may cancel, and the medicine notice (have it reviewed). **Ask your CA to confirm GST on food, products, medicines and delivery (D-065).**
+3. Admin → Food & Essentials → Zones: check delivery fees and free-delivery thresholds. Stores: add restaurants and shops (each needs a vendor in Admin → Vendors), opening hours, served areas and menus. Riders: add platform riders.
+4. Admin → Medicine → Partner pharmacies: add each licensed pharmacy with its drug licence number.
+5. To give a restaurant owner the vendor dashboard, give their account the vendor role and add them as a member of their vendor.
+6. Remove the "Demo ·" stores, the demo rider and coupon DEMOFOOD20 before launch if they were seeded.
+7. Admin → Settings → Feature flags: turn on `booking.food`, `booking.essentials` and `booking.medicine` when ready. Razorpay is optional: without keys only cash on delivery is offered.
+
+### Smoke test
+
+- [ ] `/food` lists the restaurants; Veg only, Jain and Open now filter the list.
+- [ ] Open a menu, add the Braj Thali (Deluxe) with an extra roti; the cart bar shows the right total. Adding from another store asks to replace the cart.
+- [ ] Checkout: pick an area and address. Delivery is free above the area's threshold; below the minimum order, Place order is blocked.
+- [ ] Place a cash-on-delivery order: My Trips shows it as Placed with a 4-digit OTP.
+- [ ] `/vendor/orders` (as the store's vendor) or Admin → Food & Essentials: the order appears. Accept, Preparing, Ready, assign the demo rider.
+- [ ] Open the rider link on a phone (signed out): Picked up, then Delivered with a wrong OTP (refused) and the right one. My Trips shows Delivered and offers a rating once.
+- [ ] Reject another order from the vendor dashboard: it is cancelled and the stock comes back.
+- [ ] `/medicine`: upload a prescription. Admin → Medicine: open it (files open via signed links), assign the pharmacy, send a quote. `/account/prescriptions`: accept it with cash on delivery; the order appears on the medicine board.
+- [ ] With Razorpay keys: pay online with test card `4111 1111 1111 1111`; the order reaches the store after payment.
+
 ## Later phases (prepare when you reach them)
 
 - **Optional:** a Google Maps key (`NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`), restricted to your domains, for road distances; cabs and rides work without it (D-046, D-053).

@@ -236,3 +236,99 @@ select t.id, v.reg, v.colour, v.year, v.fuel::public.fuel_type, d.id, 'Demo vehi
   join public.ride_vehicle_types t on t.key = v.type_key
   join public.drivers d on d.full_name = v.driver_name
 on conflict do nothing;
+
+-- Phase 7: a demo restaurant, essentials shop and partner pharmacy with a
+-- small menu, a platform rider and a food coupon. Names start with "Demo" —
+-- remove before launch. The pharmacy licence number is a placeholder.
+do $$
+declare
+  v_vendor uuid;
+  v_store uuid;
+  v_cat uuid;
+  v_item uuid;
+  v_group uuid;
+begin
+  if exists (select 1 from public.stores where slug like 'demo-%') then
+    return;
+  end if;
+
+  -- Restaurant: pure-veg Sattvik thali house, open 7am to 11pm.
+  insert into public.vendors (kind, name, slug, phone, status)
+    values ('restaurant', 'Demo Brajwasi Bhojnalaya', 'demo-brajwasi-bhojnalaya', '+919800000101', 'active')
+    returning id into v_vendor;
+  insert into public.stores (vendor_id, kind, slug, name, description, cuisines, address, phone, lat, lng, pure_veg, hours,
+    prep_minutes, min_order_paise, packaging_fee_paise, tax_bps, rating, is_featured, sort_order)
+  values (v_vendor, 'restaurant', 'demo-brajwasi-bhojnalaya',
+    '{"en": "Demo · Brajwasi Bhojnalaya", "hi": "डेमो · ब्रजवासी भोजनालय"}',
+    '{"en": "Pure-veg thalis, kachori and lassi near Banke Bihari. No onion or garlic on request.", "hi": "बांके बिहारी के पास शुद्ध शाकाहारी थाली, कचौड़ी और लस्सी। अनुरोध पर बिना प्याज़-लहसुन।"}',
+    '{North Indian,Thali,Sweets}', 'Near Banke Bihari Temple, Vrindavan', '+919800000101', 27.5800, 77.7000, true,
+    '[{"day":1,"open":"07:00","close":"23:00"},{"day":2,"open":"07:00","close":"23:00"},{"day":3,"open":"07:00","close":"23:00"},{"day":4,"open":"07:00","close":"23:00"},{"day":5,"open":"07:00","close":"23:00"},{"day":6,"open":"07:00","close":"23:00"},{"day":7,"open":"07:00","close":"23:00"}]',
+    20, 15000, 1000, 500, 4.4, true, 1)
+  returning id into v_store;
+  insert into public.store_zones (store_id, zone_id) select v_store, id from public.delivery_zones where slug in ('vrindavan', 'mathura');
+
+  insert into public.store_categories (store_id, name, sort_order) values (v_store, '{"en": "Thalis", "hi": "थाली"}', 1) returning id into v_cat;
+  insert into public.store_items (store_id, category_id, name, description, diet, is_jain, is_sattvik, price_paise, is_bestseller, sort_order)
+  values (v_store, v_cat, '{"en": "Braj Thali", "hi": "ब्रज थाली"}',
+    '{"en": "Dal, two sabzi, kadhi, rice, four rotis, salad and a sweet.", "hi": "दाल, दो सब्ज़ी, कढ़ी, चावल, चार रोटी, सलाद और मिठाई।"}',
+    'veg', false, true, 22000, true, 1)
+  returning id into v_item;
+  insert into public.item_variants (item_id, name, price_paise, sort_order) values
+    (v_item, '{"en": "Regular", "hi": "रेगुलर"}', 22000, 1),
+    (v_item, '{"en": "Deluxe (with paneer)", "hi": "डीलक्स (पनीर के साथ)"}', 29000, 2);
+  insert into public.item_addon_groups (item_id, name, min_select, max_select, sort_order)
+    values (v_item, '{"en": "Extras", "hi": "अतिरिक्त"}', 0, 3, 1) returning id into v_group;
+  insert into public.item_addons (group_id, name, price_paise, sort_order) values
+    (v_group, '{"en": "Extra roti", "hi": "अतिरिक्त रोटी"}', 1500, 1),
+    (v_group, '{"en": "Desi ghee on rotis", "hi": "रोटी पर देसी घी"}', 2000, 2),
+    (v_group, '{"en": "Gulab jamun (2)", "hi": "गुलाब जामुन (2)"}', 4000, 3);
+  insert into public.store_items (store_id, category_id, name, diet, is_jain, is_sattvik, price_paise, sort_order)
+    values (v_store, v_cat, '{"en": "Jain Thali (no onion, garlic or root vegetables)", "hi": "जैन थाली (बिना प्याज़, लहसुन, जड़ वाली सब्ज़ी)"}',
+      'veg', true, true, 24000, 2);
+
+  insert into public.store_categories (store_id, name, sort_order) values (v_store, '{"en": "Snacks and sweets", "hi": "नाश्ता और मिठाई"}', 2) returning id into v_cat;
+  insert into public.store_items (store_id, category_id, name, diet, is_sattvik, price_paise, track_stock, stock, is_bestseller, sort_order) values
+    (v_store, v_cat, '{"en": "Kachori sabzi (2 pcs)", "hi": "कचौड़ी सब्ज़ी (2 पीस)"}', 'veg', false, 6000, false, null, true, 1),
+    (v_store, v_cat, '{"en": "Mathura peda (250 g)", "hi": "मथुरा पेड़ा (250 ग्राम)"}', 'veg', true, 12000, true, 40, false, 2),
+    (v_store, v_cat, '{"en": "Kesar lassi", "hi": "केसर लस्सी"}', 'veg', true, 7000, false, null, false, 3);
+
+  -- Essentials: 24×7 store with stock counts and MRPs.
+  insert into public.vendors (kind, name, slug, phone, status)
+    values ('store', 'Demo Vrinda Mart', 'demo-vrinda-mart', '+919800000102', 'active')
+    returning id into v_vendor;
+  insert into public.stores (vendor_id, kind, slug, name, description, address, phone, lat, lng, is_24x7,
+    prep_minutes, min_order_paise, tax_bps, is_featured, sort_order)
+  values (v_vendor, 'grocery', 'demo-vrinda-mart', '{"en": "Demo · Vrinda Mart", "hi": "डेमो · वृंदा मार्ट"}',
+    '{"en": "Daily needs, puja samagri and travel essentials, open all night.", "hi": "रोज़मर्रा का सामान, पूजा सामग्री और यात्रा की ज़रूरतें, पूरी रात खुला।"}',
+    'Parikrama Marg, Vrindavan', '+919800000102', 27.5760, 77.6900, true, 10, 9900, 500, true, 2)
+  returning id into v_store;
+  insert into public.store_zones (store_id, zone_id) select v_store, id from public.delivery_zones where slug = 'vrindavan';
+  insert into public.store_categories (store_id, name, sort_order) values (v_store, '{"en": "Daily needs", "hi": "रोज़ की ज़रूरतें"}', 1) returning id into v_cat;
+  insert into public.store_items (store_id, category_id, name, diet, price_paise, mrp_paise, tax_bps, hsn, unit, track_stock, stock, sort_order) values
+    (v_store, v_cat, '{"en": "Packaged drinking water", "hi": "पैक्ड पीने का पानी"}', 'na', 2000, 2000, 1800, '22011010', '1 L', true, 120, 1),
+    (v_store, v_cat, '{"en": "Full cream milk", "hi": "फ़ुल क्रीम दूध"}', 'veg', 3300, 3400, 0, '04012000', '500 ml', true, 30, 2),
+    (v_store, v_cat, '{"en": "Mosquito repellent cream", "hi": "मच्छर भगाने वाली क्रीम"}', 'na', 9000, 9900, 1800, '38089191', '50 g', true, 15, 3);
+  insert into public.store_categories (store_id, name, sort_order) values (v_store, '{"en": "Puja samagri", "hi": "पूजा सामग्री"}', 2) returning id into v_cat;
+  insert into public.store_items (store_id, category_id, name, diet, price_paise, mrp_paise, tax_bps, hsn, unit, track_stock, stock, sort_order) values
+    (v_store, v_cat, '{"en": "Tulsi mala", "hi": "तुलसी माला"}', 'na', 5000, null, 500, '96020090', '108 beads', true, 25, 1),
+    (v_store, v_cat, '{"en": "Agarbatti (sandalwood)", "hi": "अगरबत्ती (चंदन)"}', 'na', 4500, 5000, 500, '33074100', '100 g', true, 50, 2);
+
+  -- Partner pharmacy: medicines only through prescription review and a quote.
+  insert into public.vendors (kind, name, slug, phone, status)
+    values ('pharmacy', 'Demo Shri Hari Medicos', 'demo-shri-hari-medicos', '+919800000103', 'active')
+    returning id into v_vendor;
+  insert into public.stores (vendor_id, kind, slug, name, description, address, phone, is_24x7, prep_minutes, tax_bps, drug_licence_no, sort_order)
+  values (v_vendor, 'pharmacy', 'demo-shri-hari-medicos', '{"en": "Demo · Shri Hari Medicos", "hi": "डेमो · श्री हरि मेडिकोज़"}',
+    '{"en": "Licensed partner pharmacy (demo).", "hi": "लाइसेंसधारी पार्टनर फ़ार्मेसी (डेमो)।"}',
+    'Chhatikara Road, Vrindavan', '+919800000103', true, 15, 1200, 'DEMO-UP-MTH-0000/20B', 3)
+  returning id into v_store;
+  insert into public.store_zones (store_id, zone_id) select v_store, id from public.delivery_zones where slug in ('vrindavan', 'mathura');
+
+  insert into public.delivery_partners (full_name, phone, vehicle, notes)
+    values ('Demo Rider Gopal', '+919800000201', 'Scooter', 'Demo rider');
+end
+$$;
+
+insert into public.coupons (code, description, discount_type, value, max_discount_paise, min_order_paise, services, is_public, per_user_limit)
+values ('DEMOFOOD20', '{"en": "Demo · 20% off food (up to ₹100)", "hi": "डेमो · भोजन पर 20% छूट (₹100 तक)"}', 'percent', 2000, 10000, 20000, '{food}', true, 3)
+on conflict (code) do nothing;
