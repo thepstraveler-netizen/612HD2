@@ -1,14 +1,16 @@
-import { ArrowLeft, Check, ChevronRight } from "lucide-react";
+import { ArrowLeft, Check, ChevronRight, Map as MapIcon, Plane } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { FaqList } from "@/components/home/faq-list";
+import { EnquiryForm } from "@/components/leads/enquiry-form";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { getFaqs, getService, getServices } from "@/lib/catalog/queries";
+import { todayInIndia } from "@/lib/dates";
 import { pickLocalized } from "@/lib/i18n/localized";
 import { getIcon } from "@/lib/icons";
 import { getRideCatalog } from "@/lib/rides/queries";
@@ -31,10 +33,16 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return { title: pickLocalized(service.name, locale), description: pickLocalized(service.summary, locale) };
 }
 
+/** Travel services hand over to their own pages: tour packages and flight / train / bus enquiries. */
+const TRAVEL_CTAS: Record<string, ("packages" | "travel")[]> = {
+  "travel-hotel-booking": ["packages", "travel"],
+  "travel-agent": ["travel", "packages"],
+};
+
 /**
  * Service landing page, fully CMS-driven. Each vertical's booking flow
- * (hotels in phase 3, cabs in phase 5, …) or enquiry form (phase 8–9) is
- * added below the overview by its own phase.
+ * (hotels in phase 3, cabs in phase 5, …) is linked below the overview;
+ * enquiry-only services get the shared enquiry form (phase 8).
  */
 export default async function ServicePage({ params }: { params: Params }) {
   const { locale, slug } = await params;
@@ -48,6 +56,7 @@ export default async function ServicePage({ params }: { params: Params }) {
   const accent = ACCENT_CLASSES[service.accent];
   const Icon = getIcon(service.icon);
   const description = service.description ? pickLocalized(service.description, locale) : null;
+  const travelCtas = TRAVEL_CTAS[service.slug];
 
   return (
     <div className="mx-auto max-w-3xl space-y-8 px-4 py-10">
@@ -118,6 +127,42 @@ export default async function ServicePage({ params }: { params: Params }) {
             </Link>
           </Button>
         </div>
+      ) : travelCtas ? (
+        <ul className="grid gap-3 sm:grid-cols-2">
+          {travelCtas.map((key, i) => {
+            const CtaIcon = key === "packages" ? MapIcon : Plane;
+            return (
+              <li key={key} className="flex flex-col justify-between gap-3 rounded-2xl border bg-card p-4">
+                <div>
+                  <p className="flex items-center gap-2 font-bold">
+                    <CtaIcon className={cn("size-5", accent.text)} aria-hidden="true" />
+                    {t(`enquiry.serviceCta.${key}.title`)}
+                  </p>
+                  <p className="text-sm text-muted-foreground">{t(`enquiry.serviceCta.${key}.body`)}</p>
+                </div>
+                <Button asChild size="lg" variant={i === 0 ? "default" : "outline"}>
+                  <Link href={key === "packages" ? "/packages" : "/travel"}>
+                    {t(`enquiry.serviceCta.${key}.button`)} <ChevronRight />
+                  </Link>
+                </Button>
+              </li>
+            );
+          })}
+        </ul>
+      ) : service.kind === "enquiry" ? (
+        <section aria-labelledby="service-enquiry" className="space-y-3">
+          <div>
+            <h2 id="service-enquiry" className="text-xl font-bold">
+              {t("enquiry.serviceTitle")}
+            </h2>
+            <p className="text-sm text-muted-foreground">{t("enquiry.serviceBody")}</p>
+          </div>
+          <EnquiryForm
+            target={{ kind: "service", serviceSlug: service.slug }}
+            locale={locale === "hi" ? "hi" : "en"}
+            minDate={todayInIndia()}
+          />
+        </section>
       ) : (
         <p className="rounded-xl bg-secondary p-4 text-sm text-secondary-foreground">
           {t("servicePage.comingSoon")}

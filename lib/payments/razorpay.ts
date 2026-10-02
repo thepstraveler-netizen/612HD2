@@ -152,3 +152,8 @@ export function createPaymentLink(
     notes: input.notes,
   });
 }
+
+/** Cancels an unpaid payment link (a withdrawn or replaced quote). */
+export function cancelPaymentLink(config: RazorpayConfig, linkId: string) {
+  return call(config, "POST", `/payment_links/${encodeURIComponent(linkId)}/cancel`, paymentLinkSchema);
+}

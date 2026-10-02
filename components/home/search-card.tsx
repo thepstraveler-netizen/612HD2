@@ -15,14 +15,14 @@ type TabKey = "hotels" | "cabs" | "rides" | "packages" | "travel";
 /**
  * Tabbed search card (hero). Each tab has its own fields; the query string it
  * builds is what the listing pages read (hotels since phase 3, cabs in phase 5,
- * …). Until a listing exists, the tab's target is that service's page.
+ * packages and travel in phase 8, …).
  */
 const TARGET: Record<TabKey, string> = {
   hotels: "/hotels",
   cabs: "/cabs",
   rides: "/rides",
-  packages: "/services/travel-hotel-booking",
-  travel: "/services/travel-agent",
+  packages: "/packages",
+  travel: "/travel",
 };
 
 const ICON = { hotels: Building2, cabs: Car, rides: Bike, packages: Map, travel: Plane } as const;

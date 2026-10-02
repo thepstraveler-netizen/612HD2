@@ -1178,6 +1178,147 @@ export type Database = {
           created_by: string | null;
         } & Timestamps
       >;
+      packages: Simple<
+        {
+          id: string;
+          slug: string;
+          title: LocalizedJson;
+          summary: LocalizedJson;
+          description: LocalizedJson | null;
+          category: string;
+          destinations: string[];
+          start_city: string | null;
+          duration_days: number;
+          duration_nights: number;
+          image_id: string | null;
+          gallery_ids: string[];
+          highlights: LocalizedJson[];
+          inclusions: LocalizedJson[];
+          exclusions: LocalizedJson[];
+          terms: LocalizedJson | null;
+          booking_mode: Database["public"]["Enums"]["package_booking_mode"];
+          fixed_departures: boolean;
+          min_pax: number;
+          max_pax: number;
+          advance_percent: number | null;
+          tax_bps: number;
+          sac: string;
+          rating: number | null;
+          is_featured: boolean;
+          is_active: boolean;
+          sort_order: number;
+          deleted_at: string | null;
+        } & Timestamps
+      >;
+      package_itinerary_days: Simple<
+        {
+          id: string;
+          package_id: string;
+          day_number: number;
+          title: LocalizedJson;
+          description: LocalizedJson | null;
+          meals: ("breakfast" | "lunch" | "dinner")[];
+          overnight: string | null;
+        } & Timestamps
+      >;
+      package_pricing_tiers: Simple<
+        {
+          id: string;
+          package_id: string;
+          min_pax: number;
+          max_pax: number;
+          adult_price_paise: number;
+          child_price_paise: number | null;
+        } & Timestamps
+      >;
+      package_departures: Simple<
+        {
+          id: string;
+          package_id: string;
+          start_date: string;
+          seats_total: number | null;
+          supplement_paise: number;
+          note: LocalizedJson | null;
+          is_active: boolean;
+        } & Timestamps
+      >;
+      package_bookings: Simple<
+        {
+          id: string;
+          booking_id: string;
+          package_id: string;
+          departure_id: string | null;
+          start_date: string;
+          end_date: string;
+          adults: number;
+          children: number;
+          travellers: Json;
+          pickup_point: string | null;
+        } & Timestamps
+      >;
+      leads: Simple<
+        {
+          id: string;
+          number: number;
+          user_id: string | null;
+          kind: Database["public"]["Enums"]["lead_kind"];
+          service_slug: string | null;
+          package_id: string | null;
+          name: string;
+          phone: string;
+          email: string | null;
+          details: Json;
+          message: string | null;
+          status: Database["public"]["Enums"]["lead_status"];
+          lost_reason: string | null;
+          assigned_to: string | null;
+          assigned_at: string | null;
+          source: string;
+          utm: Json;
+          referrer: string | null;
+          landing_path: string | null;
+          next_follow_up_at: string | null;
+          last_contacted_at: string | null;
+          value_paise: number | null;
+          booking_id: string | null;
+          locale: "en" | "hi";
+          closed_at: string | null;
+        } & Timestamps
+      >;
+      lead_activities: Simple<{
+        id: string;
+        lead_id: string;
+        kind: Database["public"]["Enums"]["lead_activity_kind"];
+        body: string | null;
+        call_outcome: "connected" | "no_answer" | "busy" | "wrong_number" | "callback" | null;
+        call_seconds: number | null;
+        meta: Json;
+        actor: string | null;
+        created_at: string;
+      }>;
+      quotes: Simple<
+        {
+          id: string;
+          lead_id: string;
+          number: number;
+          status: Database["public"]["Enums"]["quote_status"];
+          title: string;
+          lines: Json;
+          subtotal_paise: number;
+          tax_paise: number;
+          total_paise: number;
+          pay_now_paise: number;
+          valid_until: string;
+          notes: string | null;
+          terms: string | null;
+          token: string | null;
+          booking_id: string | null;
+          payment_link_url: string | null;
+          created_by: string | null;
+          sent_at: string | null;
+          paid_at: string | null;
+        } & Timestamps
+      >;
     };
     Views: { [_ in never]: never };
     Functions: {
@@ -1293,6 +1434,59 @@ export type Database = {
       };
       submit_prescription: { Args: { p: Json }; Returns: string };
       my_order_otp: { Args: { p_order_id: string }; Returns: string | null };
+      user_has_permission: { Args: { p_user_id: string; p_key: string }; Returns: boolean };
+      package_departure_seats: {
+        Args: { p_package_id: string };
+        Returns: { departure_id: string; seats_left: number | null }[];
+      };
+      create_package_booking: { Args: { p_booking: Json; p_items: Json; p_package: Json }; Returns: Json };
+      create_lead: { Args: { p: Json }; Returns: Json };
+      assign_lead: {
+        Args: { p_lead_id: string; p_assignee: string | null; p_actor: string };
+        Returns: Database["public"]["Tables"]["leads"]["Row"];
+      };
+      set_lead_status: {
+        Args: {
+          p_lead_id: string;
+          p_status: Database["public"]["Enums"]["lead_status"];
+          p_actor: string;
+          p_reason?: string | null;
+        };
+        Returns: Database["public"]["Tables"]["leads"]["Row"];
+      };
+      log_lead_activity: {
+        Args: {
+          p_lead_id: string;
+          p_kind: Database["public"]["Enums"]["lead_activity_kind"];
+          p_body: string | null;
+          p_actor: string;
+          p_call_outcome?: string | null;
+          p_call_seconds?: number | null;
+          p_follow_up?: string | null;
+          p_clear_follow_up?: boolean;
+        };
+        Returns: string;
+      };
+      save_quote: { Args: { p: Json; p_actor: string }; Returns: string };
+      send_quote: {
+        Args: { p_quote_id: string; p_booking: Json; p_token: string; p_actor: string };
+        Returns: Json;
+      };
+      attach_quote_link: { Args: { p_quote_id: string; p_url: string }; Returns: undefined };
+      cancel_quote: {
+        Args: { p_quote_id: string; p_actor: string };
+        Returns: Database["public"]["Tables"]["quotes"]["Row"];
+      };
+      record_quote_offline_payment: {
+        Args: {
+          p_quote_id: string;
+          p_amount: number;
+          p_method: string;
+          p_reference: string | null;
+          p_actor: string;
+        };
+        Returns: string;
+      };
     };
     Enums: {
       service_kind: "bookable" | "enquiry";
@@ -1373,6 +1567,21 @@ export type Database = {
         | "cancelled"
         | "rejected";
       prescription_status: "submitted" | "reviewing" | "quoted" | "ordered" | "rejected" | "expired";
+      package_booking_mode: "enquiry" | "book";
+      lead_kind: "package" | "flight" | "train" | "bus" | "hotel" | "cab" | "service" | "general";
+      lead_status: "new" | "contacted" | "quoted" | "won" | "lost";
+      lead_activity_kind:
+        | "note"
+        | "call"
+        | "whatsapp"
+        | "email"
+        | "sms"
+        | "status"
+        | "assignment"
+        | "quote"
+        | "follow_up"
+        | "system";
+      quote_status: "draft" | "sent" | "paid" | "expired" | "cancelled";
     };
     CompositeTypes: { [_ in never]: never };
   };

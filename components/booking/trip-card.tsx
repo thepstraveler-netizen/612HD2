@@ -1,4 +1,13 @@
-import { CalendarDays, Car, ChevronRight, Pill, ShoppingBasket, UtensilsCrossed } from "lucide-react";
+import {
+  CalendarDays,
+  Car,
+  ChevronRight,
+  Map as MapIcon,
+  Pill,
+  Plane,
+  ShoppingBasket,
+  UtensilsCrossed,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import { TripStatusBadge } from "@/components/cabs/trip-status-badge";
 import { Link } from "@/i18n/navigation";
@@ -8,6 +17,7 @@ import type { TripSummary } from "@/lib/bookings/trips";
 import { orderSnapshot } from "@/lib/delivery/ui";
 import { pickLocalized } from "@/lib/i18n/localized";
 import { formatPaise } from "@/lib/money";
+import { packageSnapshot, quoteSnapshot } from "@/lib/packages/ui";
 import { BookingStatusBadge } from "./status-badge";
 
 export function formatStayDate(date: string | null, locale: string): string {
@@ -89,6 +99,43 @@ export function TripCard({
             <CalendarDays className="size-4" aria-hidden="true" />
             {formatIndiaDateTime(cab.trip.pickupAt, locale, true)}
             {car ? ` · ${car}` : null}
+          </p>
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          <span className="font-extrabold">{formatPaise(trip.total_paise, locale)}</span>
+          <ChevronRight className="size-5 text-muted-foreground" aria-hidden="true" />
+        </div>
+      </Link>
+    );
+  }
+  const pkg = packageSnapshot(trip.snapshot);
+  const quote = pkg ? null : quoteSnapshot(trip.snapshot);
+  if (pkg || quote) {
+    // Tour packages booked online, and flights / trains / buses or custom tours paid from a quote.
+    const Icon = pkg || quote?.lead?.kind === "package" ? MapIcon : Plane;
+    const title = pkg ? pickLocalized(pkg.package.title, locale) : (quote?.quote.title ?? "");
+    return (
+      <Link
+        href={`/account/trips/${trip.code}`}
+        className="flex items-center justify-between gap-4 rounded-2xl border bg-card p-4 transition hover:shadow-md"
+      >
+        <div className="min-w-0 space-y-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <BookingStatusBadge status={trip.status as BookingStatus} />
+            <span className="text-xs text-muted-foreground">{t("bookingId", { code: trip.code })}</span>
+          </div>
+          <p className="flex items-center gap-1.5 truncate font-bold">
+            <Icon className="size-4 shrink-0 text-primary" aria-hidden="true" />
+            <span className="truncate">{title}</span>
+          </p>
+          <p className="flex items-center gap-1 text-sm text-muted-foreground">
+            <CalendarDays className="size-4" aria-hidden="true" />
+            {pkg
+              ? `${formatStayDate(pkg.package.startDate, locale)} – ${formatStayDate(pkg.package.endDate, locale)}`
+              : trip.check_in
+                ? formatStayDate(trip.check_in, locale)
+                : formatIndiaDateTime(trip.created_at, locale, true)}
+            {quote?.trip?.route ? ` · ${quote.trip.route}` : null}
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-2">

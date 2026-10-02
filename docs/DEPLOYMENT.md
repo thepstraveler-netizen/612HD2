@@ -204,6 +204,32 @@ This creates the user with a confirmed email (or promotes an existing one) and g
 - [ ] `/medicine`: upload a prescription. Admin → Medicine: open it (files open via signed links), assign the pharmacy, send a quote. `/account/prescriptions`: accept it with cash on delivery; the order appears on the medicine board.
 - [ ] With Razorpay keys: pay online with test card `4111 1111 1111 1111`; the order reaches the store after payment.
 
+## 13. Phase 8 setup and smoke test
+
+### Setup
+
+1. Apply the two Phase 8 migrations in order (`20261008000100_packages_leads.sql`, then `20261008000200_packages_leads_baseline.sql`). On the live project they are already applied except the two header link updates in the baseline file, which are run when this phase merges.
+2. Admin → Settings → Packages & leads: advance %, seat hold, how many days before departure online booking closes, cancellation policy; lead auto-assignment, enquiry limit, first follow-up, quote validity and default GST, sources and lost reasons; travel classes and the notice on `/travel`. **Ask your CA to confirm GST on packages and quote lines (D-075).**
+3. Give your calling team the **agent** role: after each agent signs up, run `select public.grant_role_by_email('agent@example.com', 'agent');` in the Supabase SQL editor (a roles screen comes with Admin → Customers in phase 10). New leads are shared among agents automatically.
+4. Admin → Packages: add your real packages, itineraries, prices and departure dates. Archive the three "Demo ·" packages before launch if they were seeded.
+5. Admin → Notifications: review `lead.received`, `quote.sent` and the WhatsApp quick replies `crm.intro` and `crm.follow_up`.
+6. Razorpay (test keys first) is needed for online package booking and for quote payment links; the webhook must include `payment_link.paid`. Without keys, enquiries and quotes still work and staff record payments by hand.
+7. Admin → Settings → Feature flags: turn on `booking.packages` when packages set to "Book online" should take bookings.
+8. Campaign links: add `?utm_source=instagram&utm_campaign=<name>` (or facebook, google, …) so leads show where they came from.
+
+### Smoke test
+
+- [ ] `/packages` lists the packages; open the Braj 84 Kos yatra: itinerary, prices by group size and departures with seats left show.
+- [ ] Send an enquiry from a package page while signed out: you get a reference (LD-…) and the lead appears in Admin → Leads under New, assigned to an agent.
+- [ ] `/travel?mode=train`: send a train request with `?utm_source=instagram` on the first page; the lead's source is Instagram.
+- [ ] Open the lead as an agent: log a call (connected, 3 minutes) and set a follow-up for tomorrow; the lead moves to Contacted. Open the WhatsApp quick reply; the message is filled in.
+- [ ] Build a quote (fare + service fee at 18%), send it. The lead moves to Quoted; the quote page opens signed out and shows the Pay button (with Razorpay keys).
+- [ ] Pay the link with test card `4111 1111 1111 1111`: the quote page shows Paid with a booking code, the lead is Won and the booking is confirmed in Admin → Bookings.
+- [ ] Without Razorpay: send a quote, then Record payment (UPI) as a manager; the booking confirms and the lead is Won.
+- [ ] Send a second quote on the same lead: the first is withdrawn.
+- [ ] Mark another lead Lost (reason required) and reopen it.
+- [ ] With `booking.packages` on and Razorpay keys: book the private Vrindavan tour for 3 adults with the 25% advance; My Trips shows the tour with the balance due.
+
 ## Later phases (prepare when you reach them)
 
 - **Optional:** a Google Maps key (`NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`), restricted to your domains, for road distances; cabs and rides work without it (D-046, D-053).

@@ -98,8 +98,8 @@ const HEADER: [keyof typeof en.nav, string][] = [
   ["food", "/services/food"],
   ["essentials", "/services/essentials"],
   ["medicine", "/services/medicine"],
-  ["packages", "/services/travel-hotel-booking"],
-  ["travel", "/services/travel-agent"],
+  ["packages", "/packages"],
+  ["travel", "/travel"],
   ["partner", "/partner"],
 ];
 

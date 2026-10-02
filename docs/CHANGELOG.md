@@ -1,5 +1,27 @@
 # Changelog
 
+## Phase 8 · Packages, flights / trains / buses and leads CRM
+
+### Added
+
+- Database: tour packages with a day-wise itinerary, inclusions and exclusions, per-traveller pricing tiers by group size (with child prices), departure dates with seats and peak-date supplements, and package bookings; leads with activities (notes, calls, WhatsApp, email, SMS, status changes, assignments, quotes, follow-ups) and quotes. RLS and audit on every table. Leads and quotes change only through server functions (`create_lead`, `assign_lead`, `set_lead_status`, `log_lead_activity`, `save_quote`, `send_quote`, `cancel_quote`, `record_quote_offline_payment`, `create_package_booking`); a trigger marks a quote paid and its lead Won when the quote's booking is paid.
+- Starter data: `packages.defaults`, `leads.defaults` and `travel.defaults` settings; flag `booking.packages` (off); enquiry, assignment, quote and confirmation templates plus WhatsApp quick replies.
+- Pricing (`lib/packages`, `lib/leads`): group-size tiers, child prices, departure supplements, advance or full payment, coupons, GST; departure rules (seats left, online booking closes before departure); quote lines with GST per line and an advance or full pay-now amount; pipeline rules and follow-up due states; lead source from UTM tags and the referrer.
+- `/packages` and `/packages/<slug>`: listing with categories, detail with itinerary, inclusions, prices by group size, departures with seats left, cancellation policy, an enquiry form and (for bookable packages) online booking with an advance through `/checkout/package`.
+- `/travel`: flight, train and bus request form (classes and notice from settings) that creates a lead. All inventory goes through the `TravelInventoryProvider` adapter; today it is quoted by the travel desk.
+- Enquiry forms on enquiry-only service pages; the Packages and Flights / Trains / Buses service pages link to the new pages. UTM tags and referrer are captured for every enquiry.
+- `/quote/<token>` (no login): the quote with GST, validity, a Pay button (Razorpay Payment Link) and the paid state.
+- My Trips for package and travel bookings.
+- Admin → Packages: package editor (details, photos, itinerary, pricing tiers with coverage checks, departures with seats booked). Settings → Packages & leads.
+- Admin → Leads: pipeline board and list with filters (status, type, source, assignee, overdue / due today, search), new lead from a call, lead page with assignment, status, call / WhatsApp / email quick replies, activity timeline with call logs, follow-up reminders, and the quote builder (save, send with payment link, withdraw, record an offline payment).
+- Demo seed: three "Demo ·" packages (a private tour, a fixed-departure yatra with seats, an enquiry-only tour).
+- Tests: 18 database tests (catalog RLS, seat counting and expiry, booking rules, lead capture, auto-assignment, throttling, staff-only CRM, pipeline rules, assignment checks, quote totals, send → payment link → Won, replacing and withdrawing quotes, expiry, offline payment), unit tests for package pricing, quotes, pipeline rules and source tracking, and UI tests.
+
+### Changed
+
+- Booking notifications, invoices and price lines handle package and travel bookings (`package.confirmed`, `travel.confirmed`; line kinds `package` and `service`).
+- The header "Packages" and "Flights / Trains / Buses" links and the home search tabs open `/packages` and `/travel` (the header links are updated on the live database when this phase merges).
+
 ## Phase 7 · Food, essentials and medicine
 
 ### Added

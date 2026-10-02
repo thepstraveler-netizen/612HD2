@@ -269,3 +269,45 @@ Restaurant food and packaging are taxed at the store's rate (default 5%, SAC 996
 ### D-066 · Customers rate a delivered order once
 
 After delivery the customer can rate the order 1 to 5 with a comment, once (`rate_order`). Ratings show on the vendor dashboard; store ratings shown on listings are still set by staff until the reviews phase.
+
+## Phase 8 · Packages, flights / trains / buses and the leads CRM
+
+### D-067 · Package prices are per traveller by group size
+
+A package has pricing tiers by group size (for example 1–2, 3–5 and 6–12 travellers); the tier whose range holds the whole group (adults + children) sets the price per adult, and children pay the tier's child price when it has one, otherwise the adult price. A departure date can add a per-traveller supplement for festival or peak dates. Admin checks that tiers don't overlap and cover every group size the package allows. Packages are either fixed group departures (dated, optionally with a seat limit) or private tours on any date the customer picks.
+
+### D-068 · Packages are booked online with an advance; enquiries are always open
+
+Every package takes enquiries. A package set to "book" can also be booked online when the `booking.packages` flag is on and Razorpay is configured: the customer pays the advance (the package's own %, else `packages.defaults.advance_percent`, default 25%) or the full price, and the balance is collected later with a payment link from Bookings. There is no pay-later for packages. A package booking is a `bookings` row (service `package`) plus one `package_bookings` row, like cab trips (D-045). Seats are counted from confirmed bookings plus unpaid holds that have not expired (`hold_minutes`, default 20), re-checked under a lock on the departure, so an abandoned checkout frees its seats on its own. Online booking closes `book_until_days` (default 2) before departure.
+
+### D-069 · One leads table for every enquiry form
+
+Package enquiries, flight / train / bus requests, enquiry-only service pages and leads typed in by agents (calls, WhatsApp, walk-ins) all write one `leads` row through `create_lead`, with what was asked in `details`. Customers don't need to sign in to enquire; a signed-in customer is linked to their lead. Spam control for now is a hidden honeypot field and a per-phone limit (`max_per_phone_per_hour`, default 5); a CAPTCHA (Turnstile) comes with the hardening phase. The CRM is staff-only: leads, activities and quotes are readable with `leads.read` and written only by server functions after a permission check.
+
+### D-070 · New leads go to the least busy agent; every agent sees every lead
+
+With `leads.defaults.auto_assign = least_loaded` (the default), a new lead is assigned to the active `agent` with the fewest open leads (New, Contacted or Quoted); set it to `none` to assign by hand. Leads can be reassigned to anyone holding `leads.write`. Agents can see all leads, not only their own, so a colleague can pick up a customer who calls back while the owner is away; the board filters to "Me" with one tap.
+
+### D-071 · Pipeline rules
+
+Leads move New → Contacted → Quoted → Won or Lost. Logging a call, WhatsApp, email or SMS on a new lead marks it Contacted. Quoted is reached only by sending a quote; Won happens automatically when a quote is paid, or by hand for a sale closed outside the system. Lost needs a reason (from an editable list), and a lost lead can be reopened. Each lead has a next follow-up time (the first one defaults to 2 hours after the enquiry); the board shows overdue and due-today follow-ups. The same rules are enforced in `set_lead_status` and mirrored in `lib/leads/status.ts`.
+
+### D-072 · A sent quote is an unpaid booking with a Razorpay Payment Link
+
+Agents build a quote from free lines (description, quantity, price before GST, GST % and SAC per line); the server prices it with the shared booking pricing. Sending it creates an unpaid booking (service `package` for package leads, `travel` otherwise) holding exactly those lines, opens a Razorpay Payment Link for the full total or an advance, and sends the customer a no-login quote page `/quote/<token>` (a 48-character token never readable through the API). When the link is paid the booking confirms through the normal payment path (invoice included) and a trigger marks the quote paid and the lead Won. A customer holds only one payable quote: sending a new one withdraws the previous one, cancels its booking and cancels its link at Razorpay (a payment that still arrives on a withdrawn quote is refunded automatically). A quote expires with its validity (`quote_valid_hours`, default 48), which is also the link's expiry. Without Razorpay keys a quote can still be sent and staff with `payments.write` record the money received (cash, UPI, bank transfer), which confirms the booking. Quote bookings from customers who never signed in have no account owner; their quote page shows the paid status and booking code.
+
+### D-073 · Flights, trains and buses go through an inventory adapter, quoted by hand for now
+
+`/travel` takes a flight, train or bus request and creates a lead; the travel desk finds fares, sends a quote and issues the tickets after payment. All inventory access goes through the `TravelInventoryProvider` interface (`lib/travel/provider.ts`, chosen by `travel.defaults.provider`). The only provider today is `manual` (no live results), so a live airline, rail or bus aggregator can be added later without touching the enquiry, CRM or payment code, and even then the picked option is re-priced and goes through a quote before payment.
+
+### D-074 · Lead sources come from UTM tags and the referrer
+
+On the first page of a visit the browser keeps the `utm_*` tags, the referring site and the landing page for the session; every enquiry sends them along. The CRM source is the explicit source if any, else `utm_source`, else the referring site (Instagram, Facebook, WhatsApp, Google, YouTube), else "website", limited to the editable `leads.defaults.sources` list. Campaign links should carry `utm_source` (for example `?utm_source=instagram&utm_campaign=kartik`).
+
+### D-075 · GST on packages and quotes
+
+Packages are taxed at the package's rate, default 5% under SAC 998555 (tour operator services); the CA may prefer 18% with input tax credit, and the rate is editable per package. Quote lines carry their own GST and SAC so an agent can, for example, pass an air fare through at the airline's rate and add a service fee at 18%. **The business's CA should confirm these defaults**, which are all editable without code.
+
+### D-076 · Agents message customers from their own WhatsApp
+
+Customers get an automatic acknowledgement of their enquiry and the quote with its payment link (`lead.received`, `quote.sent`; email now, SMS and WhatsApp once those providers are set up in a later phase), and agents get an email when a lead is assigned to them (`lead.assigned`). For one-to-one chats the CRM fills in quick-reply templates (`crm.intro`, `crm.follow_up`, `quote.sent`, editable in Notifications) and opens them in the agent's own WhatsApp; the agent then logs the message on the timeline. No WhatsApp Business API is needed for this.

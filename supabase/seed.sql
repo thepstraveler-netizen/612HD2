@@ -332,3 +332,69 @@ $$;
 insert into public.coupons (code, description, discount_type, value, max_discount_paise, min_order_paise, services, is_public, per_user_limit)
 values ('DEMOFOOD20', '{"en": "Demo · 20% off food (up to ₹100)", "hi": "डेमो · भोजन पर 20% छूट (₹100 तक)"}', 'percent', 2000, 10000, 20000, '{food}', true, 3)
 on conflict (code) do nothing;
+
+-- Phase 8: demo tour packages (names start with "Demo ·" — archive before
+-- launch). Group departures are dated from today so they stay bookable.
+insert into public.packages (slug, title, summary, description, category, destinations, start_city, duration_days, duration_nights,
+  highlights, inclusions, exclusions, booking_mode, fixed_departures, min_pax, max_pax, is_featured, sort_order) values
+  ('demo-vrindavan-mathura-govardhan',
+   '{"en": "Demo · Vrindavan, Mathura & Govardhan", "hi": "डेमो · वृंदावन, मथुरा और गोवर्धन"}',
+   '{"en": "Two relaxed days covering the main temples with a private car and guide", "hi": "निजी गाड़ी और गाइड के साथ मुख्य मंदिरों के दो आरामदायक दिन"}',
+   '{"en": "A private tour on the date you choose. Darshan timings are planned around aarti so you never rush.", "hi": "आपकी चुनी तारीख़ पर निजी टूर। दर्शन का समय आरती के अनुसार तय होता है ताकि जल्दबाज़ी न हो।"}',
+   'braj', '{Vrindavan,Mathura,Govardhan}', 'Vrindavan', 2, 1,
+   '[{"en": "Banke Bihari and Prem Mandir evening aarti", "hi": "बांके बिहारी और प्रेम मंदिर की संध्या आरती"}, {"en": "Govardhan parikrama by car", "hi": "गाड़ी से गोवर्धन परिक्रमा"}]',
+   '[{"en": "AC car with driver", "hi": "ड्राइवर सहित एसी गाड़ी"}, {"en": "1 night hotel stay", "hi": "1 रात होटल में ठहरना"}, {"en": "Breakfast", "hi": "नाश्ता"}, {"en": "Local guide", "hi": "स्थानीय गाइड"}]',
+   '[{"en": "Lunch and dinner", "hi": "दोपहर और रात का भोजन"}, {"en": "Temple donations", "hi": "मंदिर दान"}]',
+   'book', false, 1, 12, true, 1),
+  ('demo-braj-84-kos-yatra',
+   '{"en": "Demo · Braj 84 Kos Yatra", "hi": "डेमो · ब्रज 84 कोस यात्रा"}',
+   '{"en": "Guided group yatra through the sacred groves and villages of Braj", "hi": "ब्रज के पवित्र वनों और गाँवों से होकर गाइडेड ग्रुप यात्रा"}',
+   null, 'braj', '{Vrindavan,Govardhan,Barsana,Nandgaon,Gokul}', 'Vrindavan', 7, 6,
+   '[{"en": "All 12 forests of Braj", "hi": "ब्रज के सभी 12 वन"}, {"en": "Daily satsang", "hi": "दैनिक सत्संग"}]',
+   '[{"en": "AC coach", "hi": "एसी कोच"}, {"en": "6 nights dharamshala or hotel", "hi": "6 रात धर्मशाला या होटल"}, {"en": "All sattvik meals", "hi": "सभी सात्विक भोजन"}, {"en": "Yatra guide", "hi": "यात्रा गाइड"}]',
+   '[{"en": "Travel to Vrindavan", "hi": "वृंदावन तक की यात्रा"}, {"en": "Personal expenses", "hi": "निजी ख़र्च"}]',
+   'book', true, 1, 10, true, 2),
+  ('demo-agra-mathura-vrindavan',
+   '{"en": "Demo · Agra, Mathura & Vrindavan", "hi": "डेमो · आगरा, मथुरा और वृंदावन"}',
+   '{"en": "The Taj Mahal with the birthplace and playground of Krishna", "hi": "ताजमहल के साथ कृष्ण की जन्मभूमि और लीलाभूमि"}',
+   null, 'heritage', '{Agra,Mathura,Vrindavan}', 'Delhi', 3, 2,
+   '[{"en": "Taj Mahal at sunrise", "hi": "सूर्योदय पर ताजमहल"}]',
+   '[{"en": "AC car from Delhi", "hi": "दिल्ली से एसी गाड़ी"}, {"en": "2 nights hotel", "hi": "2 रात होटल"}, {"en": "Breakfast", "hi": "नाश्ता"}]',
+   '[{"en": "Monument tickets", "hi": "स्मारक टिकट"}]',
+   'enquiry', false, 1, 12, false, 3);
+
+insert into public.package_pricing_tiers (package_id, min_pax, max_pax, adult_price_paise, child_price_paise)
+select p.id, t.min_pax, t.max_pax, t.adult, t.child
+  from public.packages p
+  join (values
+    ('demo-vrindavan-mathura-govardhan', 1, 2, 599900, 250000),
+    ('demo-vrindavan-mathura-govardhan', 3, 5, 449900, 250000),
+    ('demo-vrindavan-mathura-govardhan', 6, 12, 379900, 250000),
+    ('demo-braj-84-kos-yatra', 1, 10, 1850000, 1200000),
+    ('demo-agra-mathura-vrindavan', 1, 3, 899900, null),
+    ('demo-agra-mathura-vrindavan', 4, 12, 699900, null)
+  ) as t(slug, min_pax, max_pax, adult, child) on t.slug = p.slug;
+
+insert into public.package_departures (package_id, start_date, seats_total, supplement_paise)
+select p.id, current_date + d.days, 30, d.supplement
+  from public.packages p
+  cross join (values (20, 0), (50, 0), (80, 150000)) as d(days, supplement)
+ where p.slug = 'demo-braj-84-kos-yatra';
+
+insert into public.package_itinerary_days (package_id, day_number, title, description, meals, overnight)
+select p.id, d.day, d.title::jsonb, d.description::jsonb, d.meals::text[], d.overnight
+  from public.packages p
+  join (values
+    ('demo-vrindavan-mathura-govardhan', 1, '{"en": "Vrindavan temples", "hi": "वृंदावन के मंदिर"}', '{"en": "Banke Bihari, ISKCON, Nidhivan and Prem Mandir for the evening aarti.", "hi": "बांके बिहारी, इस्कॉन, निधिवन और संध्या आरती के लिए प्रेम मंदिर।"}', '{}', 'Vrindavan'),
+    ('demo-vrindavan-mathura-govardhan', 2, '{"en": "Mathura and Govardhan", "hi": "मथुरा और गोवर्धन"}', '{"en": "Krishna Janmabhoomi, Vishram Ghat, then the Govardhan parikrama by car.", "hi": "कृष्ण जन्मभूमि, विश्राम घाट, फिर गाड़ी से गोवर्धन परिक्रमा।"}', '{breakfast}', null),
+    ('demo-braj-84-kos-yatra', 1, '{"en": "Arrival and sankalp", "hi": "आगमन और संकल्प"}', null, '{dinner}', 'Vrindavan'),
+    ('demo-braj-84-kos-yatra', 2, '{"en": "Madhuvan, Talvan and Kumudvan", "hi": "मधुवन, तालवन और कुमुदवन"}', null, '{breakfast,lunch,dinner}', 'Mathura'),
+    ('demo-braj-84-kos-yatra', 3, '{"en": "Radha Kund and Govardhan", "hi": "राधा कुंड और गोवर्धन"}', null, '{breakfast,lunch,dinner}', 'Govardhan'),
+    ('demo-braj-84-kos-yatra', 4, '{"en": "Kamyavan", "hi": "काम्यवन"}', null, '{breakfast,lunch,dinner}', 'Kaman'),
+    ('demo-braj-84-kos-yatra', 5, '{"en": "Barsana and Nandgaon", "hi": "बरसाना और नंदगाँव"}', null, '{breakfast,lunch,dinner}', 'Barsana'),
+    ('demo-braj-84-kos-yatra', 6, '{"en": "Gokul and Mahavan", "hi": "गोकुल और महावन"}', null, '{breakfast,lunch,dinner}', 'Vrindavan'),
+    ('demo-braj-84-kos-yatra', 7, '{"en": "Closing puja and departure", "hi": "समापन पूजा और विदाई"}', null, '{breakfast}', null),
+    ('demo-agra-mathura-vrindavan', 1, '{"en": "Delhi to Agra", "hi": "दिल्ली से आगरा"}', '{"en": "Drive to Agra, Agra Fort in the afternoon.", "hi": "आगरा तक ड्राइव, दोपहर में आगरा क़िला।"}', '{}', 'Agra'),
+    ('demo-agra-mathura-vrindavan', 2, '{"en": "Taj Mahal and Mathura", "hi": "ताजमहल और मथुरा"}', null, '{breakfast}', 'Vrindavan'),
+    ('demo-agra-mathura-vrindavan', 3, '{"en": "Vrindavan and return", "hi": "वृंदावन और वापसी"}', null, '{breakfast}', null)
+  ) as d(slug, day, title, description, meals, overnight) on d.slug = p.slug;

@@ -9,16 +9,24 @@ import {
   RideSettingsForm,
 } from "@/components/admin/settings-forms";
 import { DeliverySettingsForm } from "@/components/admin/delivery-settings-form";
+import { PackagesSettingsForms } from "@/components/admin/packages-settings-form";
 import { requirePermission } from "@/lib/auth/guards";
 import { invoiceSettingsFormValues, paymentSettingsFormValues } from "@/lib/bookings/admin-forms";
 import { cabSettingsFormValues } from "@/lib/cabs/admin-rows";
 import { deliverySettingsFormValues } from "@/lib/delivery/admin-rows";
+import {
+  leadsSettingsFormValues,
+  packagesSettingsFormValues,
+  travelSettingsFormValues,
+} from "@/lib/packages/admin-rows";
 import { rideSettingsFormValues } from "@/lib/rides/admin-rows";
 import { hasPermission } from "@/lib/permissions/check";
 import { createClient } from "@/lib/supabase/server";
 import { invoiceSettingsSchema, paymentSettingsSchema } from "@/schemas/booking";
 import { cabSettingsSchema } from "@/schemas/cabs";
 import { deliverySettingsSchema } from "@/schemas/delivery";
+import { leadsSettingsSchema } from "@/schemas/leads";
+import { packagesSettingsSchema, travelSettingsSchema } from "@/schemas/packages";
 import { rideSettingsSchema } from "@/schemas/rides";
 import { businessProfileSchema, type BusinessProfile } from "@/schemas/cms";
 
@@ -47,6 +55,9 @@ export default async function AdminSettingsPage() {
         "cabs.defaults",
         "rides.defaults",
         "delivery.defaults",
+        "packages.defaults",
+        "leads.defaults",
+        "travel.defaults",
       ]),
   ]);
   // Fill gaps so an older or partial row still opens in the form.
@@ -60,6 +71,10 @@ export default async function AdminSettingsPage() {
   const cabs = cabSettingsSchema.safeParse(storedValue("cabs.defaults"));
   const rides = rideSettingsSchema.safeParse(storedValue("rides.defaults"));
   const delivery = deliverySettingsSchema.safeParse(storedValue("delivery.defaults"));
+  const packages = packagesSettingsSchema.safeParse(storedValue("packages.defaults"));
+  const leads = leadsSettingsSchema.safeParse(storedValue("leads.defaults"));
+  const travel = travelSettingsSchema.safeParse(storedValue("travel.defaults"));
+  const travelValue = travel.success ? travel.data : travelSettingsSchema.parse({});
 
   return (
     <div className="space-y-6">
@@ -94,6 +109,16 @@ export default async function AdminSettingsPage() {
           defaultValues={deliverySettingsFormValues(
             delivery.success ? delivery.data : deliverySettingsSchema.parse({}),
           )}
+        />
+      ) : null}
+      {canWrite ? (
+        <PackagesSettingsForms
+          packages={packagesSettingsFormValues(
+            packages.success ? packages.data : packagesSettingsSchema.parse({}),
+          )}
+          leads={leadsSettingsFormValues(leads.success ? leads.data : leadsSettingsSchema.parse({}))}
+          travel={travelSettingsFormValues(travelValue)}
+          travelProvider={travelValue.provider}
         />
       ) : null}
       <FeatureFlagList flags={flags ?? []} canWrite={canWrite} />
