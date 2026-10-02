@@ -51,7 +51,10 @@ export function mergeLines(lines: readonly CartLine[]): CartLine[] {
   for (const l of lines) {
     const key = lineKey(l);
     const prev = merged.get(key);
-    merged.set(key, prev ? { ...prev, qty: Math.min(99, prev.qty + l.qty) } : { ...l, addonIds: [...l.addonIds] });
+    merged.set(
+      key,
+      prev ? { ...prev, qty: Math.min(99, prev.qty + l.qty) } : { ...l, addonIds: [...l.addonIds] },
+    );
   }
   return [...merged.values()];
 }

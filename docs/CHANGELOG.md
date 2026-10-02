@@ -1,5 +1,26 @@
 # Changelog
 
+## Phase 7 · Food, essentials and medicine
+
+### Added
+
+- Database: delivery zones, stores (restaurant, essentials shop or partner pharmacy, owned by a vendor), served zones, menu categories, items with diet marks (veg, egg, non-veg) and Jain / Sattvik tags, variants, add-on groups and add-ons, optional stock counts, customers' address books, delivery riders, orders with items and a timeline, prescriptions and medicine quotes. RLS and audit on every table. Orders are written only by server functions (`create_order`, `set_order_status`, `assign_delivery_partner`, `rate_order`, `submit_prescription`) and a trigger keeps each order in step with its booking. A pharmacy can't be saved without a drug licence number.
+- Starter data: zones for Vrindavan, Mathura, Govardhan and Barsana with delivery fees and free-delivery thresholds; `delivery.defaults` settings; flags `booking.food`, `booking.essentials`, `booking.medicine` (all off); order and medicine-quote message templates.
+- Pricing (`lib/delivery`): cart checked against the live menu (sizes, add-on limits, stock), packaging, zone delivery fee with free delivery above a threshold, GST per store or per item and on delivery, coupons on items only, convenience fee online only, minimum order, cash-on-delivery limit, opening hours in India time (including slots past midnight).
+- `/food` and `/essentials`: store listings with veg, Jain, Sattvik, 24×7, open-now and area filters; store menus with sizes, add-ons, diet marks, MRP and sold-out states; a one-store cart that survives reloads; `/checkout/order` with saved addresses, area, coupon, free-delivery progress, cash on delivery or Razorpay.
+- `/medicine`: compliance notice, prescription upload (up to 5 images or PDFs) to the private bucket, licensed partner pharmacies. `/account/prescriptions`: status, the pharmacy's quote with GST, accept (cash on delivery or online) or decline.
+- My Trips for orders: live tracker (Placed → Accepted → Preparing → On the way → Delivered), ETA, delivery OTP, rider, items, cancel before the store accepts, rating once delivered, invoice.
+- Vendor dashboard `/vendor`: today's summary, pause or resume each store, live orders (accept, reject with refund, preparing, ready, assign a rider, deliver with OTP), menu availability, prices and stock, ratings, riders.
+- Rider link `/delivery/order/<token>` (no login): pickup and drop with call and map buttons, cash to collect, picked up, delivered with the customer's OTP.
+- Admin → Food & Essentials: live order board, stores with weekly hours and served areas, menu editor, zones, riders, settlements per vendor. Admin → Medicine: prescription review queue with signed file links, quote builder, partner pharmacies, medicine orders, settlements. Settings → Delivery.
+- Demo seed: a demo restaurant, essentials shop and pharmacy with a small menu, a demo rider and coupon DEMOFOOD20.
+- Tests: 18 database tests (catalog, RLS, cash and online orders, expiry and stock return, sold out, store reject with refund, rider assignment, OTP delivery, rating once, rider token and OTP never readable by stores, prescription → quote → order, audit), unit tests for cart pricing, hours, order steps, admin, vendor and shop helpers, Playwright tests for the shop pages, medicine page and rider link.
+
+### Changed
+
+- Booking notifications, self-service cancellation, coupons and invoices handle food, essentials and medicine orders. Bookings gained the `essentials` service.
+- The header "Food", "Essentials" and "Medicine" links open the new pages (applied on the live database when this phase merges).
+
 ## Phase 6 · Local rides
 
 ### Added

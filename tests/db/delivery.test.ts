@@ -105,7 +105,12 @@ async function order(o: Opts) {
   return service(async (tx) => {
     const { rows } = await tx.query<{ r: { id: string; code: string; order_id: string; status: string } }>(
       "select public.create_order($1, $2, $3, $4) as r",
-      [JSON.stringify(p.booking), JSON.stringify(p.items), JSON.stringify(p.order), JSON.stringify(p.orderItems)],
+      [
+        JSON.stringify(p.booking),
+        JSON.stringify(p.items),
+        JSON.stringify(p.order),
+        JSON.stringify(p.orderItems),
+      ],
     );
     return rows[0].r;
   });
@@ -128,7 +133,10 @@ async function orderOf(id: string) {
 }
 
 async function stockOf(id: string, table = "store_items") {
-  const { rows } = await db.query<{ stock: number | null }>(`select stock from public.${table} where id = $1`, [id]);
+  const { rows } = await db.query<{ stock: number | null }>(
+    `select stock from public.${table} where id = $1`,
+    [id],
+  );
   return rows[0].stock;
 }
 
@@ -161,14 +169,16 @@ beforeAll(async () => {
   govardhan = await idOf("delivery_zones", "slug", "govardhan");
   thali = await itemId(restaurant, "Braj Thali");
   deluxe = (
-    await db.query<{ id: string }>("select id from public.item_variants where item_id = $1 and name->>'en' like 'Deluxe%'", [
-      thali,
-    ])
+    await db.query<{ id: string }>(
+      "select id from public.item_variants where item_id = $1 and name->>'en' like 'Deluxe%'",
+      [thali],
+    )
   ).rows[0].id;
   peda = await itemId(restaurant, "Mathura peda");
   water = await itemId(mart, "Packaged drinking water");
-  const vendorId = (await db.query<{ vendor_id: string }>("select vendor_id from public.stores where id = $1", [restaurant]))
-    .rows[0].vendor_id;
+  const vendorId = (
+    await db.query<{ vendor_id: string }>("select vendor_id from public.stores where id = $1", [restaurant])
+  ).rows[0].vendor_id;
   await db.query("insert into public.vendor_members (vendor_id, user_id) values ($1, $2)", [vendorId, cook]);
   platformRider = (
     await db.query<{ id: string }>(
@@ -176,8 +186,9 @@ beforeAll(async () => {
       [riderUser],
     )
   ).rows[0].id;
-  const martVendor = (await db.query<{ vendor_id: string }>("select vendor_id from public.stores where id = $1", [mart]))
-    .rows[0].vendor_id;
+  const martVendor = (
+    await db.query<{ vendor_id: string }>("select vendor_id from public.stores where id = $1", [mart])
+  ).rows[0].vendor_id;
   otherVendorRider = (
     await db.query<{ id: string }>(
       "insert into public.delivery_partners (full_name, phone, vendor_id) values ('Mart Rider', '+919811111112', $1) returning id",
@@ -212,12 +223,14 @@ describe("delivery catalog", () => {
   });
 
   it("requires a drug licence for pharmacies and rejects Jain non-veg items", async () => {
-    const vendor = (await db.query<{ vendor_id: string }>("select vendor_id from public.stores where id = $1", [pharmacy]))
-      .rows[0].vendor_id;
+    const vendor = (
+      await db.query<{ vendor_id: string }>("select vendor_id from public.stores where id = $1", [pharmacy])
+    ).rows[0].vendor_id;
     await expect(
-      db.query("insert into public.stores (vendor_id, kind, slug, name) values ($1, 'pharmacy', 'no-licence', '{\"en\": \"X\"}')", [
-        vendor,
-      ]),
+      db.query(
+        "insert into public.stores (vendor_id, kind, slug, name) values ($1, 'pharmacy', 'no-licence', '{\"en\": \"X\"}')",
+        [vendor],
+      ),
     ).rejects.toThrow(/check/);
     await expect(
       db.query(
@@ -229,7 +242,9 @@ describe("delivery catalog", () => {
 
   it("lets the store's own vendor edit its menu, and nobody else's", async () => {
     const mine = await asUser(db, cook, (tx) =>
-      tx.query("update public.store_items set is_available = true where store_id = $1 returning id", [restaurant]),
+      tx.query("update public.store_items set is_available = true where store_id = $1 returning id", [
+        restaurant,
+      ]),
     );
     expect(mine.rows.length).toBeGreaterThan(0);
     const theirs = await asUser(db, cook, (tx) =>
@@ -237,7 +252,9 @@ describe("delivery catalog", () => {
     );
     expect(theirs.rows).toHaveLength(0);
     const customer = await asUser(db, alice, (tx) =>
-      tx.query("update public.store_items set price_paise = 1 where store_id = $1 returning id", [restaurant]),
+      tx.query("update public.store_items set price_paise = 1 where store_id = $1 returning id", [
+        restaurant,
+      ]),
     );
     expect(customer.rows).toHaveLength(0);
   });
@@ -286,7 +303,10 @@ describe("orders", () => {
 
   it("books essentials under their own service", async () => {
     const r = await order({ user: alice, store: mart, lines: [{ item: water, qty: 3, price: 2000 }] });
-    const { rows } = await db.query<{ service: string }>("select service::text from public.bookings where id = $1", [r.id]);
+    const { rows } = await db.query<{ service: string }>(
+      "select service::text from public.bookings where id = $1",
+      [r.id],
+    );
     expect(rows[0].service).toBe("essentials");
   });
 
@@ -308,7 +328,9 @@ describe("orders", () => {
   });
 
   it("refuses sold-out stock, foreign items, unserved zones, paused stores and bad totals", async () => {
-    await expect(order({ user: alice, lines: [{ item: peda, qty: 99, price: 12_000 }] })).rejects.toThrow(/out_of_stock/);
+    await expect(order({ user: alice, lines: [{ item: peda, qty: 99, price: 12_000 }] })).rejects.toThrow(
+      /out_of_stock/,
+    );
     await expect(order({ user: alice, lines: [{ item: water, qty: 1, price: 2000 }] })).rejects.toThrow(
       /item_unavailable/,
     );
@@ -360,14 +382,16 @@ describe("order fulfilment", () => {
 
     await expect(step(r.order_id, "accepted", "partner")).rejects.toThrow(/invalid_transition/);
     await step(r.order_id, "out_for_delivery", "partner");
-    await expect(step(r.order_id, "delivered", "partner", o.delivery_otp === "0000" ? "1111" : "0000")).rejects.toThrow(
-      /otp_mismatch/,
-    );
+    await expect(
+      step(r.order_id, "delivered", "partner", o.delivery_otp === "0000" ? "1111" : "0000"),
+    ).rejects.toThrow(/otp_mismatch/);
     await step(r.order_id, "delivered", "partner", o.delivery_otp);
     expect(await orderOf(r.order_id)).toMatchObject({ status: "delivered", booking_status: "completed" });
 
     const rate = (user: string, n: number) =>
-      service((tx) => tx.query("select public.rate_order($1, $2, $3::smallint, 'Tasty')", [r.order_id, user, n]));
+      service((tx) =>
+        tx.query("select public.rate_order($1, $2, $3::smallint, 'Tasty')", [r.order_id, user, n]),
+      );
     await expect(rate(bob, 5)).rejects.toThrow(/not_found/);
     await rate(alice, 5);
     await expect(rate(alice, 4)).rejects.toThrow(/invalid_transition/);
@@ -394,13 +418,17 @@ describe("order fulfilment", () => {
     const r = await order({ user: alice });
     await assign(r.order_id, platformRider);
     const read = (user: string) =>
-      asUser(db, user, (tx) => tx.query("select id, partner_name from public.orders where id = $1", [r.order_id]));
+      asUser(db, user, (tx) =>
+        tx.query("select id, partner_name from public.orders where id = $1", [r.order_id]),
+      );
     expect((await read(alice)).rows).toHaveLength(1);
     expect((await read(cook)).rows).toHaveLength(1);
     expect((await read(riderUser)).rows).toHaveLength(1);
     expect((await read(bob)).rows).toHaveLength(0);
     await expect(
-      asUser(db, alice, (tx) => tx.query("select partner_token from public.orders where id = $1", [r.order_id])),
+      asUser(db, alice, (tx) =>
+        tx.query("select partner_token from public.orders where id = $1", [r.order_id]),
+      ),
     ).rejects.toThrow(/permission denied/);
     const items = await asUser(db, alice, (tx) =>
       tx.query("select name from public.order_items where order_id = $1", [r.order_id]),
@@ -410,6 +438,42 @@ describe("order fulfilment", () => {
       tx.query("select status::text from public.order_events where order_id = $1", [r.order_id]),
     );
     expect(events.rows.length).toBeGreaterThan(0);
+  });
+
+  it("shows the delivery OTP to the customer only, never to the store", async () => {
+    const r = await order({ user: alice });
+    const { delivery_otp } = await orderOf(r.order_id);
+    const otp = (user: string) =>
+      asUser(
+        db,
+        user,
+        async (tx) =>
+          (await tx.query<{ otp: string | null }>("select public.my_order_otp($1) as otp", [r.order_id]))
+            .rows[0].otp,
+      );
+    expect(await otp(alice)).toBe(delivery_otp);
+    expect(await otp(cook)).toBeNull();
+    await expect(
+      asUser(db, cook, (tx) =>
+        tx.query("select delivery_otp from public.orders where id = $1", [r.order_id]),
+      ),
+    ).rejects.toThrow(/permission denied/);
+  });
+
+  it("records whether staff or the store assigned the rider", async () => {
+    const r = await order({ user: alice });
+    await service((tx) =>
+      tx.query("select public.assign_delivery_partner($1, $2, $3, 'vendor')", [
+        r.order_id,
+        platformRider,
+        cook,
+      ]),
+    );
+    const { rows } = await db.query<{ source: string }>(
+      "select source from public.order_events where order_id = $1 and note like 'Rider%'",
+      [r.order_id],
+    );
+    expect(rows.map((e) => e.source)).toEqual(["vendor"]);
   });
 
   it("audits who assigned the rider", async () => {
@@ -443,9 +507,13 @@ describe("medicine", () => {
   it("only takes prescription files from the customer's own folder", async () => {
     await expect(submit(alice, [`${bob}/rx.jpg`])).rejects.toThrow(/invalid_file/);
     const id = await submit(alice, [`${alice}/rx.jpg`]);
-    const theirs = await asUser(db, bob, (tx) => tx.query("select id from public.prescriptions where id = $1", [id]));
+    const theirs = await asUser(db, bob, (tx) =>
+      tx.query("select id from public.prescriptions where id = $1", [id]),
+    );
     expect(theirs.rows).toHaveLength(0);
-    const mine = await asUser(db, alice, (tx) => tx.query("select id from public.prescriptions where id = $1", [id]));
+    const mine = await asUser(db, alice, (tx) =>
+      tx.query("select id from public.prescriptions where id = $1", [id]),
+    );
     expect(mine.rows).toHaveLength(1);
   });
 
@@ -487,10 +555,17 @@ describe("medicine", () => {
     const run = () =>
       service((tx) =>
         tx.query<{ r: { order_id: string } }>("select public.create_order($1, $2, $3, $4) as r", [
-          JSON.stringify({ ...p.booking, code: `PSTMED${++codeSeq}`, subtotal_paise: 3000, total_paise: 3000 }),
+          JSON.stringify({
+            ...p.booking,
+            code: `PSTMED${++codeSeq}`,
+            subtotal_paise: 3000,
+            total_paise: 3000,
+          }),
           JSON.stringify(lines),
           JSON.stringify(p.order),
-          JSON.stringify([{ name: "Paracetamol 650", quantity: 1, unit_price_paise: 3000, line_total_paise: 3000 }]),
+          JSON.stringify([
+            { name: "Paracetamol 650", quantity: 1, unit_price_paise: 3000, line_total_paise: 3000 },
+          ]),
         ]),
       );
     const r = (await run()).rows[0].r;

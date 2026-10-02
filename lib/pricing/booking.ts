@@ -18,15 +18,7 @@ import { gstRateBps, type GstSlab } from "./tax";
  */
 
 export type LineKind =
-  | "room"
-  | "extra_guest"
-  | "addon"
-  | "fee"
-  | "fare"
-  | "allowance"
-  | "surcharge"
-  | "item"
-  | "delivery";
+  "room" | "extra_guest" | "addon" | "fee" | "fare" | "allowance" | "surcharge" | "item" | "delivery";
 export type AddonKey = "early_checkin" | "late_checkout" | "breakfast";
 export const ADDON_KEYS: readonly AddonKey[] = ["early_checkin", "late_checkout", "breakfast"];
 

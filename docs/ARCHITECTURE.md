@@ -126,6 +126,13 @@ next-intl with `localePrefix: "as-needed"`: English at `/`, Hindi at `/hi`. All 
 - Ride lifecycle: pay-the-driver rides are confirmed at once and become `requested`; online rides start `awaiting_payment` and the `bookings_sync_ride` trigger moves them on payment, cancellation or expiry; `assign_ride` and `set_ride_status` move them through assigned → en route → arrived → picked up (OTP) → completed, which completes the booking; `rate_ride` takes one rating.
 - UI: `/rides` (search and results), `/rides/review`, My Trips, `/driver/ride/[token]` (no login), `app/[locale]/admin/rides` (live board, ride detail, catalog, fares, vehicles).
 
+## Food, essentials and medicine
+
+- Data: `delivery_zones`, `stores` (restaurant / grocery / pharmacy, owned by a vendor, served zones in `store_zones`), catalog `store_categories`, `store_items`, `item_variants`, `item_addon_groups`, `item_addons`; customers' `addresses`; `delivery_partners` (riders); operations `orders` (one per order booking), `order_items`, `order_events`; medicine `prescriptions` and `medicine_quotes`. Settings in `delivery.defaults`.
+- Pure logic: `lib/delivery/cart.ts` (cart resolution against the live menu, cart and quote price lines, delivery fee, payment modes), `hours.ts` (opening hours in India time), `status.ts` (order steps).
+- Server: `queries.ts` (zones, stores, menus cached under `catalog`; live menu for checkout), `checkout.ts`, `service.ts` (`create_order`, `set_order_status` via `moveOrder`, `assign_delivery_partner`), `actions.ts` (cart preview, place order, verify payment, rate, address book, prescription upload, accept or decline a quote).
+- Order lifecycle: cash-on-delivery orders are confirmed at once and become `placed`; online orders start `awaiting_payment` and the `bookings_sync_order` trigger moves them on payment, or cancels them and returns stock on expiry or cancellation. The store moves them accepted → preparing → ready → out for delivery; the rider delivers with the customer's OTP, which completes the booking.
+
 ## Design system
 
 Brand and accent tokens from the poster are CSS variables in `app/globals.css`, mapped onto the shadcn semantic tokens and exposed to Tailwind (`bg-brand-navy`, `text-accent-teal`, …). Dark mode via `next-themes` (`.dark` class). Buttons and inputs default to 44px height for tap targets.
@@ -139,7 +146,8 @@ Brand and accent tokens from the poster are CSS variables in `app/globals.css`, 
 | 4     | `lib/pricing`, `lib/coupons`, Razorpay (`lib/payments`, `/api/webhooks/razorpay`), inventory locks, notifications |
 | 5     | cabs: catalog, fares, fleet, dispatch board, `/cabs`, driver trip links (`lib/cabs`)                              |
 | 6     | local rides: zones, landmarks, fares, live requests board, `/rides`, driver ride links (`lib/rides`)              |
-| 7–8   | food/essentials/medicine, packages + leads CRM                                                                    |
+| 7     | food, essentials, medicine: stores, menus, cart, orders board, vendor dashboard, prescriptions (`lib/delivery`)   |
+| 8     | packages + leads CRM                                                                                              |
 | 9–11  | partner onboarding, settlements, reviews/loyalty/PWA/SEO, hardening (CSP, rate limits, Turnstile)                 |
 
 A dedicated folder (e.g. `app/[locale]/admin/hotels/page.tsx`) takes precedence over the generic `admin/[module]` placeholder, so modules can be replaced one at a time.

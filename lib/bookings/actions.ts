@@ -280,7 +280,9 @@ async function cancelMyOrder(booking: Booking, userId: string): Promise<CancelRe
     return {
       ok: false,
       error:
-        error instanceof BookingError && error.code === "invalid_transition" ? "not_allowed" : "refund_failed",
+        error instanceof BookingError && error.code === "invalid_transition"
+          ? "not_allowed"
+          : "refund_failed",
     };
   }
 }

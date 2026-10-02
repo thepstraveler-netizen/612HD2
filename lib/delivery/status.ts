@@ -50,7 +50,10 @@ export function isActive(status: OrderStatus): boolean {
 }
 
 /** Customers cancel themselves only before the store accepts (setting), or while unpaid. */
-export function customerCanCancel(status: OrderStatus, settings: Pick<DeliverySettings, "cancel_until">): boolean {
+export function customerCanCancel(
+  status: OrderStatus,
+  settings: Pick<DeliverySettings, "cancel_until">,
+): boolean {
   if (status === "awaiting_payment") return true;
   return settings.cancel_until === "placed" && status === "placed";
 }

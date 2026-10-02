@@ -38,11 +38,23 @@ export type Store = {
   zoneIds: string[];
 };
 
-export type MenuVariant = { id: string; name: LocalizedJson; pricePaise: number; stock: number | null; isAvailable: boolean };
+export type MenuVariant = {
+  id: string;
+  name: LocalizedJson;
+  pricePaise: number;
+  stock: number | null;
+  isAvailable: boolean;
+};
 
 export type MenuAddon = { id: string; name: LocalizedJson; pricePaise: number; isAvailable: boolean };
 
-export type MenuAddonGroup = { id: string; name: LocalizedJson; min: number; max: number; addons: MenuAddon[] };
+export type MenuAddonGroup = {
+  id: string;
+  name: LocalizedJson;
+  min: number;
+  max: number;
+  addons: MenuAddon[];
+};
 
 export type MenuItem = {
   id: string;

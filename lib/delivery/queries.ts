@@ -95,7 +95,10 @@ export const getDeliveryZones = unstable_cache(
   { tags: [CATALOG_TAG], revalidate: 600 },
 );
 
-async function loadStores(client: Client, filter: { kind?: StoreKind; id?: string; slug?: string }): Promise<Store[]> {
+async function loadStores(
+  client: Client,
+  filter: { kind?: StoreKind; id?: string; slug?: string },
+): Promise<Store[]> {
   let q = client.from("stores").select("*").eq("is_active", true).is("deleted_at", null);
   if (filter.kind) q = q.eq("kind", filter.kind);
   if (filter.id) q = q.eq("id", filter.id);
@@ -144,7 +147,12 @@ export async function loadStoreMenu(
   const [store] = await loadStores(client, filter);
   if (!store) return null;
   const [cats, items] = await Promise.all([
-    client.from("store_categories").select("*").eq("store_id", store.id).eq("is_active", true).order("sort_order"),
+    client
+      .from("store_categories")
+      .select("*")
+      .eq("store_id", store.id)
+      .eq("is_active", true)
+      .order("sort_order"),
     client.from("store_items").select("*").eq("store_id", store.id).order("sort_order"),
   ]);
   if (cats.error) fail("categories", cats.error);
@@ -194,7 +202,13 @@ export async function loadStoreMenu(
       isBestseller: i.is_bestseller,
       variants: (variants.data ?? [])
         .filter((v) => v.item_id === i.id)
-        .map((v) => ({ id: v.id, name: v.name, pricePaise: v.price_paise, stock: v.stock, isAvailable: v.is_available })),
+        .map((v) => ({
+          id: v.id,
+          name: v.name,
+          pricePaise: v.price_paise,
+          stock: v.stock,
+          isAvailable: v.is_available,
+        })),
       addonGroups: (groups.data ?? [])
         .filter((g) => g.item_id === i.id)
         .map((g) => ({
@@ -234,7 +248,11 @@ export const getDeliverySettings = unstable_cache(
   async (): Promise<DeliverySettings> => {
     const supabase = createPublicClient();
     if (!supabase) return deliverySettingsSchema.parse({});
-    const { data } = await supabase.from("settings").select("value").eq("key", "delivery.defaults").maybeSingle();
+    const { data } = await supabase
+      .from("settings")
+      .select("value")
+      .eq("key", "delivery.defaults")
+      .maybeSingle();
     const parsed = deliverySettingsSchema.safeParse(data?.value ?? {});
     return parsed.success ? parsed.data : deliverySettingsSchema.parse({});
   },

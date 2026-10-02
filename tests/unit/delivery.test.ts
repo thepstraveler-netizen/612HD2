@@ -107,7 +107,12 @@ const zone: DeliveryZone = {
   etaMinutes: 30,
 };
 
-const line = (itemId: string, qty = 1, variantId: string | null = null, addonIds: string[] = []): CartLine => ({
+const line = (
+  itemId: string,
+  qty = 1,
+  variantId: string | null = null,
+  addonIds: string[] = [],
+): CartLine => ({
   itemId,
   variantId,
   addonIds,
@@ -142,7 +147,10 @@ describe("cart lines", () => {
 
   it("rejects missing variants, bad add-ons, unavailable items and short stock", () => {
     expect(resolveCart([line("thali")], menu, 30)).toMatchObject({ ok: false, error: "variant_required" });
-    expect(resolveCart([line("peda", 1, "reg")], menu, 30)).toMatchObject({ ok: false, error: "variant_required" });
+    expect(resolveCart([line("peda", 1, "reg")], menu, 30)).toMatchObject({
+      ok: false,
+      error: "variant_required",
+    });
     expect(resolveCart([line("thali", 1, "reg", ["roti", "ghee", "x"])], menu, 30)).toMatchObject({
       ok: false,
       error: "addon_invalid",
@@ -153,8 +161,15 @@ describe("cart lines", () => {
     });
     expect(resolveCart([line("off")], menu, 30)).toMatchObject({ ok: false, error: "item_unavailable" });
     expect(resolveCart([line("nope")], menu, 30)).toMatchObject({ ok: false, error: "item_unavailable" });
-    expect(resolveCart([line("peda", 4)], menu, 30)).toMatchObject({ ok: false, error: "out_of_stock", itemId: "peda" });
-    expect(resolveCart([line("peda"), line("water")], menu, 1)).toMatchObject({ ok: false, error: "too_many_lines" });
+    expect(resolveCart([line("peda", 4)], menu, 30)).toMatchObject({
+      ok: false,
+      error: "out_of_stock",
+      itemId: "peda",
+    });
+    expect(resolveCart([line("peda"), line("water")], menu, 1)).toMatchObject({
+      ok: false,
+      error: "too_many_lines",
+    });
     expect(resolveCart([], menu, 30)).toMatchObject({ ok: false, error: "empty" });
   });
 });
@@ -233,7 +248,13 @@ describe("cart pricing", () => {
 
   it("prices a medicine quote line by line with its own GST", () => {
     const lines = [
-      quoteLineSchema.parse({ name: "Paracetamol 650", pack: "15 tablets", qty: 2, unit_price_paise: 3000, tax_bps: 1200 }),
+      quoteLineSchema.parse({
+        name: "Paracetamol 650",
+        pack: "15 tablets",
+        qty: 2,
+        unit_price_paise: 3000,
+        tax_bps: 1200,
+      }),
       quoteLineSchema.parse({ name: "ORS", qty: 1, unit_price_paise: 2500, tax_bps: 500, hsn: "30049099" }),
     ];
     const price = finalizePrice(buildQuoteLines(lines, 2000, settings, null), 0, []);

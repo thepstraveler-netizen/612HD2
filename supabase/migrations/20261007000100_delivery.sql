@@ -367,6 +367,14 @@ set search_path = ''
 as $$ select store_id from public.store_items where id = p_item_id $$;
 revoke execute on function public.item_store_id(uuid) from public, anon;
 
+-- Food and medicine editors upload store and item photos to the media bucket and register them.
+create policy "delivery editors upload media" on storage.objects
+  for insert to authenticated
+  with check (bucket_id = 'media' and (public.has_permission('food.write') or public.has_permission('medicine.write')));
+create policy "delivery editors register media" on public.media
+  for insert to authenticated
+  with check (public.has_permission('food.write') or public.has_permission('medicine.write'));
+
 -- Zones: public when active; managed by food or medicine staff.
 create policy "active zones are public" on public.delivery_zones
   for select to anon, authenticated using (is_active or public.has_permission('food.read'));
@@ -461,13 +469,28 @@ create policy "order items follow the order" on public.order_items
 create policy "order events follow the order" on public.order_events
   for select to authenticated using (public.can_read_order(order_id));
 
--- The rider link token stays server-side.
+-- The rider link token stays server-side, and the delivery OTP is the
+-- customer's alone (a store could otherwise mark its own deliveries).
 revoke select on public.orders from anon, authenticated;
 grant select (
   id, booking_id, store_id, vendor_id, kind, zone_id, address, status, prescription_id, partner_id, partner_name,
-  partner_phone, eta_at, placed_at, accepted_at, ready_at, picked_up_at, delivered_at, delivery_otp,
+  partner_phone, eta_at, placed_at, accepted_at, ready_at, picked_up_at, delivered_at,
   rating, rating_comment, rated_at, created_at, updated_at
 ) on public.orders to authenticated;
+
+-- The delivery OTP, for the customer who placed the order only.
+create or replace function public.my_order_otp(p_order_id uuid)
+returns text
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select o.delivery_otp from public.orders o join public.bookings b on b.id = o.booking_id
+   where o.id = p_order_id and b.user_id = (select auth.uid());
+$$;
+revoke execute on function public.my_order_otp(uuid) from public, anon;
+grant execute on function public.my_order_otp(uuid) to authenticated;
 
 -- Prescriptions: the customer reads their own; medicine staff and the assigned pharmacy review.
 create policy "patients read own prescriptions" on public.prescriptions
@@ -757,7 +780,7 @@ end;
 $$;
 
 -- Assigns (or reassigns) a rider and issues a fresh rider link, valid for a day.
-create or replace function public.assign_delivery_partner(p_order_id uuid, p_partner_id uuid, p_actor uuid)
+create or replace function public.assign_delivery_partner(p_order_id uuid, p_partner_id uuid, p_actor uuid, p_source text default 'admin')
 returns public.orders
 language plpgsql
 security definer
@@ -770,6 +793,7 @@ begin
   perform public.set_actor(p_actor);
   select * into v_order from public.orders where id = p_order_id for update;
   if v_order.id is null then raise exception 'not_found' using errcode = 'P0001'; end if;
+  if p_source not in ('admin', 'vendor') then raise exception 'invalid_source' using errcode = 'P0001'; end if;
   if v_order.status not in ('placed', 'accepted', 'preparing', 'ready', 'out_for_delivery') then
     raise exception 'invalid_transition' using errcode = 'P0001';
   end if;
@@ -788,7 +812,7 @@ begin
    returning * into v_order;
 
   insert into public.order_events (order_id, status, actor, source, note)
-    values (p_order_id, v_order.status, p_actor, 'admin', 'Rider ' || v_partner.full_name);
+    values (p_order_id, v_order.status, p_actor, p_source, 'Rider ' || v_partner.full_name);
   return v_order;
 end;
 $$;
@@ -851,7 +875,7 @@ begin
     'public.restock_order(uuid)',
     'public.sync_order_with_booking()',
     'public.set_order_status(uuid, public.order_status, uuid, text, text, text)',
-    'public.assign_delivery_partner(uuid, uuid, uuid)',
+    'public.assign_delivery_partner(uuid, uuid, uuid, text)',
     'public.rate_order(uuid, uuid, smallint, text)',
     'public.submit_prescription(jsonb)'
   ]

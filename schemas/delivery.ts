@@ -36,7 +36,14 @@ export const ORDER_STATUSES = [
 ] as const;
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
 
-export const PRESCRIPTION_STATUSES = ["submitted", "reviewing", "quoted", "ordered", "rejected", "expired"] as const;
+export const PRESCRIPTION_STATUSES = [
+  "submitted",
+  "reviewing",
+  "quoted",
+  "ordered",
+  "rejected",
+  "expired",
+] as const;
 export type PrescriptionStatus = (typeof PRESCRIPTION_STATUSES)[number];
 
 /** `settings` key `delivery.defaults` (admin → Settings → Delivery). Public: its terms are shown at checkout. */
@@ -89,7 +96,9 @@ export const deliveryAddressSchema = z.object({
   line1: z.string().trim().min(3, { error: "required" }).max(200),
   line2: z.string().trim().max(200).optional(),
   landmark: z.string().trim().max(120).optional(),
-  pincode: z.union([z.literal(""), z.string().regex(/^[1-9][0-9]{5}$/, { error: "invalidPincode" })]).optional(),
+  pincode: z
+    .union([z.literal(""), z.string().regex(/^[1-9][0-9]{5}$/, { error: "invalidPincode" })])
+    .optional(),
   zoneId: uuid,
 });
 export type DeliveryAddress = z.output<typeof deliveryAddressSchema>;
@@ -148,7 +157,10 @@ export const quoteLineSchema = z.object({
   qty: z.number().int().min(1).max(99),
   unit_price_paise: z.number().int().min(1).max(10_000_000),
   tax_bps: z.number().int().min(0).max(2800).default(1200),
-  hsn: z.union([z.literal(""), z.string().regex(/^[0-9]{4,8}$/)]).optional().default(""),
+  hsn: z
+    .union([z.literal(""), z.string().regex(/^[0-9]{4,8}$/)])
+    .optional()
+    .default(""),
 });
 export type QuoteLine = z.output<typeof quoteLineSchema>;
 export const quoteLinesSchema = z.array(quoteLineSchema).min(1).max(50);

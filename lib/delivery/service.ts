@@ -27,7 +27,12 @@ import type { ResolvedLine } from "./cart";
  * confirmed and go straight to the store.
  */
 
-const createdOrderSchema = z.object({ id: z.uuid(), code: z.string(), order_id: z.uuid(), status: z.string() });
+const createdOrderSchema = z.object({
+  id: z.uuid(),
+  code: z.string(),
+  order_id: z.uuid(),
+  status: z.string(),
+});
 
 export type Contact = { name: string; phone: string; email: string | null; notes: string | null };
 
@@ -59,7 +64,12 @@ function addressJson(a: DeliveryAddress) {
   };
 }
 
-async function writeOrder(w: OrderWrite, contact: Contact, userId: string, locale: "en" | "hi"): Promise<CreatedBooking> {
+async function writeOrder(
+  w: OrderWrite,
+  contact: Contact,
+  userId: string,
+  locale: "en" | "hi",
+): Promise<CreatedBooking> {
   const admin = createAdminClient();
   const booking = {
     user_id: userId,
@@ -194,7 +204,14 @@ export async function createMedicineOrder(
   const { quote, prescription, store, price } = input;
   const address = prescription.address as Partial<Record<string, string | null>>;
   const lines = z
-    .array(z.object({ name: z.string(), pack: z.string().optional(), qty: z.number(), unit_price_paise: z.number() }))
+    .array(
+      z.object({
+        name: z.string(),
+        pack: z.string().optional(),
+        qty: z.number(),
+        unit_price_paise: z.number(),
+      }),
+    )
     .parse(quote.lines);
   return writeOrder(
     {
@@ -291,11 +308,17 @@ export async function moveOrder(input: {
   return order;
 }
 
-export async function assignRider(orderId: string, partnerId: string, actor: string | null): Promise<Tables<"orders">> {
+export async function assignRider(
+  orderId: string,
+  partnerId: string,
+  actor: string | null,
+  source: "admin" | "vendor" = "admin",
+): Promise<Tables<"orders">> {
   const { data, error } = await createAdminClient().rpc("assign_delivery_partner", {
     p_order_id: orderId,
     p_partner_id: partnerId,
     p_actor: actor,
+    p_source: source,
   });
   if (error) throw dbError(error);
   return data as Tables<"orders">;

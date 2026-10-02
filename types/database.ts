@@ -1263,7 +1263,10 @@ export type Database = {
       };
       can_manage_store: { Args: { p_store_id: string }; Returns: boolean };
       can_read_order: { Args: { p_order_id: string }; Returns: boolean };
-      create_order: { Args: { p_booking: Json; p_items: Json; p_order: Json; p_order_items: Json }; Returns: Json };
+      create_order: {
+        Args: { p_booking: Json; p_items: Json; p_order: Json; p_order_items: Json };
+        Returns: Json;
+      };
       set_order_status: {
         Args: {
           p_order_id: string;
@@ -1276,7 +1279,12 @@ export type Database = {
         Returns: Database["public"]["Tables"]["orders"]["Row"];
       };
       assign_delivery_partner: {
-        Args: { p_order_id: string; p_partner_id: string; p_actor: string | null };
+        Args: {
+          p_order_id: string;
+          p_partner_id: string;
+          p_actor: string | null;
+          p_source?: "admin" | "vendor";
+        };
         Returns: Database["public"]["Tables"]["orders"]["Row"];
       };
       rate_order: {
@@ -1284,6 +1292,7 @@ export type Database = {
         Returns: Database["public"]["Tables"]["orders"]["Row"];
       };
       submit_prescription: { Args: { p: Json }; Returns: string };
+      my_order_otp: { Args: { p_order_id: string }; Returns: string | null };
     };
     Enums: {
       service_kind: "bookable" | "enquiry";

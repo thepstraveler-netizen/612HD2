@@ -30,7 +30,8 @@ import { createDeliveryOrder, createMedicineOrder } from "./service";
  * here and every price is recomputed on the server.
  */
 
-export type CartPreviewResult = OrderPreview | { ok: false; error: OrderCheckoutError | "invalid"; itemId?: string };
+export type CartPreviewResult =
+  OrderPreview | { ok: false; error: OrderCheckoutError | "invalid"; itemId?: string };
 
 export async function previewCart(input: unknown): Promise<CartPreviewResult> {
   const parsed = cartQuoteSchema.safeParse(input);
@@ -41,10 +42,7 @@ export async function previewCart(input: unknown): Promise<CartPreviewResult> {
 }
 
 export type PlaceOrderError =
-  | Exclude<BookResult, { ok: true }>["error"]
-  | OrderCheckoutError
-  | "below_minimum"
-  | "no_zone";
+  Exclude<BookResult, { ok: true }>["error"] | OrderCheckoutError | "below_minimum" | "no_zone";
 export type PlaceOrderResult =
   | Extract<BookResult, { ok: true }>
   | { ok: false; error: PlaceOrderError; field?: string; itemId?: string; preview?: OrderPreview };
@@ -67,7 +65,10 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
   const request = parsed.data.checkout;
 
   await expireStaleBookings().catch(() => undefined);
-  const checkout = await prepareOrderCheckout({ ...request, zoneId: request.address.zoneId }, session.user.id);
+  const checkout = await prepareOrderCheckout(
+    { ...request, zoneId: request.address.zoneId },
+    session.user.id,
+  );
   if (!checkout.ok) return checkout;
   const preview = toOrderPreview(checkout);
   if (!checkout.zone) return { ok: false, error: "no_zone" };
@@ -216,7 +217,11 @@ export async function deleteAddress(input: unknown): Promise<{ ok: boolean }> {
 
 export type PrescriptionResult =
   | { ok: true; id: string }
-  | { ok: false; error: "signin" | "forbidden" | "invalid" | "booking_closed" | "invalid_file" | "unknown"; field?: string };
+  | {
+      ok: false;
+      error: "signin" | "forbidden" | "invalid" | "booking_closed" | "invalid_file" | "unknown";
+      field?: string;
+    };
 
 /**
  * Files are uploaded by the browser straight to the private `prescriptions`
@@ -231,7 +236,8 @@ export async function submitPrescription(input: unknown): Promise<PrescriptionRe
     const issue = parsed.error.issues[0];
     return { ok: false, error: "invalid", field: issue?.path.join(".") };
   }
-  if (!hasServiceRole() || !(await getFeatureFlag("booking.medicine"))) return { ok: false, error: "booking_closed" };
+  if (!hasServiceRole() || !(await getFeatureFlag("booking.medicine")))
+    return { ok: false, error: "booking_closed" };
   const p = parsed.data;
   const { data, error } = await createAdminClient().rpc("submit_prescription", {
     p: {
@@ -265,7 +271,16 @@ export type AcceptQuoteResult =
   | Extract<BookResult, { ok: true }>
   | {
       ok: false;
-      error: "signin" | "forbidden" | "invalid" | "not_found" | "expired" | "payment_mode" | "booking_closed" | "payment_failed" | "unknown";
+      error:
+        | "signin"
+        | "forbidden"
+        | "invalid"
+        | "not_found"
+        | "expired"
+        | "payment_mode"
+        | "booking_closed"
+        | "payment_failed"
+        | "unknown";
     };
 
 async function loadMyQuote(quoteId: string, userId: string) {
@@ -298,7 +313,8 @@ export async function acceptQuote(input: unknown): Promise<AcceptQuoteResult> {
   const found = await loadMyQuote(parsed.data.quoteId, session.user.id);
   if (!found) return { ok: false, error: "not_found" };
   const { quote, prescription, store } = found;
-  if (quote.status !== "sent" || Date.parse(quote.valid_until) <= Date.now()) return { ok: false, error: "expired" };
+  if (quote.status !== "sent" || Date.parse(quote.valid_until) <= Date.now())
+    return { ok: false, error: "expired" };
 
   const [settings, payments, invoice] = await Promise.all([
     getDeliverySettings(),
@@ -341,7 +357,11 @@ export async function acceptQuote(input: unknown): Promise<AcceptQuoteResult> {
       code: created.code,
       status: "pending_payment",
       order: created.order,
-      prefill: { name: prescription.patient_name, email: session.user.email ?? "", contact: prescription.phone },
+      prefill: {
+        name: prescription.patient_name,
+        email: session.user.email ?? "",
+        contact: prescription.phone,
+      },
     };
   } catch (error) {
     if (error instanceof BookingError) {

@@ -59,9 +59,13 @@ export type OrderCheckoutQuote = {
   etaMinutes: number | null;
 };
 
-export type OrderCheckoutResult = OrderCheckoutQuote | { ok: false; error: OrderCheckoutError; itemId?: string };
+export type OrderCheckoutResult =
+  OrderCheckoutQuote | { ok: false; error: OrderCheckoutError; itemId?: string };
 
-export async function prepareOrderCheckout(input: CartQuote, userId: string | null): Promise<OrderCheckoutResult> {
+export async function prepareOrderCheckout(
+  input: CartQuote,
+  userId: string | null,
+): Promise<OrderCheckoutResult> {
   if (!hasServiceRole()) return { ok: false, error: "booking_closed" };
   const [menu, zones, settings, payments, invoice] = await Promise.all([
     getLiveStoreMenu(input.storeId),
@@ -148,10 +152,24 @@ export type OrderPreview = {
   storeSlug: string;
   zoneId: string | null;
   zones: { id: string; name: DeliveryZone["name"]; feePaise: number; freeAbovePaise: number | null }[];
-  lines: (Pick<ResolvedLine, "itemId" | "variantId" | "addonIds" | "qty" | "name" | "variantName" | "diet" | "unitPricePaise" | "lineTotalPaise"> & {
+  lines: (Pick<
+    ResolvedLine,
+    | "itemId"
+    | "variantId"
+    | "addonIds"
+    | "qty"
+    | "name"
+    | "variantName"
+    | "diet"
+    | "unitPricePaise"
+    | "lineTotalPaise"
+  > & {
     addons: string[];
   })[];
-  priceLines: Pick<PriceLine, "key" | "kind" | "description" | "amountPaise" | "discountPaise" | "taxPaise">[];
+  priceLines: Pick<
+    PriceLine,
+    "key" | "kind" | "description" | "amountPaise" | "discountPaise" | "taxPaise"
+  >[];
   itemsPaise: number;
   discountPaise: number;
   taxPaise: number;
@@ -174,7 +192,12 @@ export function toOrderPreview(q: OrderCheckoutQuote): OrderPreview {
     storeName: q.store.name,
     storeSlug: q.store.slug,
     zoneId: q.zone?.id ?? null,
-    zones: q.zones.map((z) => ({ id: z.id, name: z.name, feePaise: z.feePaise, freeAbovePaise: z.freeAbovePaise })),
+    zones: q.zones.map((z) => ({
+      id: z.id,
+      name: z.name,
+      feePaise: z.feePaise,
+      freeAbovePaise: z.freeAbovePaise,
+    })),
     lines: q.lines.map((l) => ({
       itemId: l.itemId,
       variantId: l.variantId,
@@ -211,4 +234,3 @@ export function toOrderPreview(q: OrderCheckoutQuote): OrderPreview {
     maxCodPaise: q.settings.max_cod_paise,
   };
 }
-
