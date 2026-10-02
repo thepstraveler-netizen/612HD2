@@ -88,6 +88,7 @@ describe("public catalog RLS", () => {
     expect(keys).toEqual([
       "business.profile",
       "business.social",
+      "delivery.defaults",
       "hotels.search_defaults",
       "tax.hotel_gst_slabs",
     ]);
