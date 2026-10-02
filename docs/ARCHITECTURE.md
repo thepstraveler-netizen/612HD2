@@ -154,16 +154,16 @@ Brand and accent tokens from the poster are CSS variables in `app/globals.css`, 
 
 ## Where later phases plug in
 
-| Phase | Adds                                                                                                              |
-| ----- | ----------------------------------------------------------------------------------------------------------------- |
-| 2     | catalog schema + seed, media/storage, CMS (home sections, banners, services table), DataTable                     |
-| 3     | `app/[locale]/admin/hotels`, `/hotels` listing + detail, availability engine in `lib/availability`                |
-| 4     | `lib/pricing`, `lib/coupons`, Razorpay (`lib/payments`, `/api/webhooks/razorpay`), inventory locks, notifications |
-| 5     | cabs: catalog, fares, fleet, dispatch board, `/cabs`, driver trip links (`lib/cabs`)                              |
-| 6     | local rides: zones, landmarks, fares, live requests board, `/rides`, driver ride links (`lib/rides`)              |
-| 7     | food, essentials, medicine: stores, menus, cart, orders board, vendor dashboard, prescriptions (`lib/delivery`)   |
-| 8     | packages, flight / train / bus enquiries, leads CRM, quotes with payment links (`lib/packages`, `lib/leads`)      |
+| Phase | Adds                                                                                                                      |
+| ----- | ------------------------------------------------------------------------------------------------------------------------- |
+| 2     | catalog schema + seed, media/storage, CMS (home sections, banners, services table), DataTable                             |
+| 3     | `app/[locale]/admin/hotels`, `/hotels` listing + detail, availability engine in `lib/availability`                        |
+| 4     | `lib/pricing`, `lib/coupons`, Razorpay (`lib/payments`, `/api/webhooks/razorpay`), inventory locks, notifications         |
+| 5     | cabs: catalog, fares, fleet, dispatch board, `/cabs`, driver trip links (`lib/cabs`)                                      |
+| 6     | local rides: zones, landmarks, fares, live requests board, `/rides`, driver ride links (`lib/rides`)                      |
+| 7     | food, essentials, medicine: stores, menus, cart, orders board, vendor dashboard, prescriptions (`lib/delivery`)           |
+| 8     | packages, flight / train / bus enquiries, leads CRM, quotes with payment links (`lib/packages`, `lib/leads`)              |
 | 9     | B2B service plans and portfolio, Partner With Us, vendor portal earnings, settlements (`lib/partners`, `lib/settlements`) |
-| 10–11 | reviews/loyalty/PWA/SEO, hardening (CSP, rate limits, Turnstile)                                                  |
+| 10–11 | reviews/loyalty/PWA/SEO, hardening (CSP, rate limits, Turnstile)                                                          |
 
 A dedicated folder (e.g. `app/[locale]/admin/hotels/page.tsx`) takes precedence over the generic `admin/[module]` placeholder, so modules can be replaced one at a time.
