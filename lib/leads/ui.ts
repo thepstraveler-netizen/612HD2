@@ -153,6 +153,19 @@ export function leadTravelFacts(details: Record<string, unknown>): {
   };
 }
 
+/** The plan picked on a B2B service page (null when none), with its price then (null = on request). */
+export function leadPlanFact(
+  details: Record<string, unknown>,
+): { name: string; pricePaise: number | null } | null {
+  const name = text(details.plan);
+  if (!name) return null;
+  const price = details.plan_price_paise;
+  return {
+    name,
+    pricePaise: typeof price === "number" && Number.isInteger(price) && price >= 0 ? price : null,
+  };
+}
+
 /** UTM tags with a value, in a stable order (utm_source first). */
 export function utmEntries(utm: Record<string, unknown>): [string, string][] {
   const order = ["source", "medium", "campaign", "term", "content"];

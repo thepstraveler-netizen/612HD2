@@ -1,5 +1,25 @@
 # Changelog
 
+## Phase 9 · B2B services, partner onboarding and vendor settlements
+
+### Added
+
+- Database: plans and portfolio items for the business service pages; partner applications; vendor documents; vendors gained PAN, address, city, bank / UPI details and the accepted agreement; a vendor settlement ledger and payouts. RLS and audit on every table. Applications, ledger rows and payouts change only through server functions (`submit_partner_application`, `review_partner_application`, `approve_partner_application`, `update_vendor_profile`, `add_vendor_document`, `create_vendor_payout`, `mark_vendor_payout_paid`, `cancel_vendor_payout`, `add_vendor_adjustment`); a trigger writes ledger rows when a vendor's booking completes and follows later refunds and payments.
+- Starter data: `partners.defaults` (business types, required documents per type, default commission per type, upload limit, partner agreement in English and Hindi) and `settlements.defaults` (GST on commission, TCS and TDS placeholders, settlement cycle); application, approval, rejection and payout email templates. Sample plans on the six business service pages.
+- Business service pages (hotel photography, OTA handling, calling centre, Instagram reels marketing, lead generation, travel agent & data): pricing cards with features and a "Popular" mark, "Choose this plan" preselecting the plan in the enquiry form, a portfolio gallery with a photo viewer and reel links, structured data for the plans. The plan travels with the lead into the CRM.
+- `/partner`: Partner With Us pitch, and for signed-in visitors a four-step application (business type, details with questions per type, documents uploaded to private storage, agreement signed by typing your name) with its status afterwards.
+- Partner dashboard `/vendor` for every kind of partner: earnings (balance not yet settled, who owes whom, settlement cycle, ledger, payouts, CSV statement) and business details (contact, GST / PAN, bank or UPI for payouts, documents with verification status). Store partners keep their order screens.
+- Admin → Vendors: application queue with document links, approve (commission), under review, reject with a reason; vendor list and vendor page with status, commission, notes, members, documents to verify and payout details.
+- Admin → Payments → Settlements: balances per vendor, vendor ledger with manual credits and debits, create a payout up to a cut-off date, mark it paid with the UTR or cancel it, payout list, commission report with CSV export. Settings → Partners & settlements.
+- Admin → CMS → Services: plan and portfolio editors.
+- Payouts go through a `PayoutProvider` adapter; `manual` today.
+- Tests: database tests for plans, applications (one open per person, approval into a vendor with role and documents, slugs, rejection reasons), the ledger (commission, GST, pay at hotel, refunds before and after a payout, cab vendor from the vehicle, cash on delivery by platform riders), payouts and vendor self-service, plus unit and browser tests for the new screens.
+
+### Changed
+
+- The vendor dashboard works for hotels, transport and other partners, not only stores.
+- Lead summaries and the lead page show the plan a customer picked.
+
 ## Phase 8 · Packages, flights / trains / buses and leads CRM
 
 ### Added

@@ -1,10 +1,10 @@
 import { getTranslations } from "next-intl/server";
 import { AdminSubnav } from "./page-header";
 
-export const PAYMENT_AREAS = ["payments", "refunds", "events"] as const;
+export const PAYMENT_AREAS = ["payments", "refunds", "events", "settlements"] as const;
 export type PaymentArea = (typeof PAYMENT_AREAS)[number];
 
-/** Payments | Refunds | Webhook events. */
+/** Payments | Refunds | Webhook events | Vendor settlements. */
 export async function PaymentSubnav({ active }: { active: PaymentArea }) {
   const t = await getTranslations("bookingsAdmin.nav");
   return (

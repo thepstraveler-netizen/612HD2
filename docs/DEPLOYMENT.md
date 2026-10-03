@@ -230,6 +230,26 @@ This creates the user with a confirmed email (or promotes an existing one) and g
 - [ ] Mark another lead Lost (reason required) and reopen it.
 - [ ] With `booking.packages` on and Razorpay keys: book the private Vrindavan tour for 3 adults with the 25% advance; My Trips shows the tour with the balance due.
 
+## 14. Phase 9 setup and smoke test
+
+### Setup
+
+1. Apply the two Phase 9 migrations in order (`20261009000100_partners_settlements.sql`, then `20261009000200_partners_settlements_baseline.sql`). Run the Phase 9 part of `supabase/seed.sql` for the sample service plans if you want them.
+2. Admin → Settings → Partners & settlements: business types you accept, documents required per type, default commission per type, the partner agreement (bump its version whenever you change the text); GST on commission, TCS and TDS rates and the settlement cycle. **Ask your CA to set TCS and TDS (D-082); they start at 0.**
+3. Admin → CMS → Services: replace the sample plan prices on the business service pages and add portfolio photos or reel links.
+4. Admin → Notifications: review `partner.application_received`, `partner.application_approved`, `partner.application_rejected` and `payout.paid`.
+5. Existing hotels, stores and transport partners created before this phase have no owner account: ask each to apply through `/partner`, or add their login to `vendor_members` and grant the `vendor` role (`select public.grant_role_by_email('owner@example.com', 'vendor');`).
+
+### Smoke test
+
+- [ ] `/services/instagram-marketing` shows the plans; "Choose this plan" fills the plan in the enquiry form, and the lead in Admin → Leads shows the plan.
+- [ ] `/partner` signed out shows the pitch and a sign-in button; signed in, apply as a hotel with the required documents and accept the agreement; you get a PA-… reference and the page shows "Submitted".
+- [ ] Admin → Vendors → Applications: open it, view a document, approve at 15%. The applicant can open `/vendor` and sees Earnings and Business.
+- [ ] As the vendor, add bank details and a document on Business; the document shows "Pending" until staff verify it in Admin → Vendors.
+- [ ] Complete a booking that belongs to the vendor (for example a pay-at-hotel stay marked completed): Admin → Payments → Settlements shows the vendor owes the commission; `/vendor/earnings` shows the same row.
+- [ ] Create a payout up to today, mark it paid with a UTR; the vendor gets the email and the payout shows as paid on both sides. Cancel another pending payout and check its rows are unsettled again.
+- [ ] Download the commission report CSV and the vendor statement CSV.
+
 ## Later phases (prepare when you reach them)
 
 - **Optional:** a Google Maps key (`NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`), restricted to your domains, for road distances; cabs and rides work without it (D-046, D-053).

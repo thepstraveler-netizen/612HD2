@@ -82,6 +82,8 @@ export function summarizeLead(lead: {
     const route = str(d.from) && str(d.to) ? ` ${str(d.from)} → ${str(d.to)}` : "";
     parts.push(`${KIND_LABEL[lead.kind]}${route}`);
   } else parts.push(KIND_LABEL[lead.kind]);
+  // A plan picked on a B2B service page (stored by submitEnquiry).
+  if (str(d.plan)) parts.push(str(d.plan));
   const date = str(d.depart_on) || str(d.start_date);
   if (date)
     parts.push(formatShortDate(date) + (str(d.return_on) ? ` – ${formatShortDate(str(d.return_on))}` : ""));

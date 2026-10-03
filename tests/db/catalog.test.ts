@@ -91,6 +91,7 @@ describe("public catalog RLS", () => {
       "delivery.defaults",
       "hotels.search_defaults",
       "packages.defaults",
+      "partners.defaults",
       "tax.hotel_gst_slabs",
       "travel.defaults",
     ]);

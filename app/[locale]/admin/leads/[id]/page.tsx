@@ -15,7 +15,7 @@ import { requirePermission } from "@/lib/auth/guards";
 import { getLeadDetail, getLeadStaff } from "@/lib/leads/crm";
 import { getLeadsSettings } from "@/lib/leads/settings";
 import { isOpen } from "@/lib/leads/status";
-import { leadTravelFacts, utmEntries } from "@/lib/leads/ui";
+import { leadPlanFact, leadTravelFacts, utmEntries } from "@/lib/leads/ui";
 import { formatPaise } from "@/lib/money";
 import { hasPermission } from "@/lib/permissions/check";
 import type { PermissionKey } from "@/lib/permissions/constants";
@@ -70,6 +70,7 @@ export default async function AdminLeadPage({ params }: { params: Promise<{ id: 
       ? format.dateTime(new Date(`${iso}T00:00:00Z`), { dateStyle: "medium", timeZone: "UTC" })
       : iso;
   const travel = leadTravelFacts(lead.details);
+  const plan = leadPlanFact(lead.details);
   const utm = utmEntries(lead.utm);
   const staffNames = Object.fromEntries([
     ...staff.map((s) => [s.id, s.name] as const),
@@ -216,6 +217,11 @@ export default async function AdminLeadPage({ params }: { params: Promise<{ id: 
                   ) : null,
                 ),
                 ...optional(t("detail.service"), lead.serviceSlug),
+                ...optional(
+                  t("detail.plan"),
+                  plan &&
+                    `${plan.name} · ${plan.pricePaise !== null ? formatPaise(plan.pricePaise, locale) : t("detail.planOnRequest")}`,
+                ),
                 ...optional(
                   t("detail.message"),
                   lead.message && <span className="font-normal whitespace-pre-line">{lead.message}</span>,

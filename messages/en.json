@@ -129,12 +129,287 @@
     "back": "All services",
     "comingSoon": "Booking and enquiries for this service open soon.",
     "kindBookable": "Bookable service",
-    "kindEnquiry": "Business service · enquiry"
+    "kindEnquiry": "Business service · enquiry",
+    "plans": {
+      "title": "Plans and pricing",
+      "lead": "Pick a plan to start with. We can tailor any of them to your business.",
+      "popular": "Most chosen",
+      "onRequest": "Price on request",
+      "choose": "Choose this plan",
+      "note": "Choosing a plan only sends an enquiry; nothing is charged now. We confirm the final scope and price in your quote."
+    },
+    "portfolio": {
+      "title": "Our work",
+      "lead": "A few projects we have delivered for businesses like yours.",
+      "open": "View larger: {title}",
+      "viewLink": "Watch or visit",
+      "newTab": "(opens in a new tab)",
+      "close": "Close",
+      "previous": "Previous photo",
+      "next": "Next photo",
+      "counter": "Photo {current} of {total}"
+    }
   },
   "partner": {
     "title": "Partner With Us",
     "lead": "We are open to collaborating with hotels and resorts, travel agencies, restaurant and food businesses, transport providers, local shops and other service partners.",
-    "comingSoon": "Partner applications open soon."
+    "pitch": {
+      "title": "Why collaborate with us?",
+      "openTo": "We work with",
+      "points": {
+        "local": "Vrindavan-focused local network",
+        "platform": "Multiple services on one platform",
+        "leads": "Customer lead sharing and coordination",
+        "marketing": "Marketing and promotion for your business",
+        "trust": "Long-term, trusted partnerships"
+      },
+      "howTitle": "How joining works",
+      "how": {
+        "details": "Tell us about your business",
+        "documents": "Upload your documents",
+        "agreement": "Read and sign the partner agreement",
+        "review": "Our team reviews it and opens your partner dashboard"
+      }
+    },
+    "signIn": {
+      "title": "Sign in to apply",
+      "body": "Apply with the account you want to run your business from. Keep your ID proof, PAN and any licence your business needs handy.",
+      "signIn": "Sign in to apply",
+      "signUp": "Create an account"
+    },
+    "types": {
+      "hotel": {
+        "name": "Hotels & Resorts",
+        "hint": "Hotels, resorts, guest houses, dharamshalas and homestays"
+      },
+      "travel_agency": {
+        "name": "Travel Agencies",
+        "hint": "Tours, ticketing and yatra planning"
+      },
+      "restaurant": {
+        "name": "Restaurant & Food Businesses",
+        "hint": "Restaurants, cafes, sweet shops and tiffin services"
+      },
+      "transport": {
+        "name": "Transport Providers",
+        "hint": "Cabs, buses, tempo travellers, bikes and e-rickshaws"
+      },
+      "shop": {
+        "name": "Local Shops",
+        "hint": "Groceries, puja items, gifts and daily needs"
+      },
+      "pharmacy": {
+        "name": "Pharmacies",
+        "hint": "Licensed chemists and medical stores"
+      },
+      "service_provider": {
+        "name": "Service Providers",
+        "hint": "Guides, photographers, priests and other local services"
+      },
+      "other": {
+        "name": "Other Vendors",
+        "hint": "Anything else visitors to Braj need"
+      }
+    },
+    "form": {
+      "label": "Partner application",
+      "stepOf": "Step {current} of {total}",
+      "steps": {
+        "type": "Business type",
+        "details": "Business details",
+        "documents": "Documents",
+        "agreement": "Agreement"
+      },
+      "typeTitle": "What kind of business do you run?",
+      "detailsTitle": "Tell us about your business",
+      "moreTitle": "A few more questions",
+      "choose": "Choose…",
+      "fields": {
+        "businessName": "Business name",
+        "contactName": "Contact person",
+        "phone": "Mobile number",
+        "email": "Email",
+        "city": "City or town",
+        "address": "Business address",
+        "gstin": "GSTIN (optional)",
+        "pan": "PAN (optional)",
+        "website": "Website or Instagram (optional)",
+        "message": "Anything else we should know? (optional)"
+      },
+      "back": "Back",
+      "next": "Continue",
+      "submit": "Submit application",
+      "submitting": "Submitting…",
+      "checkStep": "Please fix the highlighted fields."
+    },
+    "detailFields": {
+      "property_kind": {
+        "label": "Property type",
+        "options": {
+          "hotel": "Hotel",
+          "resort": "Resort",
+          "guest_house": "Guest house",
+          "dharamshala": "Dharamshala",
+          "homestay": "Homestay"
+        }
+      },
+      "rooms": {
+        "label": "Number of rooms"
+      },
+      "nearest_temple": {
+        "label": "Nearest temple or landmark (optional)"
+      },
+      "services_offered": {
+        "label": "Services you offer",
+        "placeholder": "e.g. Braj yatra, train tickets, hotel bookings"
+      },
+      "years_in_business": {
+        "label": "Years in business (optional)"
+      },
+      "cuisine": {
+        "label": "Cuisine",
+        "placeholder": "e.g. North Indian, Brajwasi thali, sweets"
+      },
+      "food_type": {
+        "label": "Food served",
+        "options": {
+          "pure_veg": "Pure vegetarian",
+          "veg_egg": "Vegetarian and egg",
+          "veg_non_veg": "Vegetarian and non-vegetarian"
+        }
+      },
+      "seating": {
+        "label": "Seating capacity (optional)"
+      },
+      "fssai_number": {
+        "label": "FSSAI licence number (optional)"
+      },
+      "vehicle_types": {
+        "label": "Vehicle types",
+        "placeholder": "e.g. Sedan, SUV, tempo traveller, e-rickshaw"
+      },
+      "fleet_size": {
+        "label": "Number of vehicles"
+      },
+      "shop_category": {
+        "label": "What do you sell?",
+        "placeholder": "e.g. Groceries, puja items, clothes"
+      },
+      "home_delivery": {
+        "label": "Do you deliver to homes and hotels? (optional)",
+        "options": {
+          "yes": "Yes",
+          "no": "No"
+        }
+      },
+      "drug_licence_number": {
+        "label": "Drug licence number"
+      },
+      "pharmacist_name": {
+        "label": "Registered pharmacist (optional)"
+      },
+      "service_category": {
+        "label": "Service you provide",
+        "placeholder": "e.g. Tour guide, photographer, priest"
+      },
+      "what_you_offer": {
+        "label": "What do you offer?"
+      }
+    },
+    "documents": {
+      "title": "Upload your documents",
+      "lead": "PDF, JPG, PNG or WebP, up to {mb} MB each. Clear phone photos are fine.",
+      "required": "Required",
+      "optional": "Optional",
+      "progress": "{done} of {total} required documents uploaded",
+      "choose": "Choose file",
+      "replace": "Replace",
+      "remove": "Remove",
+      "removeNamed": "Remove {name}",
+      "uploading": "Uploading…",
+      "uploaded": "Uploaded",
+      "failed": "Upload failed",
+      "addOther": "Add another document",
+      "otherKind": "Document type",
+      "otherTitle": "Other documents (optional)",
+      "missing": "Upload the required documents: {list}",
+      "stillUploading": "Please wait for the uploads to finish.",
+      "kinds": {
+        "id_proof": "ID proof (Aadhaar, voter ID or passport)",
+        "pan": "PAN card",
+        "gst": "GST certificate",
+        "property_proof": "Property ownership or lease papers",
+        "fssai": "FSSAI licence",
+        "drug_licence": "Drug licence",
+        "vehicle_rc": "Vehicle RC",
+        "trade_licence": "Trade or shop licence",
+        "bank_proof": "Cancelled cheque or bank passbook",
+        "agreement": "Signed agreement",
+        "other": "Other document"
+      },
+      "errors": {
+        "badFile": "Use a PDF, JPG, PNG or WebP file.",
+        "tooLarge": "This file is larger than {mb} MB.",
+        "uploadFailed": "The upload didn't go through. Check your connection and try again.",
+        "signIn": "Your session has ended. Sign in again to continue.",
+        "unavailable": "Uploads aren't available right now. Please try again later."
+      }
+    },
+    "agreement": {
+      "title": "Partner agreement",
+      "version": "Version {version}",
+      "name": "Type your full name to sign",
+      "accept": "I have read the partner agreement and accept it on behalf of my business.",
+      "note": "Your name, today's date and this version are saved with your application."
+    },
+    "fieldErrors": {
+      "required": "This is required.",
+      "invalidPhone": "Enter a valid mobile number.",
+      "invalidEmail": "Enter a valid email address.",
+      "invalidGstin": "Enter a valid 15-character GSTIN.",
+      "invalidPan": "Enter a valid PAN, like ABCDE1234F.",
+      "invalid": "Please check this field.",
+      "invalidNumber": "Enter a whole number.",
+      "tooLong": "This is too long.",
+      "acceptAgreement": "Accept the agreement to continue."
+    },
+    "errors": {
+      "invalid": "Some details need another look.",
+      "missingDocuments": "Some required documents are missing.",
+      "applicationOpen": "You already have an application under review.",
+      "unavailable": "Applications can't be sent right now. Please try again later.",
+      "unknown": "Something went wrong. Please try again.",
+      "agreementChanged": "The partner agreement was just updated. Please read it again and sign.",
+      "signIn": "Your session has ended. Sign in again to continue."
+    },
+    "status": {
+      "title": "Your partner application",
+      "reference": "Application {reference}",
+      "submittedOn": "Submitted on {date}",
+      "labels": {
+        "submitted": "Received",
+        "under_review": "Under review",
+        "approved": "Approved",
+        "rejected": "Not approved"
+      },
+      "bodies": {
+        "submitted": "Thank you! Our partnerships team will go through your details and documents shortly.",
+        "under_review": "Our team is reviewing your application. We may call you if we need anything else.",
+        "approved": "Welcome aboard. Your partner dashboard is ready.",
+        "rejected": "We couldn't approve this application."
+      },
+      "reason": "Reason: {reason}",
+      "progress": "Application progress",
+      "track": {
+        "received": "Received",
+        "review": "Review",
+        "decision": "Decision"
+      },
+      "openDashboard": "Open partner dashboard",
+      "applyAgain": "Apply again",
+      "applyAnother": "Register another business",
+      "sent": "Application {reference} sent. We have emailed you a copy."
+    }
   },
   "footer": {
     "quickLinks": "Quick links",
@@ -738,7 +1013,66 @@
       "needPlan": "Add at least one rate plan.",
       "occupancyOrder": "Base occupancy ≤ max adults ≤ max occupancy.",
       "rangeTooLong": "Pick a range of one year or less.",
-      "pickPlan": "Choose the rate plan this price is for."
+      "pickPlan": "Choose the rate plan this price is for.",
+      "hindiWithoutEnglish": "Each Hindi line needs an English line beside it.",
+      "tooManyFeatures": "Too many features. Remove a few lines.",
+      "featureTooLong": "Keep each feature under 200 characters.",
+      "invalidLinkUrl": "Enter a full link starting with https://",
+      "needImageOrLink": "Add a photo or a link.",
+      "notFound": "This item no longer exists. Refresh the page.",
+      "invalidPan": "Enter a valid PAN, e.g. ABCDE1234F.",
+      "invalidDate": "Enter a valid date.",
+      "agreementVersionBump": "You changed the agreement text. Give it a new version so applicants accept the new terms."
+    },
+    "plans": {
+      "title": "Plans and pricing",
+      "lead": "Shown as pricing cards on the service page. Choosing one preselects it in the enquiry form.",
+      "empty": "No plans yet. The page shows no pricing section until you add one.",
+      "newTitle": "Add a plan",
+      "nameEn": "Plan name (English)",
+      "nameHi": "Plan name (Hindi)",
+      "summaryEn": "One-line summary (English)",
+      "summaryHi": "One-line summary (Hindi)",
+      "price": "Price in ₹",
+      "pricePlaceholder": "Empty = on request",
+      "priceHelp": "Type rupees, e.g. 4999 or 4999.50. Leave empty to show “Price on request”.",
+      "suffixEn": "After the price (English)",
+      "suffixHi": "After the price (Hindi)",
+      "suffixPlaceholder": "per month",
+      "featuresEn": "Features (English, one per line)",
+      "featuresHi": "Features (Hindi, one per line)",
+      "featuresHelp": "Line 1 in Hindi translates line 1 in English, and so on. Up to {max} features.",
+      "sortOrder": "Order",
+      "popular": "Highlight as popular",
+      "published": "Published",
+      "hidden": "Hidden",
+      "onRequest": "Price on request",
+      "add": "Add plan",
+      "save": "Save plan",
+      "confirmDelete": "Delete this plan? Past enquiries keep the plan name."
+    },
+    "portfolio": {
+      "title": "Portfolio",
+      "lead": "Photos and links (reels, videos, live listings) shown in the service page's gallery.",
+      "empty": "No portfolio items yet. The gallery stays hidden until you add one.",
+      "newTitle": "Add a portfolio item",
+      "image": "Photo",
+      "imageAlt": "Portfolio photo",
+      "titleEn": "Title (English)",
+      "titleHi": "Title (Hindi)",
+      "captionEn": "Caption (English)",
+      "captionHi": "Caption (Hindi)",
+      "client": "Client name",
+      "clientPlaceholder": "Hotel or business name",
+      "link": "Link (https)",
+      "linkHelp": "Add a photo, a link, or both. Links open in a new tab.",
+      "sortOrder": "Order",
+      "published": "Published",
+      "hidden": "Hidden",
+      "hasLink": "Link",
+      "add": "Add item",
+      "save": "Save item",
+      "confirmDelete": "Delete this portfolio item?"
     }
   },
   "hotels": {
@@ -1405,7 +1739,8 @@
       "banners": "Banners",
       "coupons": "Coupons",
       "templates": "Templates",
-      "logs": "Delivery log"
+      "logs": "Delivery log",
+      "settlements": "Vendor settlements"
     },
     "status": {
       "draft": "Draft",
@@ -2977,7 +3312,10 @@
       "orders": "Orders",
       "menu": "Menu & stock",
       "ratings": "Ratings",
-      "riders": "Riders"
+      "riders": "Riders",
+      "earnings": "Earnings",
+      "business": "Business",
+      "switcher": "Choose business"
     },
     "noStores": {
       "title": "No store linked yet",
@@ -3500,7 +3838,8 @@
       "net": "Net payable",
       "cod": "Cash (COD)",
       "online": "Online",
-      "total": "Total"
+      "total": "Total",
+      "ledgerLink": "Record payouts on the vendor ledger →"
     },
     "prescriptions": {
       "lead": "Uploaded prescriptions. Check the files, assign a partner pharmacy and send a quote, or reject with a reason.",
@@ -4248,7 +4587,9 @@
       "sourceTitle": "Where they came from",
       "source": "Source",
       "referrer": "Referrer",
-      "landingPage": "Landing page"
+      "landingPage": "Landing page",
+      "plan": "Plan",
+      "planOnRequest": "price on request"
     },
     "contact": {
       "call": "Call",
@@ -5028,6 +5369,11 @@
         "body": "Send your route and dates; our travel desk sends the best fares.",
         "button": "Plan your travel"
       }
+    },
+    "plan": {
+      "label": "Plan",
+      "notSure": "Not sure yet",
+      "unavailable": "That plan is no longer offered. Please pick another or choose “Not sure yet”."
     }
   },
   "quotePage": {
@@ -5071,5 +5417,581 @@
     "notes": "Notes",
     "terms": "Terms",
     "questions": "Questions about this quote?"
+  },
+  "vendorEarnings": {
+    "title": "Earnings",
+    "lead": "Every completed booking adds a line to your statement. We settle the balance every {days} days.",
+    "balance": {
+      "title": "Not yet settled",
+      "pay_vendor": "We will pay you this at the next settlement.",
+      "collect": "You owe us this. It is adjusted at the next settlement.",
+      "settled": "Nothing is due either way.",
+      "entries": "{count, plural, one {# entry} other {# entries}}"
+    },
+    "cutoff": {
+      "title": "Next cut-off",
+      "body": "Bookings up to this day go into the next settlement."
+    },
+    "commission": {
+      "title": "Your commission",
+      "value": "{percent}% per booking",
+      "body": "GST of {tax}% applies on the commission."
+    },
+    "netHelp": "Net to you = collected by P&S − commission − GST − TCS/TDS + adjustments. A minus sign means you owe us, usually because you collected the payment directly.",
+    "download": "Download statement (CSV)",
+    "ledger": {
+      "title": "Statement",
+      "caption": "Statement entries, newest first",
+      "empty": "No entries yet",
+      "emptyHelp": "Completed bookings show up here with what was collected, our commission and what you get.",
+      "date": "Date",
+      "booking": "Booking",
+      "gross": "Booking value",
+      "platform": "Collected by P&S",
+      "vendor": "Collected by you",
+      "commission": "Commission + GST",
+      "tcs": "TCS",
+      "tds": "TDS",
+      "adjustment": "Adjustment",
+      "net": "Net to you",
+      "payout": "Settlement",
+      "open": "Open",
+      "kinds": {
+        "booking": "Booking",
+        "adjustment": "Adjustment",
+        "manual": "Manual entry"
+      },
+      "truncated": "Showing the latest {count} entries. Download the statement for all of them."
+    },
+    "payouts": {
+      "title": "Settlements",
+      "empty": "No settlements yet",
+      "periodEnd": "Bookings up to {date}",
+      "amount": "Amount",
+      "paidOn": "Paid on {date}",
+      "method": "via {method}",
+      "statuses": {
+        "pending": "Processing",
+        "paid": "Paid",
+        "cancelled": "Cancelled"
+      },
+      "methods": {
+        "bank_transfer": "Bank transfer",
+        "upi": "UPI",
+        "cash": "Cash",
+        "cheque": "Cheque",
+        "adjusted": "Adjusted",
+        "other": "Other"
+      }
+    },
+    "home": {
+      "title": "Your business at a glance",
+      "lastPayout": "Last settlement",
+      "none": "None yet",
+      "viewEarnings": "View earnings",
+      "business": "Business details",
+      "addPayout": "Add your bank or UPI details so we can pay you.",
+      "addPayoutCta": "Add payout details",
+      "pending": "Your business is waiting for activation. Bookings start once our team activates it.",
+      "suspended": "Your business is paused. Please contact our team."
+    }
+  },
+  "vendorBusiness": {
+    "title": "Business",
+    "lead": "Keep your contact, tax and payout details up to date. Your business name, type and commission are managed by our team.",
+    "overview": {
+      "title": "Overview",
+      "name": "Business name",
+      "kind": "Type",
+      "status": "Status",
+      "commission": "Commission",
+      "commissionValue": "{percent}% per booking",
+      "agreement": "Partner agreement",
+      "agreementValue": "Version {version}, accepted on {date}",
+      "noAgreement": "Not on file"
+    },
+    "kinds": {
+      "hotel": "Hotel",
+      "restaurant": "Restaurant",
+      "store": "Shop",
+      "transport": "Transport",
+      "pharmacy": "Pharmacy",
+      "agency": "Travel agency",
+      "other": "Other"
+    },
+    "statuses": {
+      "pending": "Awaiting activation",
+      "active": "Active",
+      "suspended": "Paused"
+    },
+    "form": {
+      "title": "Contact and tax details",
+      "contactName": "Contact person",
+      "phone": "Mobile number",
+      "email": "Email",
+      "address": "Business address",
+      "city": "City or town",
+      "gstin": "GSTIN (optional)",
+      "pan": "PAN (optional)",
+      "payoutTitle": "Payout details",
+      "payoutLead": "Add a bank account, a UPI ID or both. Settlements are sent here.",
+      "holder": "Account holder name",
+      "account_number": "Account number",
+      "ifsc": "IFSC",
+      "bank": "Bank name (optional)",
+      "upi_id": "UPI ID",
+      "save": "Save details",
+      "saving": "Saving…",
+      "saved": "Details saved."
+    },
+    "fieldErrors": {
+      "required": "This is required.",
+      "invalid": "Please check this field.",
+      "invalidPhone": "Enter a valid mobile number.",
+      "invalidEmail": "Enter a valid email address.",
+      "invalidGstin": "Enter a valid 15-character GSTIN.",
+      "invalidPan": "Enter a valid PAN, like ABCDE1234F.",
+      "invalidAccount": "Enter the account number, 6 to 18 digits.",
+      "invalidIfsc": "Enter a valid IFSC, like SBIN0001234.",
+      "invalidUpi": "Enter a valid UPI ID, like name@bank.",
+      "payoutRequired": "Add a bank account or a UPI ID."
+    },
+    "errors": {
+      "forbidden": "You can't change this business.",
+      "notFound": "This business wasn't found.",
+      "saveFailed": "Couldn't save. Please try again.",
+      "invalid": "Some details need another look.",
+      "badFile": "Use a PDF, JPG, PNG or WebP file.",
+      "tooLarge": "This file is too large.",
+      "uploadFailed": "The upload didn't go through. Please try again."
+    },
+    "documents": {
+      "title": "Documents",
+      "lead": "Licences and proofs on file. Our team checks every new document.",
+      "empty": "No documents yet",
+      "statuses": {
+        "pending": "Awaiting check",
+        "verified": "Verified",
+        "rejected": "Rejected"
+      },
+      "note": "Note from our team: {note}",
+      "expires": "Valid until {date}",
+      "expired": "Expired on {date}",
+      "noExpiry": "No expiry date",
+      "added": "Added on {date}",
+      "open": "Open",
+      "openNamed": "Open {name}",
+      "add": "Add a document",
+      "kind": "Document type",
+      "expiresOn": "Valid until (optional)",
+      "file": "File",
+      "upload": "Upload",
+      "uploading": "Uploading…",
+      "uploaded": "Document added. We'll check it soon.",
+      "pickFile": "Choose a file first.",
+      "help": "PDF, JPG, PNG or WebP, up to {mb} MB."
+    },
+    "noVendor": {
+      "title": "No business linked yet",
+      "body": "Ask the business owner to add you, or apply on the Partner With Us page.",
+      "apply": "Partner With Us"
+    }
+  },
+  "vendorsAdmin": {
+    "title": "Vendors & partners",
+    "lead": "Hotels, restaurants, stores, transport and other partners: status, commission, documents and payout details.",
+    "new": "Add vendor",
+    "newTitle": "New vendor",
+    "newLead": "Add a partner directly, for example one onboarded over the phone. Partners who apply online are created when you approve their application.",
+    "view": "View",
+    "results": "{count, plural, one {# vendor} other {# vendors}}",
+    "nav": {
+      "vendors": "Vendors",
+      "applications": "Applications",
+      "applicationsCount": "Applications ({count})"
+    },
+    "filters": {
+      "search": "Search",
+      "searchPlaceholder": "Name, contact, city or phone",
+      "kind": "Type",
+      "status": "Status",
+      "any": "Any",
+      "apply": "Apply",
+      "clear": "Clear filters"
+    },
+    "columns": {
+      "name": "Name",
+      "kind": "Type",
+      "status": "Status",
+      "city": "City",
+      "phone": "Phone",
+      "commission": "Commission",
+      "created": "Added",
+      "reference": "Reference",
+      "business": "Business",
+      "contact": "Contact",
+      "type": "Business type",
+      "submitted": "Submitted"
+    },
+    "kinds": {
+      "hotel": "Hotel",
+      "restaurant": "Restaurant",
+      "store": "Store",
+      "transport": "Transport",
+      "pharmacy": "Pharmacy",
+      "agency": "Travel agency",
+      "other": "Other"
+    },
+    "vendorStatus": {
+      "pending": "Pending",
+      "active": "Active",
+      "suspended": "Suspended"
+    },
+    "applicationStatus": {
+      "submitted": "New",
+      "under_review": "Under review",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "businessTypes": {
+      "hotel": "Hotels & resorts",
+      "travel_agency": "Travel agency",
+      "restaurant": "Restaurant & food",
+      "transport": "Transport provider",
+      "shop": "Local shop",
+      "pharmacy": "Pharmacy",
+      "service_provider": "Service provider",
+      "other": "Other"
+    },
+    "documentKinds": {
+      "id_proof": "ID proof",
+      "pan": "PAN card",
+      "gst": "GST certificate",
+      "property_proof": "Property papers",
+      "fssai": "FSSAI licence",
+      "drug_licence": "Drug licence",
+      "vehicle_rc": "Vehicle RC",
+      "trade_licence": "Trade / shop licence",
+      "bank_proof": "Cancelled cheque / passbook",
+      "agreement": "Signed agreement",
+      "other": "Other document"
+    },
+    "applications": {
+      "title": "Partner applications",
+      "lead": "Businesses that applied through Partner With Us. Open ones are listed oldest first.",
+      "searchPlaceholder": "Business, contact, city, phone or PA-number",
+      "open": "Open (new and under review)",
+      "all": "All",
+      "results": "{count, plural, one {# application} other {# applications}}",
+      "openVendor": "Open vendor: {name}",
+      "reviewed": "Reviewed by {who} on {when}",
+      "business": "Business and contact",
+      "website": "Website or social page",
+      "language": "Language",
+      "message": "Message from the applicant",
+      "details": "Business details",
+      "noDetails": "No extra details were given.",
+      "agreement": "Partner agreement",
+      "agreementVersion": "Version accepted",
+      "agreementName": "Signed as",
+      "agreementAt": "Accepted on",
+      "actions": {
+        "markReview": "Mark under review",
+        "markedReview": "Marked under review.",
+        "approve": "Approve",
+        "approveTitle": "Approve this partner?",
+        "approveLead": "A vendor is created from this application, its documents are copied over and the applicant is told they can open their partner dashboard.",
+        "commission": "Commission (%)",
+        "commissionHelp": "Filled with the default for this business type. You can change it later on the vendor.",
+        "confirmApprove": "Approve and create vendor",
+        "approved": "Approved. The vendor has been created.",
+        "reject": "Reject",
+        "rejectTitle": "Reject this application?",
+        "rejectLead": "The applicant is sent your reason.",
+        "reason": "Reason",
+        "reasonHelp": "Shown to the applicant, so be clear and polite.",
+        "confirmReject": "Reject application",
+        "rejected": "Application rejected. The applicant has been told."
+      }
+    },
+    "detail": {
+      "ledger": "Ledger and payouts",
+      "application": "Application",
+      "applicationRef": "Application {reference}",
+      "created": "Vendor since",
+      "slug": "Slug"
+    },
+    "form": {
+      "title": "Vendor details",
+      "createTitle": "Vendor details",
+      "name": "Business name",
+      "kind": "Type",
+      "status": "Status",
+      "commission": "Commission (%)",
+      "commissionHelp": "Our share of each booking's gross value. Changes apply to new bookings only.",
+      "contactName": "Contact person",
+      "phone": "Phone",
+      "email": "Email",
+      "city": "City",
+      "address": "Address",
+      "gstin": "GSTIN",
+      "pan": "PAN",
+      "notes": "Internal notes",
+      "notesHelp": "Only staff see these."
+    },
+    "members": {
+      "title": "Partner accounts",
+      "none": "No one can sign in to this vendor's dashboard yet.",
+      "roles": {
+        "owner": "Owner",
+        "staff": "Staff"
+      }
+    },
+    "bank": {
+      "title": "Payout details",
+      "none": "The vendor has not added bank or UPI details yet.",
+      "holder": "Account holder",
+      "account": "Account number",
+      "ifsc": "IFSC",
+      "bank": "Bank",
+      "upi": "UPI ID",
+      "hint": "The vendor keeps these up to date from their dashboard. The full account number is shown to finance staff on payouts."
+    },
+    "documents": {
+      "title": "Documents",
+      "none": "No documents uploaded.",
+      "download": "Download",
+      "missing": "File not found",
+      "linkHint": "Download links work for 5 minutes. Reload the page for fresh ones.",
+      "uploaded": "Uploaded {when}",
+      "expires": "Expires {date}",
+      "reviewedAt": "Reviewed {when}",
+      "status": {
+        "pending": "To check",
+        "verified": "Verified",
+        "rejected": "Rejected"
+      },
+      "verify": "Verify",
+      "verified": "Document verified.",
+      "reject": "Reject",
+      "rejectTitle": "Reject this document?",
+      "rejectLead": "The vendor sees your note on their dashboard and can upload a new file.",
+      "note": "What is wrong with it?",
+      "confirmReject": "Reject document",
+      "rejected": "Document rejected.",
+      "markPending": "Back to pending",
+      "reset": "Document set back to pending."
+    },
+    "errors": {
+      "forbidden": "You don't have permission to do that.",
+      "invalid": "Please check the highlighted fields.",
+      "required": "This field is required.",
+      "reasonRequired": "Please give a reason.",
+      "invalidTransition": "This application has already been decided. Reload the page to see its current status.",
+      "invalidCommission": "Commission must be between 0 and 100%.",
+      "notFound": "This record no longer exists.",
+      "actionFailed": "Something went wrong. Please try again."
+    },
+    "settings": {
+      "title": "Partners & settlements",
+      "errors": {
+        "agreementVersionBump": "You changed the agreement text. Give it a new version so applicants accept the new terms."
+      },
+      "partners": {
+        "title": "Partner onboarding",
+        "lead": "What the Partner With Us form offers and asks for, and the commission new partners start with.",
+        "businessTypes": "Business types offered",
+        "businessTypesHelp": "Only checked types can be chosen on the form.",
+        "perType": "Per business type",
+        "perTypeHelp": "Default commission on approval and the documents applicants must upload.",
+        "notOffered": "Not offered",
+        "commission": "Default commission (%)",
+        "requiredDocs": "Required documents",
+        "maxFileMb": "Largest upload (MB)",
+        "maxFileMbHelp": "Per file, between 1 and 20 MB.",
+        "agreementVersion": "Agreement version",
+        "agreementVersionHelp": "Applicants accept a numbered version. Change it whenever you change the text.",
+        "agreementBody": "Agreement text"
+      },
+      "settlements": {
+        "title": "Vendor settlements",
+        "lead": "Tax on our commission, tax withheld and how often vendors are settled.",
+        "commissionTax": "GST on commission (%)",
+        "commissionTaxHelp": "Usually 18%.",
+        "cycleDays": "Settlement cycle (days)",
+        "cycleDaysHelp": "Payouts suggest the end of the last full cycle. Between 1 and 60 days.",
+        "tcs": "TCS (%)",
+        "tds": "TDS (%)",
+        "taxHelp": "Withheld on gross value. Leave at 0 unless your CA advises otherwise.",
+        "provider": "Payout method",
+        "providerHelp": "Manual: finance staff transfer the money and record it on the payout.",
+        "frozenNote": "Rates are saved on each ledger row when it is created, so changes here apply to new bookings only."
+      }
+    }
+  },
+  "settlementsAdmin": {
+    "title": "Vendor settlements",
+    "lead": "What each vendor is owed (or owes) from bookings, and the payouts that settle it.",
+    "nav": {
+      "overview": "Overview",
+      "payouts": "Payouts",
+      "report": "Commission report"
+    },
+    "direction": {
+      "pay_vendor": "Pay vendor",
+      "collect": "Collect from vendor",
+      "settled": "Settled"
+    },
+    "filters": {
+      "from": "From",
+      "to": "To",
+      "view": "Show",
+      "all": "All rows",
+      "unsettled": "Unsettled",
+      "settled": "Settled",
+      "status": "Status",
+      "anyStatus": "Any status",
+      "vendor": "Vendor",
+      "anyVendor": "All vendors",
+      "apply": "Apply",
+      "clear": "Clear"
+    },
+    "overview": {
+      "cycle": "Settlement cycle: every {days} days. The last full cycle ended on {date}.",
+      "empty": "All vendors are settled. Nothing to pay or collect.",
+      "vendor": "Vendor",
+      "unsettled": "Unsettled balance",
+      "count": "Rows",
+      "oldest": "Oldest",
+      "pending": "Payout waiting",
+      "actions": "Actions"
+    },
+    "ledger": {
+      "lead": "Every booking, adjustment and payout for this vendor.",
+      "csv": "Download CSV",
+      "vendorProfile": "Vendor profile",
+      "balance": "Unsettled balance",
+      "unsettledRows": "{count, plural, =0 {No unsettled rows} one {# unsettled row} other {# unsettled rows}}",
+      "pendingPayout": "Payout waiting to be paid:",
+      "commission": "Commission",
+      "commissionTax": "GST on commission",
+      "payTo": "Pay to",
+      "date": "Date",
+      "booking": "Booking",
+      "kind": "Entry",
+      "gross": "Gross",
+      "platform": "Collected by us",
+      "vendorCollected": "Collected by vendor",
+      "tcs": "TCS",
+      "tds": "TDS",
+      "adjustment": "Adjustment",
+      "net": "Net",
+      "payout": "Payout",
+      "unsettled": "Unsettled",
+      "empty": "No ledger rows for these filters.",
+      "total": "Total ({count})",
+      "kinds": {
+        "booking": "Booking",
+        "adjustment": "Booking change",
+        "manual": "Manual adjustment"
+      },
+      "formula": "Net = collected by us − commission − GST on commission − TCS − TDS + adjustments. A positive net is paid to the vendor; a negative net is collected from them."
+    },
+    "adjustment": {
+      "title": "Manual adjustment",
+      "direction": "Type",
+      "credit": "Credit (we owe the vendor more)",
+      "debit": "Debit (the vendor owes us)",
+      "amount": "Amount (₹)",
+      "amountHelp": "In rupees, e.g. 250 or 99.50.",
+      "reason": "Reason",
+      "reasonHelp": "Shown to the vendor on their statement.",
+      "submit": "Add adjustment",
+      "added": "Adjustment added to the ledger."
+    },
+    "payoutStatus": {
+      "pending": "To pay",
+      "paid": "Paid",
+      "cancelled": "Cancelled"
+    },
+    "methods": {
+      "bank_transfer": "Bank transfer (NEFT / IMPS)",
+      "upi": "UPI",
+      "cash": "Cash",
+      "cheque": "Cheque",
+      "adjusted": "Adjusted against dues",
+      "other": "Other"
+    },
+    "payouts": {
+      "title": "Payouts",
+      "lead": "Every payout to (or collection from) vendors, newest first.",
+      "empty": "No payouts yet.",
+      "reference": "Reference",
+      "vendor": "Vendor",
+      "periodEnd": "Rows up to",
+      "entries": "Rows",
+      "amount": "Amount",
+      "status": "Status",
+      "created": "Payout created.",
+      "page": "Page {page} of {pages}",
+      "prev": "Previous",
+      "next": "Next",
+      "create": "Create payout",
+      "createTitle": "Create payout for {vendor}",
+      "createLead": "Gathers every unsettled row up to the date below into one payout. Nothing is sent until you mark it paid.",
+      "periodEndHelp": "Usually the end of the last settlement cycle.",
+      "confirmCreate": "Create payout",
+      "markPaid": "Mark paid",
+      "markCollected": "Mark collected",
+      "markPaidTitle": "Record payment of {amount}",
+      "markCollectedTitle": "Record collection of {amount}",
+      "markPaidLead": "Send the money first, then record how it was paid. The vendor is notified.",
+      "method": "Method",
+      "referenceHelp": "UTR, UPI or cheque number.",
+      "notes": "Notes",
+      "confirmPaid": "Save",
+      "paid": "Payout recorded as paid.",
+      "cancel": "Cancel payout",
+      "confirmCancel": "Cancel this payout? Its rows become unsettled again.",
+      "cancelled": "Payout cancelled.",
+      "detailTitle": "Payout {reference}",
+      "detailLead": "{vendor} · rows up to {date}",
+      "sendTo": "Send to",
+      "collectFrom": "Collect from",
+      "viewLedger": "View ledger",
+      "summary": "Summary",
+      "gross": "Gross",
+      "commission": "Commission",
+      "provider": "Provider",
+      "createdBy": "Created by",
+      "paidBy": "Recorded by",
+      "cancelledAt": "Cancelled on",
+      "rows": "Rows in this payout",
+      "cancelledRows": "This payout was cancelled; its rows are unsettled again and show on the vendor's ledger.",
+      "createdAt": "Created"
+    },
+    "report": {
+      "title": "Commission report",
+      "lead": "Gross value, our commission and tax per vendor for a date range.",
+      "csv": "Download CSV",
+      "basis": "Includes every ledger row dated in the range, settled or not.",
+      "empty": "No ledger rows in this range.",
+      "vendor": "Vendor",
+      "entries": "Rows",
+      "total": "Total"
+    },
+    "errors": {
+      "forbidden": "You don't have permission to do that.",
+      "invalid": "Please check the highlighted fields.",
+      "required": "This field is required.",
+      "invalidDate": "Enter a valid date.",
+      "nothingToSettle": "There are no unsettled rows up to that date.",
+      "payoutPending": "This vendor already has a payout waiting. Pay or cancel it first.",
+      "invalidTransition": "This payout is no longer pending. Reload the page to see its status.",
+      "reasonRequired": "Please give a reason.",
+      "invalidAmount": "Enter an amount greater than zero.",
+      "notFound": "This record no longer exists.",
+      "actionFailed": "Something went wrong. Please try again."
+    }
   }
 }

@@ -2,10 +2,26 @@
 
 import { getSession } from "@/lib/auth/session";
 import { hasServiceRole } from "@/lib/env.server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { getLivePackage } from "@/lib/packages/queries";
 import { enquirySchema, type Enquiry } from "@/schemas/packages";
 import type { Json } from "@/types/database";
 import { createLead, LeadError, type NewLead } from "./capture";
+
+/** A published plan of the service the enquiry is for (service role: the form may be stale). */
+async function getServicePlan(
+  planId: string,
+  serviceSlug: string,
+): Promise<{ id: string; name: string; pricePaise: number | null } | null> {
+  const { data } = await createAdminClient()
+    .from("service_plans")
+    .select("id, name, price_paise, is_published, services!inner(slug)")
+    .eq("id", planId)
+    .eq("services.slug", serviceSlug)
+    .eq("is_published", true)
+    .maybeSingle();
+  return data ? { id: data.id, name: data.name.en, pricePaise: data.price_paise } : null;
+}
 
 /**
  * Public enquiry forms (packages, flights / trains / buses, service pages).
@@ -53,6 +69,8 @@ export async function submitEnquiry(input: unknown): Promise<EnquiryResult> {
   if (!hasServiceRole()) return { ok: false, error: "unavailable" };
 
   const session = await getSession();
+  const plan = "planId" in e && e.planId ? await getServicePlan(e.planId, e.serviceSlug) : null;
+  if ("planId" in e && e.planId && !plan) return { ok: false, error: "not_found" };
   let pkg: { id: string; title: string } | null = null;
   if (e.kind === "package") {
     const found = await getLivePackage(e.packageSlug);
@@ -66,7 +84,9 @@ export async function submitEnquiry(input: unknown): Promise<EnquiryResult> {
     phone: e.phone,
     email: e.email || session?.user.email || null,
     message: e.message || null,
-    details: details(e),
+    details: plan
+      ? { ...details(e), plan_id: plan.id, plan: plan.name, plan_price_paise: plan.pricePaise }
+      : details(e),
     packageId: pkg?.id ?? null,
     packageTitle: pkg?.title ?? null,
     serviceSlug: "serviceSlug" in e && e.serviceSlug ? e.serviceSlug : null,

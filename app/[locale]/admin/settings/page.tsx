@@ -10,6 +10,7 @@ import {
 } from "@/components/admin/settings-forms";
 import { DeliverySettingsForm } from "@/components/admin/delivery-settings-form";
 import { PackagesSettingsForms } from "@/components/admin/packages-settings-form";
+import { PartnersSettingsForms } from "@/components/admin/partners-settings-form";
 import { requirePermission } from "@/lib/auth/guards";
 import { invoiceSettingsFormValues, paymentSettingsFormValues } from "@/lib/bookings/admin-forms";
 import { cabSettingsFormValues } from "@/lib/cabs/admin-rows";
@@ -19,7 +20,9 @@ import {
   packagesSettingsFormValues,
   travelSettingsFormValues,
 } from "@/lib/packages/admin-rows";
+import { partnersSettingsFormValues } from "@/lib/partners/admin-rows";
 import { rideSettingsFormValues } from "@/lib/rides/admin-rows";
+import { settlementsSettingsFormValues } from "@/lib/settlements/admin-rows";
 import { hasPermission } from "@/lib/permissions/check";
 import { createClient } from "@/lib/supabase/server";
 import { invoiceSettingsSchema, paymentSettingsSchema } from "@/schemas/booking";
@@ -27,6 +30,8 @@ import { cabSettingsSchema } from "@/schemas/cabs";
 import { deliverySettingsSchema } from "@/schemas/delivery";
 import { leadsSettingsSchema } from "@/schemas/leads";
 import { packagesSettingsSchema, travelSettingsSchema } from "@/schemas/packages";
+import { partnersSettingsSchema } from "@/schemas/partners";
+import { settlementsSettingsSchema } from "@/schemas/settlements";
 import { rideSettingsSchema } from "@/schemas/rides";
 import { businessProfileSchema, type BusinessProfile } from "@/schemas/cms";
 
@@ -58,6 +63,8 @@ export default async function AdminSettingsPage() {
         "packages.defaults",
         "leads.defaults",
         "travel.defaults",
+        "partners.defaults",
+        "settlements.defaults",
       ]),
   ]);
   // Fill gaps so an older or partial row still opens in the form.
@@ -75,6 +82,9 @@ export default async function AdminSettingsPage() {
   const leads = leadsSettingsSchema.safeParse(storedValue("leads.defaults"));
   const travel = travelSettingsSchema.safeParse(storedValue("travel.defaults"));
   const travelValue = travel.success ? travel.data : travelSettingsSchema.parse({});
+  const partners = partnersSettingsSchema.safeParse(storedValue("partners.defaults"));
+  const settlements = settlementsSettingsSchema.safeParse(storedValue("settlements.defaults"));
+  const settlementsValue = settlements.success ? settlements.data : settlementsSettingsSchema.parse({});
 
   return (
     <div className="space-y-6">
@@ -119,6 +129,15 @@ export default async function AdminSettingsPage() {
           leads={leadsSettingsFormValues(leads.success ? leads.data : leadsSettingsSchema.parse({}))}
           travel={travelSettingsFormValues(travelValue)}
           travelProvider={travelValue.provider}
+        />
+      ) : null}
+      {canWrite ? (
+        <PartnersSettingsForms
+          partners={partnersSettingsFormValues(
+            partners.success ? partners.data : partnersSettingsSchema.parse({}),
+          )}
+          settlements={settlementsSettingsFormValues(settlementsValue)}
+          provider={settlementsValue.provider}
         />
       ) : null}
       <FeatureFlagList flags={flags ?? []} canWrite={canWrite} />

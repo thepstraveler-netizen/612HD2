@@ -2,11 +2,14 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { ServiceForm } from "@/components/admin/cms-forms";
 import { AdminPageHeader } from "@/components/admin/page-header";
+import { ServicePlansEditor } from "@/components/admin/service-plans-editor";
+import { ServicePortfolioEditor, type AdminPortfolioItem } from "@/components/admin/service-portfolio-editor";
 import { parseEditId } from "@/lib/admin/params";
 import { requirePermission } from "@/lib/auth/guards";
 import { mediaUrl } from "@/lib/media";
 import { createClient } from "@/lib/supabase/server";
 import type { ServiceFormInput } from "@/schemas/cms";
+import type { Tables } from "@/types/database";
 
 const LIST = "/admin/cms/services";
 
@@ -32,16 +35,32 @@ export default async function EditServicePage({ params }: { params: Promise<{ id
     show_in_nav: false,
   };
   let preview: string | null = null;
+  let plans: Tables<"service_plans">[] = [];
+  let portfolio: AdminPortfolioItem[] = [];
 
   if (!isNew) {
     const supabase = await createClient();
-    const { data } = await supabase
-      .from("services")
-      .select("*, media:hero_media_id (path)")
-      .eq("id", id)
-      .is("deleted_at", null)
-      .maybeSingle();
+    const [{ data }, planRows, portfolioRows] = await Promise.all([
+      supabase
+        .from("services")
+        .select("*, media:hero_media_id (path)")
+        .eq("id", id)
+        .is("deleted_at", null)
+        .maybeSingle(),
+      supabase.from("service_plans").select("*").eq("service_id", id).order("sort_order").order("created_at"),
+      supabase
+        .from("service_portfolio")
+        .select("*, media:media_id (path)")
+        .eq("service_id", id)
+        .order("sort_order")
+        .order("created_at"),
+    ]);
     if (!data) notFound();
+    plans = planRows.data ?? [];
+    portfolio = (portfolioRows.data ?? []).map(({ media, ...item }) => ({
+      ...item,
+      imageUrl: mediaUrl((media as { path: string } | null)?.path),
+    }));
     defaults = {
       id: data.id,
       slug: data.slug,
@@ -69,6 +88,12 @@ export default async function EditServicePage({ params }: { params: Promise<{ id
         backLabel={t("cms.nav.services")}
       />
       <ServiceForm defaultValues={defaults} heroPreview={preview} listHref={LIST} />
+      {defaults.id ? (
+        <>
+          <ServicePlansEditor serviceId={defaults.id} plans={plans} />
+          <ServicePortfolioEditor serviceId={defaults.id} items={portfolio} />
+        </>
+      ) : null}
     </div>
   );
 }

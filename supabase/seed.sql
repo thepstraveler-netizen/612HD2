@@ -398,3 +398,25 @@ select p.id, d.day, d.title::jsonb, d.description::jsonb, d.meals::text[], d.ove
     ('demo-agra-mathura-vrindavan', 2, '{"en": "Taj Mahal and Mathura", "hi": "ताजमहल और मथुरा"}', null, '{breakfast}', 'Vrindavan'),
     ('demo-agra-mathura-vrindavan', 3, '{"en": "Vrindavan and return", "hi": "वृंदावन और वापसी"}', null, '{breakfast}', null)
   ) as d(slug, day, title, description, meals, overnight) on d.slug = p.slug;
+
+-- Phase 9: sample plans on the B2B service pages (prices are examples; edit
+-- them in Admin → CMS → Services before launch).
+insert into public.service_plans (service_id, name, summary, price_paise, price_suffix, features, is_popular, sort_order)
+select s.id, p.name::jsonb, p.summary::jsonb, p.price, p.suffix::jsonb, p.features::jsonb, p.popular, p.sort
+  from public.services s
+  join (values
+    ('hotel-photography', '{"en": "Essential shoot", "hi": "बेसिक शूट"}', '{"en": "For small hotels and guest houses", "hi": "छोटे होटल और गेस्ट हाउस के लिए"}', 499900, null,
+     '[{"en": "25 edited photos", "hi": "25 एडिट की हुई फ़ोटो"}, {"en": "Rooms, lobby and facade", "hi": "कमरे, लॉबी और बाहरी हिस्सा"}, {"en": "Delivery in 5 days", "hi": "5 दिन में डिलीवरी"}]', false, 1),
+    ('hotel-photography', '{"en": "Listing booster", "hi": "लिस्टिंग बूस्टर"}', '{"en": "Photos and a short video for OTAs and Instagram", "hi": "OTA और इंस्टाग्राम के लिए फ़ोटो और छोटा वीडियो"}', 1199900, null,
+     '[{"en": "60 edited photos", "hi": "60 एडिट की हुई फ़ोटो"}, {"en": "60-second walkthrough video", "hi": "60 सेकंड का वॉकथ्रू वीडियो"}, {"en": "Drone shot where allowed", "hi": "जहाँ अनुमति हो वहाँ ड्रोन शॉट"}]', true, 2),
+    ('ota-handling', '{"en": "OTA management", "hi": "OTA प्रबंधन"}', '{"en": "We run your listings on the major travel sites", "hi": "हम प्रमुख ट्रैवल साइटों पर आपकी लिस्टिंग चलाते हैं"}', 799900, '{"en": "per month", "hi": "प्रति माह"}',
+     '[{"en": "Rates and availability updated daily", "hi": "रोज़ाना रेट और उपलब्धता अपडेट"}, {"en": "Review replies", "hi": "रिव्यू के जवाब"}, {"en": "Monthly performance report", "hi": "मासिक प्रदर्शन रिपोर्ट"}]', true, 1),
+    ('calling-centre', '{"en": "Booking desk", "hi": "बुकिंग डेस्क"}', '{"en": "Calls answered in your name, 8 am to 10 pm", "hi": "सुबह 8 से रात 10 बजे तक आपके नाम से कॉल का जवाब"}', 999900, '{"en": "per month", "hi": "प्रति माह"}',
+     '[{"en": "Enquiries and booking help", "hi": "पूछताछ और बुकिंग में मदद"}, {"en": "Follow-up calls", "hi": "फ़ॉलो-अप कॉल"}, {"en": "Daily call report", "hi": "रोज़ाना कॉल रिपोर्ट"}]', false, 1),
+    ('instagram-marketing', '{"en": "Reels starter", "hi": "रील्स स्टार्टर"}', '{"en": "Content that shows off your property or shop", "hi": "आपकी प्रॉपर्टी या दुकान को दिखाने वाला कंटेंट"}', 699900, '{"en": "per month", "hi": "प्रति माह"}',
+     '[{"en": "8 reels and 8 posts", "hi": "8 रील्स और 8 पोस्ट"}, {"en": "Captions in Hindi and English", "hi": "हिंदी और अंग्रेज़ी में कैप्शन"}, {"en": "Posting schedule", "hi": "पोस्टिंग शेड्यूल"}]', true, 1),
+    ('lead-generation', '{"en": "Leads package", "hi": "लीड्स पैकेज"}', '{"en": "Calling, Instagram and ads working together", "hi": "कॉलिंग, इंस्टाग्राम और विज्ञापन एक साथ"}', null, null,
+     '[{"en": "Campaign setup", "hi": "कैंपेन सेटअप"}, {"en": "Leads called within the hour", "hi": "लीड्स को एक घंटे में कॉल"}, {"en": "Weekly lead report", "hi": "साप्ताहिक लीड रिपोर्ट"}]', false, 1),
+    ('travel-agent', '{"en": "Travel desk partner", "hi": "ट्रैवल डेस्क पार्टनर"}', '{"en": "Plan and coordinate trips for your guests", "hi": "आपके मेहमानों की यात्राओं की योजना और समन्वय"}', null, null,
+     '[{"en": "Customer records and trip plans", "hi": "ग्राहक रिकॉर्ड और यात्रा योजना"}, {"en": "Cabs, hotels and tickets in one place", "hi": "कैब, होटल और टिकट एक जगह"}]', false, 1)
+  ) as p(slug, name, summary, price, suffix, features, popular, sort) on p.slug = s.slug;

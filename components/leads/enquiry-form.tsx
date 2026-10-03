@@ -10,6 +10,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Textarea } from "@/components/ui/textarea";
+import { CHOOSE_PLAN_EVENT, type ChoosePlanDetail } from "@/lib/catalog/b2b-ui";
 import { submitEnquiry } from "@/lib/leads/actions";
 import { enquiryPayload, type EnquiryFormValues, type EnquiryTarget } from "@/lib/packages/ui";
 import { cn } from "@/lib/utils";
@@ -29,6 +30,7 @@ const FIELDS: readonly (keyof EnquiryFormValues)[] = [
   "phone",
   "email",
   "message",
+  "planId",
 ];
 const isField = (key: unknown): key is keyof EnquiryFormValues =>
   typeof key === "string" && (FIELDS as readonly string[]).includes(key);
@@ -55,6 +57,7 @@ export function EnquiryForm({
   initial,
   title,
   className,
+  plans = [],
 }: {
   target: EnquiryTarget;
   locale: "en" | "hi";
@@ -66,6 +69,8 @@ export function EnquiryForm({
   initial?: Partial<EnquiryFormValues>;
   title?: string;
   className?: string;
+  /** Service pages: plans the customer can pick (labels already localized). */
+  plans?: { id: string; label: string }[];
 }) {
   const t = useTranslations("enquiry");
   const [pending, start] = useTransition();
@@ -85,6 +90,7 @@ export function EnquiryForm({
     email: "",
     message: "",
     website: "",
+    planId: "",
     ...initial,
   };
 
@@ -105,6 +111,27 @@ export function EnquiryForm({
   useEffect(() => {
     if (mode) form.setValue("travelClass", "");
   }, [mode, form]);
+
+  // "Choose this plan" on the pricing cards preselects the plan and brings the form into view.
+  const hasPlans = target.kind === "service" && plans.length > 0;
+  useEffect(() => {
+    if (!hasPlans) return;
+    const choose = (event: Event) => {
+      const { planId } = (event as CustomEvent<ChoosePlanDetail>).detail ?? {};
+      if (!planId || !plans.some((p) => p.id === planId)) return;
+      if (reference) {
+        // After a sent enquiry, start a fresh one for the newly chosen plan.
+        form.reset({ ...form.formState.defaultValues, planId });
+        setReference(null);
+      } else {
+        form.setValue("planId", planId, { shouldDirty: true });
+      }
+      // Wait a frame so a just-reset form has re-rendered the select.
+      requestAnimationFrame(() => form.setFocus("planId"));
+    };
+    window.addEventListener(CHOOSE_PLAN_EVENT, choose);
+    return () => window.removeEventListener(CHOOSE_PLAN_EVENT, choose);
+  }, [hasPlans, plans, form, reference]);
 
   const fieldError = (key: string) =>
     t.has(`fieldErrors.${key}`) ? t(`fieldErrors.${key}`) : t("fieldErrors.invalid");
@@ -127,7 +154,9 @@ export function EnquiryForm({
             form.setFocus(key);
           }
         }
-        toast.error(t(`errors.${result.error}`));
+        toast.error(
+          result.error === "not_found" && values.planId ? t("plan.unavailable") : t(`errors.${result.error}`),
+        );
       }),
     () => toast.error(t("fieldErrors.checkForm")),
   );
@@ -311,6 +340,29 @@ export function EnquiryForm({
             {number("adults", 1)}
             {number("children", 0)}
           </div>
+        ) : null}
+
+        {hasPlans ? (
+          <FormField
+            control={form.control}
+            name="planId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("plan.label")}</FormLabel>
+                <FormControl>
+                  <NativeSelect {...field} value={field.value ?? ""}>
+                    <option value="">{t("plan.notSure")}</option>
+                    {plans.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.label}
+                      </option>
+                    ))}
+                  </NativeSelect>
+                </FormControl>
+                <FormMessage translateKey={fieldError} />
+              </FormItem>
+            )}
+          />
         ) : null}
 
         <div className="grid gap-4 sm:grid-cols-2">
