@@ -113,13 +113,14 @@ async function handleNavigation(event, url) {
   const tripKey = url.origin + url.pathname.replace(/\/$/, "");
   try {
     const res = await fetch(event.request);
-    if (isTrip) {
+    const final = new URL(res.url || url.href);
+    if (res.redirected && LOGIN_PAGE.test(final.pathname)) {
+      // Signed out or the session expired: forget every saved trip, so the
+      // next person on this device can't open them offline.
+      await caches.delete(TRIPS_CACHE);
+    } else if (isTrip) {
       const cache = await caches.open(TRIPS_CACHE);
-      const final = new URL(res.url || url.href);
-      if (res.redirected && LOGIN_PAGE.test(final.pathname)) {
-        // Signed out: forget the saved copy.
-        await cache.delete(tripKey);
-      } else if (cacheable(res) && !res.redirected) {
+      if (cacheable(res) && !res.redirected) {
         await cache.delete(tripKey);
         await cache.put(tripKey, res.clone());
         event.waitUntil(trim(TRIPS_CACHE, MAX_TRIPS));

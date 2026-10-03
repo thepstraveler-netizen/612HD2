@@ -29,11 +29,16 @@ const slug = z
   .regex(/^[a-z0-9-]+$/, { error: "invalidSlug" })
   .max(80);
 const sortOrder = z.coerce.number().int().min(0).max(10_000);
-const internalHref = z.string().trim().regex(/^\//, { error: "invalidHref" }).max(300);
+// Same-site paths only: "//host" and "/\\host" would leave the site.
+const internalHref = z
+  .string()
+  .trim()
+  .regex(/^\/(?![/\\])/, { error: "invalidHref" })
+  .max(300);
 const anyHref = z
   .string()
   .trim()
-  .regex(/^(\/|https:\/\/)/, { error: "invalidHref" })
+  .regex(/^(\/(?![/\\])|https:\/\/)/, { error: "invalidHref" })
   .max(300);
 const uuid = z.uuid();
 

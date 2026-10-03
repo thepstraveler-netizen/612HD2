@@ -225,7 +225,7 @@ This creates the user with a confirmed email (or promotes an existing one) and g
 - [ ] Open the lead as an agent: log a call (connected, 3 minutes) and set a follow-up for tomorrow; the lead moves to Contacted. Open the WhatsApp quick reply; the message is filled in.
 - [ ] Build a quote (fare + service fee at 18%), send it. The lead moves to Quoted; the quote page opens signed out and shows the Pay button (with Razorpay keys).
 - [ ] Pay the link with test card `4111 1111 1111 1111`: the quote page shows Paid with a booking code, the lead is Won and the booking is confirmed in Admin → Bookings.
-- [ ] Without Razorpay: send a quote, then Record payment (UPI) as a manager; the booking confirms and the lead is Won.
+- [ ] Without Razorpay: send a quote, then Record payment (UPI) as an admin (managers lack `payments.write`); the booking confirms and the lead is Won.
 - [ ] Send a second quote on the same lead: the first is withdrawn.
 - [ ] Mark another lead Lost (reason required) and reopen it.
 - [ ] With `booking.packages` on and Razorpay keys: book the private Vrindavan tour for 3 adults with the 25% advance; My Trips shows the tour with the balance due.

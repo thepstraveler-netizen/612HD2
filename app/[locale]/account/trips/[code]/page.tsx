@@ -55,13 +55,16 @@ export default async function TripPage({ params }: Props) {
   );
   if (trip.booking.service === "cab") {
     const supabase = await createClient();
-    const { data: cabTrip } = await supabase
+    const { data: cabRow } = await supabase
       .from("trips")
       .select(
-        "status, pickup_address, drop_address, passengers, driver_name, driver_phone, vehicle_label, vehicle_registration, pickup_otp",
+        "id, status, pickup_address, drop_address, passengers, driver_name, driver_phone, vehicle_label, vehicle_registration",
       )
       .eq("booking_id", trip.booking.id)
       .maybeSingle();
+    // The pickup OTP is only returned to the customer who booked (D-098).
+    const cabOtp = cabRow ? (await supabase.rpc("trip_otp", { p_trip_id: cabRow.id })).data : null;
+    const cabTrip = cabRow ? { ...cabRow, pickup_otp: cabOtp ?? null } : null;
     return withReview(
       <CabTripDetail
         data={trip}
@@ -74,11 +77,13 @@ export default async function TripPage({ params }: Props) {
   if (trip.booking.service === "ride") {
     const supabase = await createClient();
     // Explicit columns: the driver link token is not readable by customers.
-    const { data: ride } = await supabase
+    const { data: rideRow } = await supabase
       .from("ride_requests")
       .select(CUSTOMER_RIDE_COLUMNS)
       .eq("booking_id", trip.booking.id)
       .maybeSingle();
+    const rideOtp = rideRow ? (await supabase.rpc("ride_otp", { p_ride_id: rideRow.id })).data : null;
+    const ride = rideRow ? { ...rideRow, pickup_otp: rideOtp ?? null } : null;
     return withReview(
       <RideTripDetail
         data={trip}

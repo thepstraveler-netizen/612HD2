@@ -25,6 +25,10 @@ function fail(scope: string, error: { message: string }): never {
   throw new Error(`[hotels] ${scope}: ${error.message}`);
 }
 
+/** Every hotel column visitors may read (commission_bps is staff-only, D-098). */
+const PUBLIC_HOTEL_COLUMNS =
+  "id, slug, vendor_id, city_id, area_id, name, summary, description, property_type, star_rating, address, lat, lng, check_in_time, check_out_time, highlights, policies, food_dining, is_couple_friendly, is_featured, is_sponsored, pay_at_hotel_enabled, part_payment_percent, early_checkin_paise, late_checkout_paise, breakfast_addon_paise, rating_avg, rating_count, status, seo, sort_order, deleted_at, created_at, updated_at";
+
 export const getHotelCatalog = unstable_cache(
   async (): Promise<HotelCatalog> => {
     const supabase = createPublicClient();
@@ -33,7 +37,7 @@ export const getHotelCatalog = unstable_cache(
     const [hotelsRes, amenitiesRes, citiesRes, areasRes] = await Promise.all([
       supabase
         .from("hotels")
-        .select("*")
+        .select(PUBLIC_HOTEL_COLUMNS)
         .eq("status", "published")
         .is("deleted_at", null)
         .order("sort_order"),

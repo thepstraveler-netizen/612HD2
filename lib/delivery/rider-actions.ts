@@ -1,5 +1,6 @@
 "use server";
 
+import { otpAttemptAllowed } from "@/lib/bookings/otp-attempts";
 import { revalidatePath } from "next/cache";
 import { BookingError } from "@/lib/bookings/service";
 import { hasServiceRole } from "@/lib/env.server";
@@ -21,6 +22,9 @@ export async function riderStep(input: unknown): Promise<RiderStepResult> {
   if (!order) return { ok: false, error: "not_found" };
   if (!RIDER_NEXT[order.status]?.includes(parsed.data.status))
     return { ok: false, error: "invalid_transition" };
+  // Locked after too many tries; reported like a wrong code (D-098).
+  if (parsed.data.otp && !(await otpAttemptAllowed("order", order.id)))
+    return { ok: false, error: "otp_mismatch" };
   try {
     await moveOrder({
       orderId: order.id,

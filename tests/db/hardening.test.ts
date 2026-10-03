@@ -56,7 +56,9 @@ describe("rate limits", () => {
     expect(purged.rows[0].n).toBe(1);
 
     expect(
-      await errorOf(() => asAnon(db, (tx) => tx.query("select * from public.hit_rate_limit('x:y:z', 1, 60)"))),
+      await errorOf(() =>
+        asAnon(db, (tx) => tx.query("select * from public.hit_rate_limit('x:y:z', 1, 60)")),
+      ),
     ).toContain("permission denied");
     const seen = await asUser(db, priya, (tx) =>
       tx.query<{ n: number }>("select count(*)::int as n from public.rate_limit_hits"),
@@ -65,9 +67,10 @@ describe("rate limits", () => {
   });
 
   it("ships admin-editable limits that stay private", async () => {
-    const { rows } = await db.query<{ value: { rate_limits: Record<string, { limit: number }> }; is_public: boolean }>(
-      "select value, is_public from public.settings where key = 'security.defaults'",
-    );
+    const { rows } = await db.query<{
+      value: { rate_limits: Record<string, { limit: number }> };
+      is_public: boolean;
+    }>("select value, is_public from public.settings where key = 'security.defaults'");
     expect(rows[0].is_public).toBe(false);
     expect(Object.keys(rows[0].value.rate_limits)).toEqual(
       expect.arrayContaining(["auth", "enquiry", "coupon", "partner", "review", "upload", "export"]),
@@ -78,14 +81,16 @@ describe("rate limits", () => {
 describe("privacy requests", () => {
   it("records one pending deletion per account, visible to its owner and staff only", async () => {
     const id = await service(async (tx) => {
-      const { rows } = await tx.query<{ id: string }>("select public.request_account_deletion($1, $2) as id", [
-        priya,
-        "Moving abroad",
-      ]);
+      const { rows } = await tx.query<{ id: string }>(
+        "select public.request_account_deletion($1, $2) as id",
+        [priya, "Moving abroad"],
+      );
       return rows[0].id;
     });
     expect(
-      await errorOf(() => service((tx) => tx.query("select public.request_account_deletion($1, null)", [priya]))),
+      await errorOf(() =>
+        service((tx) => tx.query("select public.request_account_deletion($1, null)", [priya])),
+      ),
     ).toContain("already_requested");
 
     const own = await asUser(db, priya, (tx) =>
@@ -114,16 +119,24 @@ describe("privacy requests", () => {
     expect(cancelled.rows[0].ok).toBe(true);
 
     const id = await service(async (tx) => {
-      const { rows } = await tx.query<{ id: string }>("select public.request_account_deletion($1, null) as id", [ravi]);
+      const { rows } = await tx.query<{ id: string }>(
+        "select public.request_account_deletion($1, null) as id",
+        [ravi],
+      );
       return rows[0].id;
     });
     expect(
       await errorOf(() =>
-        service((tx) => tx.query("select public.resolve_privacy_request($1, $2, 'rejected', '')", [admin, id])),
+        service((tx) =>
+          tx.query("select public.resolve_privacy_request($1, $2, 'rejected', '')", [admin, id]),
+        ),
       ),
     ).toContain("reason_required");
     await service((tx) =>
-      tx.query("select public.resolve_privacy_request($1, $2, 'rejected', 'Open booking next week')", [admin, id]),
+      tx.query("select public.resolve_privacy_request($1, $2, 'rejected', 'Open booking next week')", [
+        admin,
+        id,
+      ]),
     );
     const { rows } = await db.query<{ status: string; processed_by: string }>(
       "select status, processed_by from public.privacy_requests where id = $1",
@@ -132,7 +145,9 @@ describe("privacy requests", () => {
     expect(rows[0]).toEqual({ status: "rejected", processed_by: admin });
     expect(
       await errorOf(() =>
-        service((tx) => tx.query("select public.resolve_privacy_request($1, $2, 'completed', null)", [admin, id])),
+        service((tx) =>
+          tx.query("select public.resolve_privacy_request($1, $2, 'completed', null)", [admin, id]),
+        ),
       ),
     ).toContain("not_found");
   });
@@ -159,7 +174,10 @@ describe("privacy requests", () => {
 
   it("keeps bookings but drops the link when the account is deleted", async () => {
     const id = await service(async (tx) => {
-      const { rows } = await tx.query<{ id: string }>("select public.request_account_deletion($1, null) as id", [ravi]);
+      const { rows } = await tx.query<{ id: string }>(
+        "select public.request_account_deletion($1, null) as id",
+        [ravi],
+      );
       return rows[0].id;
     });
     await db.query("delete from auth.users where id = $1", [ravi]);
@@ -172,6 +190,74 @@ describe("privacy requests", () => {
       [id],
     );
     expect(request.rows[0]).toEqual({ user_id: null, email: "ravi@example.com" });
-    await service((tx) => tx.query("select public.resolve_privacy_request($1, $2, 'completed', null)", [admin, id]));
+    await service((tx) =>
+      tx.query("select public.resolve_privacy_request($1, $2, 'completed', null)", [admin, id]),
+    );
+  });
+});
+
+describe("security review fixes", () => {
+  it("keeps pickup OTPs and hotel commission out of the API grants", async () => {
+    const { rows } = await db.query<{
+      trip: boolean;
+      ride: boolean;
+      status: boolean;
+      anon_commission: boolean;
+      anon_name: boolean;
+    }>(
+      `select has_column_privilege('authenticated', 'public.trips', 'pickup_otp', 'select') as trip,
+              has_column_privilege('authenticated', 'public.ride_requests', 'pickup_otp', 'select') as ride,
+              has_column_privilege('authenticated', 'public.trips', 'status', 'select') as status,
+              has_column_privilege('anon', 'public.hotels', 'commission_bps', 'select') as anon_commission,
+              has_column_privilege('anon', 'public.hotels', 'name', 'select') as anon_name`,
+    );
+    expect(rows[0]).toEqual({
+      trip: false,
+      ride: false,
+      status: true,
+      anon_commission: false,
+      anon_name: true,
+    });
+  });
+
+  it("lets only medicine staff create or change quotes", async () => {
+    const { rows } = await db.query<{ qual: string; with_check: string }>(
+      "select qual, with_check from pg_policies where tablename = 'medicine_quotes' and policyname = 'medicine staff and pharmacies manage quotes'",
+    );
+    expect(rows[0].qual).toContain("medicine.write");
+    expect(rows[0].qual).not.toContain("can_manage_store");
+    expect(rows[0].with_check).not.toContain("can_manage_store");
+  });
+
+  it("stops a manager blocking an admin, but not a customer", async () => {
+    const manager = await createUser(db, "manager@example.com");
+    await db.query("select public.grant_role_by_email('manager@example.com', 'manager')");
+    const customer = await createUser(db, "customer@example.com");
+
+    expect(
+      await errorOf(() =>
+        asUser(db, manager, (tx) =>
+          tx.query("update public.profiles set is_blocked = true where id = $1", [admin]),
+        ),
+      ),
+    ).toContain("insufficient_privilege");
+    await asUser(db, manager, (tx) =>
+      tx.query("update public.profiles set is_blocked = true where id = $1", [customer]),
+    );
+    const { rows } = await db.query<{ is_blocked: boolean }>(
+      "select is_blocked from public.profiles where id = $1",
+      [customer],
+    );
+    expect(rows[0].is_blocked).toBe(true);
+  });
+
+  it("returns a pickup OTP only to the booking's customer or staff", async () => {
+    const otherwise = await asUser(db, priya, (tx) =>
+      tx.query<{ otp: string | null }>("select public.trip_otp(gen_random_uuid()) as otp"),
+    );
+    expect(otherwise.rows[0].otp).toBeNull();
+    expect(
+      await errorOf(() => asAnon(db, (tx) => tx.query("select public.ride_otp(gen_random_uuid())"))),
+    ).toContain("permission denied");
   });
 });

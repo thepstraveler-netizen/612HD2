@@ -29,9 +29,12 @@ import { RideRatingForm, RideStars } from "./ride-rating-form";
 import { RideStatusBadge } from "./ride-status-badge";
 import { RideTripActions } from "./ride-trip-actions";
 
-/** ride_requests columns the customer may read (driver_token is not granted). */
+/**
+ * ride_requests columns the customer may read (driver_token and pickup_otp are
+ * not granted; the OTP comes from rpc ride_otp).
+ */
 export const CUSTOMER_RIDE_COLUMNS =
-  "status, pickup_address, drop_address, passengers, hours, pickup_at, distance_km, driver_name, driver_phone, vehicle_label, vehicle_registration, pickup_otp, rating, rating_comment, rated_at" as const;
+  "id, status, pickup_address, drop_address, passengers, hours, pickup_at, distance_km, driver_name, driver_phone, vehicle_label, vehicle_registration, rating, rating_comment, rated_at" as const;
 
 export type CustomerRideRow = Pick<
   Tables<"ride_requests">,

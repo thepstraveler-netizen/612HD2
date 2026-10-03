@@ -1,5 +1,6 @@
 "use server";
 
+import { otpAttemptAllowed } from "@/lib/bookings/otp-attempts";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { getSession } from "@/lib/auth/session";
@@ -103,6 +104,9 @@ export async function driverStep(input: unknown): Promise<DriverStepResult> {
   }
   if (!DRIVER_NEXT[trip.status]?.includes(parsed.data.status))
     return { ok: false, error: "invalid_transition" };
+  // Locked after too many tries; reported like a wrong code (D-098).
+  if (parsed.data.otp && !(await otpAttemptAllowed("trip", trip.id)))
+    return { ok: false, error: "otp_mismatch" };
   const { data, error } = await admin.rpc("set_trip_status", {
     p_trip_id: trip.id,
     p_status: parsed.data.status,
