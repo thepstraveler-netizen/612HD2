@@ -341,3 +341,17 @@ When a booking that belongs to a vendor completes (the hotel's or store's vendor
 ### D-083 · Payouts are made by hand through an adapter
 
 A payout gathers a vendor's unsettled rows up to a cut-off date (cycles end every `cycle_days` days for everyone) into one pending payout; finance pays it by bank transfer or UPI outside the app (or collects it, when the vendor owes money) and records the method and UTR, and the vendor is emailed. A pending payout can be cancelled, which releases its rows. One pending payout per vendor at a time. Money movement goes through a `PayoutProvider` interface (`lib/settlements/provider.ts`); only `manual` exists, and a Razorpay Route or RazorpayX adapter can be added later without changing the ledger. Creating, paying and cancelling payouts and adjustments need `payments.refund`, like refunds.
+
+## Phase 10 · Reviews, rewards, referrals, wishlist, PWA, SEO and reports
+
+### D-084 · Only customers who booked can review, and staff moderate first
+
+A review belongs to one booking (one review per booking) and only the customer who made it can write it. It opens once the booking is completed, or for a hotel stay or package once its end date has passed while it is still confirmed (staff do not always mark stays completed), and stays open for `window_days` (180) after that. The subject is the booking's hotel, package or store; cab, ride and travel bookings are reviewed as the service. Reviews wait in Admin → Reviews until staff publish them (`reviews.defaults.auto_publish` turns that off); rejecting needs a note. Staff can post one public reply. Only published reviews count towards the cached ratings on hotels, packages and stores. The public sees the first name and initial ("Priya S."), never who wrote it or for which booking. Review photos go to the public `media` bucket under `reviews/<user id>/` with unguessable names and are listed only once the review is published.
+
+### D-085 · P&S Rewards points are spent as a personal coupon
+
+Points live in a ledger. A completed booking earns `earn_bps` (1%) of its total minus refunds, in points worth `point_value_paise` (₹1) each; the rate is frozen when the booking first earns, and a later refund takes the matching points back. Staff can credit or debit points with a reason; a published review can earn a bonus. To spend points, the customer turns them into a one-time coupon only they can use (`PSR…`, valid `code_valid_days`), so checkout, server-side pricing and the coupon engine stay unchanged and the discount is recomputed on the server like any coupon. A code that lapses unused gives its points back. Earned points expire after `expiry_days` (365; oldest first). All of it, including turning the programme off, is in `loyalty.defaults`.
+
+### D-086 · Referral bonuses are paid on the friend's first completed booking
+
+Every customer gets a referral code. A new customer can claim a friend's code until their first booking completes; when it does, both get points (`referrer_points`, `referee_points`). Paying on completion rather than signup stops self-referral farming with throwaway accounts.

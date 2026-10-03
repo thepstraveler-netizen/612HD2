@@ -108,6 +108,7 @@ export type Database = {
           avatar_url: string | null;
           preferred_locale: "en" | "hi";
           is_blocked: boolean;
+          referral_code: string | null;
           deleted_at: string | null;
         } & Timestamps;
         Insert: {
@@ -118,6 +119,7 @@ export type Database = {
           avatar_url?: string | null;
           preferred_locale?: "en" | "hi";
           is_blocked?: boolean;
+          referral_code?: string | null;
           deleted_at?: string | null;
         } & Partial<Timestamps>;
         Update: Partial<Database["public"]["Tables"]["profiles"]["Insert"]>;
@@ -466,6 +468,8 @@ export type Database = {
           first_booking_only: boolean;
           is_public: boolean;
           is_active: boolean;
+          /** Personal coupon (P&S Rewards code); null = anyone. */
+          user_id: string | null;
         } & Timestamps
       >;
       bookings: Simple<
@@ -1002,6 +1006,7 @@ export type Database = {
           tax_bps: number;
           drug_licence_no: string | null;
           rating: number | null;
+          rating_count: number;
           is_featured: boolean;
           is_active: boolean;
           sort_order: number;
@@ -1212,6 +1217,7 @@ export type Database = {
           tax_bps: number;
           sac: string;
           rating: number | null;
+          rating_count: number;
           is_featured: boolean;
           is_active: boolean;
           sort_order: number;
@@ -1447,6 +1453,91 @@ export type Database = {
           created_by: string | null;
         } & Timestamps
       >;
+      reviews: Simple<
+        {
+          id: string;
+          booking_id: string;
+          user_id: string;
+          subject_type: Database["public"]["Enums"]["review_subject"];
+          hotel_id: string | null;
+          package_id: string | null;
+          store_id: string | null;
+          service: Database["public"]["Enums"]["booking_service"];
+          rating: number;
+          title: string | null;
+          body: string | null;
+          author_name: string;
+          locale: "en" | "hi";
+          status: Database["public"]["Enums"]["review_status"];
+          moderation_note: string | null;
+          moderated_by: string | null;
+          moderated_at: string | null;
+          reply: string | null;
+          replied_by: string | null;
+          replied_at: string | null;
+        } & Timestamps
+      >;
+      review_media: Simple<{
+        id: string;
+        review_id: string;
+        file_path: string;
+        sort_order: number;
+        created_at: string;
+      }>;
+      wishlists: Simple<{
+        id: string;
+        user_id: string;
+        subject_type: Database["public"]["Enums"]["wishlist_subject"];
+        subject_id: string;
+        created_at: string;
+      }>;
+      travellers: Simple<
+        {
+          id: string;
+          user_id: string;
+          full_name: string;
+          relation: string | null;
+          date_of_birth: string | null;
+          gender: "female" | "male" | "other" | null;
+          phone: string | null;
+          is_default: boolean;
+        } & Timestamps
+      >;
+      referrals: Simple<
+        {
+          id: string;
+          referrer_id: string;
+          referee_id: string;
+          code: string;
+          status: Database["public"]["Enums"]["referral_status"];
+          booking_id: string | null;
+          rewarded_at: string | null;
+        } & Timestamps
+      >;
+      loyalty_ledger: Simple<{
+        id: string;
+        user_id: string;
+        kind: Database["public"]["Enums"]["loyalty_kind"];
+        points: number;
+        booking_id: string | null;
+        referral_id: string | null;
+        review_id: string | null;
+        coupon_id: string | null;
+        base_paise: number | null;
+        rate_bps: number | null;
+        note: string | null;
+        expires_at: string | null;
+        created_by: string | null;
+        created_at: string;
+      }>;
+      customer_notes: Simple<
+        {
+          id: string;
+          user_id: string;
+          body: string;
+          created_by: string | null;
+        } & Timestamps
+      >;
     };
     Views: { [_ in never]: never };
     Functions: {
@@ -1655,6 +1746,30 @@ export type Database = {
         Args: { p_id: string; p_actor: string };
         Returns: Database["public"]["Tables"]["vendor_payouts"]["Row"];
       };
+      review_target: { Args: { p_booking_id: string; p_user: string }; Returns: Json | null };
+      submit_review: { Args: { p: Json }; Returns: Database["public"]["Tables"]["reviews"]["Row"] };
+      moderate_review: {
+        Args: {
+          p_id: string;
+          p_status: Database["public"]["Enums"]["review_status"];
+          p_note: string | null;
+          p_actor: string;
+        };
+        Returns: Database["public"]["Tables"]["reviews"]["Row"];
+      };
+      reply_review: {
+        Args: { p_id: string; p_reply: string | null; p_actor: string };
+        Returns: Database["public"]["Tables"]["reviews"]["Row"];
+      };
+      loyalty_balance: { Args: { p_user: string }; Returns: number };
+      redeem_points: {
+        Args: { p_user: string; p_points: number };
+        Returns: Database["public"]["Tables"]["coupons"]["Row"];
+      };
+      adjust_points: { Args: { p_user: string; p_points: number; p_note: string; p_actor: string }; Returns: string };
+      expire_loyalty_points: { Args: Record<string, never>; Returns: number };
+      ensure_referral_code: { Args: { p_user: string }; Returns: string };
+      claim_referral: { Args: { p_user: string; p_code: string }; Returns: string };
     };
     Enums: {
       service_kind: "bookable" | "enquiry";
@@ -1763,6 +1878,11 @@ export type Database = {
       vendor_document_status: "pending" | "verified" | "rejected";
       ledger_entry_kind: "booking" | "adjustment" | "manual";
       payout_status: "pending" | "paid" | "cancelled";
+      review_subject: "hotel" | "package" | "store" | "service";
+      review_status: "pending" | "published" | "rejected";
+      wishlist_subject: "hotel" | "package" | "store";
+      loyalty_kind: "earn" | "reverse" | "redeem" | "restore" | "referral" | "review" | "adjust" | "expire";
+      referral_status: "pending" | "rewarded" | "void";
     };
     CompositeTypes: { [_ in never]: never };
   };

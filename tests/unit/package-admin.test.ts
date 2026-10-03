@@ -92,6 +92,7 @@ const packageRowFixture: Tables<"packages"> = {
   tax_bps: 1250,
   sac: "998555",
   rating: null,
+  rating_count: 0,
   is_featured: true,
   is_active: true,
   sort_order: 2,
