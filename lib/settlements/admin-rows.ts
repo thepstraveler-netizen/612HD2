@@ -143,7 +143,10 @@ export function settlementsSettingsFormValues(s: SettlementsSettings): Settlemen
 }
 
 /** The provider is kept as stored: only "manual" exists and it is not edited here. */
-export function settlementsSettingsValue(form: SettlementsSettingsForm, provider: string): SettlementsSettings {
+export function settlementsSettingsValue(
+  form: SettlementsSettingsForm,
+  provider: string,
+): SettlementsSettings {
   return {
     commission_tax_bps: percentToBps(form.commission_tax_percent),
     tcs_bps: percentToBps(form.tcs_percent),

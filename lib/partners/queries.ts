@@ -26,7 +26,9 @@ export async function getMyApplications(session: SessionContext): Promise<MyAppl
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("partner_applications")
-    .select("id, number, status, business_type, business_name, created_at, reviewed_at, review_note, vendor_id")
+    .select(
+      "id, number, status, business_type, business_name, created_at, reviewed_at, review_note, vendor_id",
+    )
     .eq("user_id", session.user.id)
     .order("created_at", { ascending: false })
     .limit(10);

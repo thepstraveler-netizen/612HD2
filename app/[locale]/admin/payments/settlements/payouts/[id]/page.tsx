@@ -6,7 +6,13 @@ import { AdminPageHeader } from "@/components/admin/page-header";
 import { PaymentSubnav } from "@/components/admin/payment-subnav";
 import { PayoutActions } from "@/components/admin/settlement-actions";
 import { LedgerTable, NetAmount, SettlementSubnav } from "@/components/admin/settlement-shared";
-import { BankDetailsFacts, DetailCard, FactList, dayFormatter, whenFormatter } from "@/components/admin/vendor-shared";
+import {
+  BankDetailsFacts,
+  DetailCard,
+  FactList,
+  dayFormatter,
+  whenFormatter,
+} from "@/components/admin/vendor-shared";
 import { Link } from "@/i18n/navigation";
 import { requirePermission } from "@/lib/auth/guards";
 import { formatPaise } from "@/lib/money";
@@ -67,7 +73,9 @@ export default async function PayoutPage({ params }: { params: Promise<{ id: str
           <p className="font-medium">{vendor?.name ?? "–"}</p>
           <BankDetailsFacts bank={vendor?.bank ?? null} full={canAct} />
           {vendor?.phone || vendor?.email ? (
-            <p className="text-xs text-muted-foreground">{[vendor.phone, vendor.email].filter(Boolean).join(" · ")}</p>
+            <p className="text-xs text-muted-foreground">
+              {[vendor.phone, vendor.email].filter(Boolean).join(" · ")}
+            </p>
           ) : null}
         </DetailCard>
         <DetailCard title={t("payouts.summary")}>
@@ -78,12 +86,21 @@ export default async function PayoutPage({ params }: { params: Promise<{ id: str
               { label: t("payouts.commission"), value: formatPaise(payout.commission_paise, locale) },
               { label: t("payouts.amount"), value: formatPaise(payout.amount_paise, locale) },
               { label: t("payouts.provider"), value: payout.provider },
-              { label: t("payouts.createdBy"), value: `${person(payout.created_by)} · ${when(payout.created_at)}` },
+              {
+                label: t("payouts.createdBy"),
+                value: `${person(payout.created_by)} · ${when(payout.created_at)}`,
+              },
               ...(payout.status === "paid"
                 ? [
-                    { label: t("payouts.method"), value: payout.method ? t(`methods.${payout.method}`) : "–" },
+                    {
+                      label: t("payouts.method"),
+                      value: payout.method ? t(`methods.${payout.method}`) : "–",
+                    },
                     { label: t("payouts.reference"), value: payout.reference },
-                    { label: t("payouts.paidBy"), value: `${person(payout.paid_by)} · ${when(payout.paid_at)}` },
+                    {
+                      label: t("payouts.paidBy"),
+                      value: `${person(payout.paid_by)} · ${when(payout.paid_at)}`,
+                    },
                   ]
                 : []),
               ...(payout.status === "cancelled"

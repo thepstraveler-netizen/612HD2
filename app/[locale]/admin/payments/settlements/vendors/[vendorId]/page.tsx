@@ -52,12 +52,7 @@ export default async function VendorLedgerPage({
 
   return (
     <div className="space-y-6">
-      <AdminPageHeader
-        title={vendor.name}
-        lead={t("ledger.lead")}
-        backHref={BASE}
-        backLabel={t("title")}
-      >
+      <AdminPageHeader title={vendor.name} lead={t("ledger.lead")} backHref={BASE} backLabel={t("title")}>
         <PaymentSubnav active="settlements" />
         <SettlementSubnav active="overview" />
         <div className="flex flex-wrap gap-2">
@@ -95,14 +90,17 @@ export default async function VendorLedgerPage({
             <p className="text-sm">
               {t("ledger.pendingPayout")}{" "}
               <Link href={`${BASE}/payouts/${ledger.pending.id}`} className="font-medium text-primary">
-                {payoutReference(ledger.pending.number)} · {formatPaise(ledger.pending.amount_paise, locale)} (
-                {day(ledger.pending.period_end)})
+                {payoutReference(ledger.pending.number)} · {formatPaise(ledger.pending.amount_paise, locale)}{" "}
+                ({day(ledger.pending.period_end)})
               </Link>
             </p>
           ) : null}
           <FactList
             items={[
-              { label: t("ledger.commission"), value: formatPaise(ledger.unsettled.commission_paise, locale) },
+              {
+                label: t("ledger.commission"),
+                value: formatPaise(ledger.unsettled.commission_paise, locale),
+              },
               {
                 label: t("ledger.commissionTax"),
                 value: formatPaise(ledger.unsettled.commission_tax_paise, locale),

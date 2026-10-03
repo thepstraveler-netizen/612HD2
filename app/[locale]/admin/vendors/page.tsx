@@ -45,7 +45,12 @@ export default async function AdminVendorsPage({
       <form method="get" role="search" className="grid gap-3 rounded-2xl border bg-card p-4 sm:grid-cols-3">
         <div className="grid gap-1.5">
           <Label htmlFor="vf-q">{t("filters.search")}</Label>
-          <Input id="vf-q" name="q" defaultValue={filters.q ?? ""} placeholder={t("filters.searchPlaceholder")} />
+          <Input
+            id="vf-q"
+            name="q"
+            defaultValue={filters.q ?? ""}
+            placeholder={t("filters.searchPlaceholder")}
+          />
         </div>
         <div className="grid gap-1.5">
           <Label htmlFor="vf-kind">{t("filters.kind")}</Label>

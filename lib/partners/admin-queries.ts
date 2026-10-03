@@ -106,7 +106,11 @@ export type AdminApplication = {
 
 export async function getApplication(id: string): Promise<AdminApplication | null> {
   const supabase = await createClient();
-  const { data: app, error } = await supabase.from("partner_applications").select("*").eq("id", id).maybeSingle();
+  const { data: app, error } = await supabase
+    .from("partner_applications")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
   if (error) fail("application", error);
   if (!app) return null;
   const docs = readApplicationDocuments(app.documents);
@@ -179,8 +183,16 @@ export async function getVendor(id: string): Promise<AdminVendor | null> {
   if (error) fail("vendor", error);
   if (!vendor) return null;
   const [members, documents, application] = await Promise.all([
-    supabase.from("vendor_members").select("user_id, role, created_at").eq("vendor_id", id).order("created_at"),
-    supabase.from("vendor_documents").select("*").eq("vendor_id", id).order("created_at", { ascending: false }),
+    supabase
+      .from("vendor_members")
+      .select("user_id, role, created_at")
+      .eq("vendor_id", id)
+      .order("created_at"),
+    supabase
+      .from("vendor_documents")
+      .select("*")
+      .eq("vendor_id", id)
+      .order("created_at", { ascending: false }),
     vendor.application_id
       ? supabase.from("partner_applications").select("number").eq("id", vendor.application_id).maybeSingle()
       : Promise.resolve({ data: null, error: null }),

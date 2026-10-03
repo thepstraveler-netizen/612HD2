@@ -150,7 +150,10 @@ export const reviewApplicationSchema = z
 export const approveApplicationSchema = z.object({
   id: z.uuid(),
   commissionPercent: z
-    .union([z.literal(""), z.coerce.number().min(0).max(100)])
+    .union([
+      z.literal(""),
+      z.coerce.number({ error: "invalid" }).min(0, { error: "invalid" }).max(100, { error: "invalid" }),
+    ])
     .default("")
     .transform((v) => (v === "" ? null : Math.round(v * 100))),
 });

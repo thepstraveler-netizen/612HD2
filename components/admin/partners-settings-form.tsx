@@ -40,7 +40,11 @@ function SettingsCard({
 }) {
   const t = useTranslations("cms.actions");
   return (
-    <form onSubmit={onSubmit} className="grid max-w-3xl gap-4 rounded-2xl border bg-card p-4 sm:p-6" noValidate>
+    <form
+      onSubmit={onSubmit}
+      className="grid max-w-3xl gap-4 rounded-2xl border bg-card p-4 sm:p-6"
+      noValidate
+    >
       <div className="space-y-1">
         <h2 className="text-lg font-semibold">{title}</h2>
         <p className="text-sm text-muted-foreground">{lead}</p>
@@ -119,11 +123,18 @@ function TypeBlock({ type }: { type: (typeof PARTNER_BUSINESS_TYPES)[number] }) 
       <div className="mt-3 grid gap-3">
         <div className="grid max-w-xs gap-2">
           <Label htmlFor={id}>{t("settings.partners.commission")}</Label>
-          <Input id={id} inputMode="decimal" aria-invalid={!!commissionError} {...register(`types.${type}.commission_percent`)} />
+          <Input
+            id={id}
+            inputMode="decimal"
+            aria-invalid={!!commissionError}
+            {...register(`types.${type}.commission_percent`)}
+          />
           {commissionError ? <p className="text-sm text-destructive">{commissionError}</p> : null}
         </div>
         <fieldset className="grid gap-2">
-          <legend className="mb-1 text-xs text-muted-foreground">{t("settings.partners.requiredDocs")}</legend>
+          <legend className="mb-1 text-xs text-muted-foreground">
+            {t("settings.partners.requiredDocs")}
+          </legend>
           <div className="grid gap-2 sm:grid-cols-2">
             {PARTNER_DOCUMENT_KINDS.map((kind) => (
               <Checkbox
@@ -186,7 +197,11 @@ function PartnersDefaultsForm({ defaultValues }: { defaultValues: PartnersSettin
           className="max-w-xs"
         />
         <AgreementVersionField />
-        <LocalizedField<PartnersSettingsFormInput> name="agreement_body" label={t("agreementBody")} multiline />
+        <LocalizedField<PartnersSettingsFormInput>
+          name="agreement_body"
+          label={t("agreementBody")}
+          multiline
+        />
       </SettingsCard>
     </FormProvider>
   );
@@ -224,8 +239,16 @@ function SettlementsDefaultsForm({
             help={t("cycleDaysHelp")}
             type="number"
           />
-          <TextInputField<SettlementsSettingsFormInput> name="tcs_percent" label={t("tcs")} help={t("taxHelp")} />
-          <TextInputField<SettlementsSettingsFormInput> name="tds_percent" label={t("tds")} help={t("taxHelp")} />
+          <TextInputField<SettlementsSettingsFormInput>
+            name="tcs_percent"
+            label={t("tcs")}
+            help={t("taxHelp")}
+          />
+          <TextInputField<SettlementsSettingsFormInput>
+            name="tds_percent"
+            label={t("tds")}
+            help={t("taxHelp")}
+          />
           <div className="grid gap-2">
             <Label htmlFor="ss-provider">{t("provider")}</Label>
             <Input id="ss-provider" value={provider} readOnly aria-describedby="ss-provider-help" />
@@ -252,7 +275,10 @@ export function PartnersSettingsForms({
   const t = useTranslations("vendorsAdmin.settings");
   return (
     <section className="grid gap-4" aria-labelledby="partners-settlements-settings">
-      <h2 id="partners-settlements-settings" className="text-[length:var(--text-heading,1.25rem)] font-semibold">
+      <h2
+        id="partners-settlements-settings"
+        className="text-[length:var(--text-heading,1.25rem)] font-semibold"
+      >
         {t("title")}
       </h2>
       <PartnersDefaultsForm defaultValues={partners} />

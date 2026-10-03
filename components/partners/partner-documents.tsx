@@ -138,7 +138,9 @@ export function PartnerDocuments({
       {required.length > 0 ? (
         <div className="space-y-2">
           <div className="flex items-center justify-between gap-2 text-sm">
-            <span className="font-medium">{t("progress", { done: requiredDone, total: required.length })}</span>
+            <span className="font-medium">
+              {t("progress", { done: requiredDone, total: required.length })}
+            </span>
           </div>
           <div
             role="progressbar"
@@ -220,7 +222,10 @@ export function PartnerDocuments({
       ) : null}
 
       {error ? (
-        <p role="alert" className="flex items-start gap-2 rounded-xl bg-destructive/10 p-3 text-sm text-destructive">
+        <p
+          role="alert"
+          className="flex items-start gap-2 rounded-xl bg-destructive/10 p-3 text-sm text-destructive"
+        >
           <CircleAlert className="mt-0.5 size-4 shrink-0" aria-hidden="true" /> {error}
         </p>
       ) : null}
@@ -270,7 +275,9 @@ function DocRow({
           )}
           <span className="min-w-0">
             <span className="block truncate">{item.name}</span>
-            <span className={cn("block", item.state === "error" ? "text-destructive" : "text-muted-foreground")}>
+            <span
+              className={cn("block", item.state === "error" ? "text-destructive" : "text-muted-foreground")}
+            >
               {item.state === "uploading"
                 ? t("uploading")
                 : item.state === "done"

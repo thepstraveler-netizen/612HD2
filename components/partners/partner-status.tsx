@@ -62,7 +62,11 @@ export async function PartnerStatus({ application, locale }: { application: MyAp
             <span
               className={cn(
                 "block h-1.5 rounded-full",
-                i <= reached ? (status === "rejected" && i === 2 ? "bg-destructive" : "bg-primary") : "bg-muted",
+                i <= reached
+                  ? status === "rejected" && i === 2
+                    ? "bg-destructive"
+                    : "bg-primary"
+                  : "bg-muted",
               )}
             />
             <span className={cn("block text-xs", i <= reached ? "font-semibold" : "text-muted-foreground")}>

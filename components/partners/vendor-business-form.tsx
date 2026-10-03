@@ -38,7 +38,11 @@ export function VendorBusinessForm({ vendorId, initial }: { vendorId: string; in
           return;
         }
         if (result.field && result.field !== "vendorId") {
-          form.setError(result.field as Name, { type: "server", message: result.error }, { shouldFocus: true });
+          form.setError(
+            result.field as Name,
+            { type: "server", message: result.error },
+            { shouldFocus: true },
+          );
           toast.error(t("errors.invalid"));
           return;
         }
@@ -47,7 +51,12 @@ export function VendorBusinessForm({ vendorId, initial }: { vendorId: string; in
     () => toast.error(t("errors.invalid")),
   );
 
-  const text = (name: Name, label: string, props: Partial<ComponentProps<"input">> = {}, className?: string) => (
+  const text = (
+    name: Name,
+    label: string,
+    props: Partial<ComponentProps<"input">> = {},
+    className?: string,
+  ) => (
     <FormField
       control={form.control}
       name={name}
@@ -110,8 +119,15 @@ export function VendorBusinessForm({ vendorId, initial }: { vendorId: string; in
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             {text("bank.holder", t("form.holder"), { autoComplete: "off" }, "sm:col-span-2")}
-            {text("bank.account_number", t("form.account_number"), { inputMode: "numeric", autoComplete: "off" })}
-            {text("bank.ifsc", t("form.ifsc"), { className: "uppercase", maxLength: 11, autoComplete: "off" })}
+            {text("bank.account_number", t("form.account_number"), {
+              inputMode: "numeric",
+              autoComplete: "off",
+            })}
+            {text("bank.ifsc", t("form.ifsc"), {
+              className: "uppercase",
+              maxLength: 11,
+              autoComplete: "off",
+            })}
             {text("bank.bank", t("form.bank"), { autoComplete: "off" })}
             {text("bank.upi_id", t("form.upi_id"), { autoComplete: "off", inputMode: "email" })}
           </div>

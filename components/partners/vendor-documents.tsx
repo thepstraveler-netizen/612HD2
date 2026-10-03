@@ -63,7 +63,12 @@ export function VendorDocuments({
     if (problem) return toast.error(errorText(problem));
     setBusy(true);
     try {
-      const ticket = await createVendorUpload({ vendorId, kind, mime_type: file.type, size_bytes: file.size });
+      const ticket = await createVendorUpload({
+        vendorId,
+        kind,
+        mime_type: file.type,
+        size_bytes: file.size,
+      });
       if (!ticket.ok || !ticket.path || !ticket.token) {
         return toast.error(errorText(ticket.ok ? "uploadFailed" : ticket.error));
       }

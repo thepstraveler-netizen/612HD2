@@ -127,7 +127,12 @@ export function PayoutActions({ payoutId, amountPaise }: { payoutId: string; amo
   const [open, setOpen] = useState(false);
   const form = useForm<MarkPayoutPaidInput>({
     resolver: zodResolver(markPayoutPaidSchema, undefined, { raw: true }),
-    defaultValues: { id: payoutId, method: amountPaise >= 0 ? "bank_transfer" : "upi", reference: "", notes: "" },
+    defaultValues: {
+      id: payoutId,
+      method: amountPaise >= 0 ? "bank_transfer" : "upi",
+      reference: "",
+      notes: "",
+    },
   });
   const amount = formatPaise(Math.abs(amountPaise), locale);
   return (

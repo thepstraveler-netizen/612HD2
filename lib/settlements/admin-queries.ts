@@ -39,7 +39,10 @@ async function readAll<T>(
   }
 }
 
-export type VendorPayoutInfo = Pick<Tables<"vendors">, "id" | "name" | "kind" | "status" | "phone" | "email"> & {
+export type VendorPayoutInfo = Pick<
+  Tables<"vendors">,
+  "id" | "name" | "kind" | "status" | "phone" | "email"
+> & {
   bank: BankDetailsView | null;
 };
 
@@ -81,7 +84,10 @@ async function bookingCodes(ids: (string | null)[]): Promise<Map<string, string>
   await assertPermission("payments.read");
   const admin = createAdminClient();
   for (let i = 0; i < wanted.length; i += IN_CHUNK) {
-    const { data, error } = await admin.from("bookings").select("id, code").in("id", wanted.slice(i, i + IN_CHUNK));
+    const { data, error } = await admin
+      .from("bookings")
+      .select("id, code")
+      .in("id", wanted.slice(i, i + IN_CHUNK));
     if (error) fail("bookings", error);
     for (const b of data) out.set(b.id, b.code);
   }
@@ -269,7 +275,11 @@ export type AdminPayout = {
 
 export async function getPayout(id: string): Promise<AdminPayout | null> {
   const supabase = await createClient();
-  const { data: payout, error } = await supabase.from("vendor_payouts").select("*").eq("id", id).maybeSingle();
+  const { data: payout, error } = await supabase
+    .from("vendor_payouts")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
   if (error) fail("payout", error);
   if (!payout) return null;
   const rows = await readAll(

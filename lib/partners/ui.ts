@@ -21,7 +21,18 @@ export type PartnerStep = (typeof PARTNER_STEPS)[number];
 /** Form fields each step validates before moving on (details are checked separately). */
 export const STEP_FIELDS = {
   type: ["businessType"],
-  details: ["businessName", "contactName", "phone", "email", "city", "address", "gstin", "pan", "website", "message"],
+  details: [
+    "businessName",
+    "contactName",
+    "phone",
+    "email",
+    "city",
+    "address",
+    "gstin",
+    "pan",
+    "website",
+    "message",
+  ],
   documents: [],
   agreement: ["agreementName", "acceptAgreement"],
 } as const satisfies Record<PartnerStep, readonly string[]>;
@@ -141,7 +152,10 @@ export function fileSizeLabel(bytes: number): string {
 // ---------------------------------------------------------------- vendor portal
 
 /** The vendor the portal shows: `?v=` when it is one of the user's, else the first. */
-export function pickVendorId(vendors: readonly { id: string }[], requested: string | undefined): string | null {
+export function pickVendorId(
+  vendors: readonly { id: string }[],
+  requested: string | undefined,
+): string | null {
   if (requested && vendors.some((v) => v.id === requested)) return requested;
   return vendors[0]?.id ?? null;
 }
@@ -163,7 +177,9 @@ export function nextCycleEnd(today: string, cycleDays: number): string {
 }
 
 /** Totals of the ledger rows no payout has gathered yet. */
-export function unsettledTotals(rows: readonly (LedgerAmounts & { payout_id: string | null })[]): LedgerTotals {
+export function unsettledTotals(
+  rows: readonly (LedgerAmounts & { payout_id: string | null })[],
+): LedgerTotals {
   return sumLedger(rows.filter((r) => r.payout_id === null));
 }
 
@@ -185,7 +201,9 @@ export function formatDay(value: string, locale: string): string {
 }
 
 /** Which optional money columns a statement needs (hidden when every row is zero). */
-export function statementColumns(rows: readonly Pick<LedgerAmounts, "tcs_paise" | "tds_paise" | "adjustment_paise">[]): {
+export function statementColumns(
+  rows: readonly Pick<LedgerAmounts, "tcs_paise" | "tds_paise" | "adjustment_paise">[],
+): {
   tcs: boolean;
   tds: boolean;
   adjustment: boolean;

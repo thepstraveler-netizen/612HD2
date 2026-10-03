@@ -17,7 +17,15 @@ import { percentField } from "./ride-admin";
  * as % and leave the row mappers as basis points.
  */
 
-export const VENDOR_KINDS = ["hotel", "restaurant", "store", "transport", "pharmacy", "agency", "other"] as const;
+export const VENDOR_KINDS = [
+  "hotel",
+  "restaurant",
+  "store",
+  "transport",
+  "pharmacy",
+  "agency",
+  "other",
+] as const;
 export type VendorKind = (typeof VENDOR_KINDS)[number];
 
 export const VENDOR_STATUSES = ["pending", "active", "suspended"] as const;
@@ -46,7 +54,10 @@ const optionalPhone = z
     return phone;
   });
 
-const optionalEmail = z.union([z.literal(""), z.email({ error: "invalidEmail" }).max(200, { error: "invalidEmail" })]);
+const optionalEmail = z.union([
+  z.literal(""),
+  z.email({ error: "invalidEmail" }).max(200, { error: "invalidEmail" }),
+]);
 
 const optionalUpper = (pattern: RegExp, error: string) =>
   z

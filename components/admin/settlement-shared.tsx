@@ -109,7 +109,10 @@ export async function LedgerTable({
         <tbody>
           {rows.length === 0 ? (
             <tr>
-              <td colSpan={AMOUNT_KEYS.length + (showPayout ? 5 : 4)} className="px-4 py-8 text-center text-muted-foreground">
+              <td
+                colSpan={AMOUNT_KEYS.length + (showPayout ? 5 : 4)}
+                className="px-4 py-8 text-center text-muted-foreground"
+              >
                 {t("empty")}
               </td>
             </tr>
@@ -119,7 +122,10 @@ export async function LedgerTable({
                 <td className="px-3 py-2.5 whitespace-nowrap">{day(r.entry_date)}</td>
                 <td className="px-3 py-2.5 whitespace-nowrap">
                   {r.booking_id ? (
-                    <Link href={`/admin/bookings/${r.booking_id}`} className="font-mono font-medium text-primary">
+                    <Link
+                      href={`/admin/bookings/${r.booking_id}`}
+                      className="font-mono font-medium text-primary"
+                    >
                       {r.bookingCode ?? t("booking")}
                     </Link>
                   ) : (
@@ -128,7 +134,9 @@ export async function LedgerTable({
                 </td>
                 <td className="px-3 py-2.5">
                   <span className="whitespace-nowrap">{t(`kinds.${r.kind}`)}</span>
-                  {r.note ? <span className="block max-w-56 text-xs text-muted-foreground">{r.note}</span> : null}
+                  {r.note ? (
+                    <span className="block max-w-56 text-xs text-muted-foreground">{r.note}</span>
+                  ) : null}
                 </td>
                 {AMOUNT_KEYS.map(([column, key]) => (
                   <td key={key} className={td}>

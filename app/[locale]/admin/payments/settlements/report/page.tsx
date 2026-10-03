@@ -95,7 +95,11 @@ export default async function CommissionReportPage({
           ...report.rows.map((r) => ({
             key: r.vendorId,
             cells: [
-              <Link key="v" href={`${BASE}/vendors/${r.vendorId}?from=${from}&to=${to}`} className="text-primary">
+              <Link
+                key="v"
+                href={`${BASE}/vendors/${r.vendorId}?from=${from}&to=${to}`}
+                className="text-primary"
+              >
                 {r.vendorName}
               </Link>,
               <span key="e" className="block text-right">

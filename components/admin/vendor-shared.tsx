@@ -2,7 +2,12 @@ import { Download, FileText } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 import { countOpenApplications } from "@/lib/partners/admin-queries";
-import { formatBytes, isKnownDocumentKind, maskAccountNumber, type BankDetailsView } from "@/lib/partners/admin-rows";
+import {
+  formatBytes,
+  isKnownDocumentKind,
+  maskAccountNumber,
+  type BankDetailsView,
+} from "@/lib/partners/admin-rows";
 import { AdminSubnav } from "./page-header";
 
 /** Vendors | Applications (n open). */
@@ -104,7 +109,13 @@ export async function DocumentLink({
 }
 
 /** Bank / UPI details for payouts; the account number is masked unless `full`. */
-export async function BankDetailsFacts({ bank, full = false }: { bank: BankDetailsView | null; full?: boolean }) {
+export async function BankDetailsFacts({
+  bank,
+  full = false,
+}: {
+  bank: BankDetailsView | null;
+  full?: boolean;
+}) {
   const t = await getTranslations("vendorsAdmin.bank");
   if (!bank) return <p className="text-sm text-muted-foreground">{t("none")}</p>;
   return (
@@ -140,4 +151,3 @@ export async function dayFormatter() {
   return (date: string | null | undefined) =>
     date ? format.dateTime(new Date(`${date}T00:00:00Z`), { dateStyle: "medium", timeZone: "UTC" }) : "–";
 }
-

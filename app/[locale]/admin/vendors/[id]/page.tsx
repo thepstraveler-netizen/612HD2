@@ -147,7 +147,10 @@ export default async function AdminVendorPage({ params }: { params: Promise<{ id
                     <div className="min-w-0 flex-1">
                       <DocumentLink kind={d.kind} name={d.file_name} size={d.size_bytes} url={d.url} />
                     </div>
-                    <ToneBadge tone={documentStatusTone(d.status)} label={t(`documents.status.${d.status}`)} />
+                    <ToneBadge
+                      tone={documentStatusTone(d.status)}
+                      label={t(`documents.status.${d.status}`)}
+                    />
                   </div>
                   <p className="text-xs text-muted-foreground">
                     {t("documents.uploaded", { when: when(d.created_at) })}

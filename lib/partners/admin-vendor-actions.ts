@@ -36,7 +36,14 @@ export async function saveVendor(input: unknown) {
     if (slugError) return { error: slugError };
     const { data, error } = await supabase
       .from("vendors")
-      .insert({ ...row, kind: form.kind, slug: nextFreeSlug(base, taken.map((t) => t.slug)) })
+      .insert({
+        ...row,
+        kind: form.kind,
+        slug: nextFreeSlug(
+          base,
+          taken.map((t) => t.slug),
+        ),
+      })
       .select("id")
       .single();
     if (error) return { error };
