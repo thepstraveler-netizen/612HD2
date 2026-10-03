@@ -1538,6 +1538,24 @@ export type Database = {
           created_by: string | null;
         } & Timestamps
       >;
+      rate_limit_hits: Simple<{
+        bucket: string;
+        window_start: string;
+        hits: number;
+      }>;
+      privacy_requests: Simple<{
+        id: string;
+        user_id: string | null;
+        email: string | null;
+        kind: Database["public"]["Enums"]["privacy_request_kind"];
+        status: Database["public"]["Enums"]["privacy_request_status"];
+        reason: string | null;
+        note: string | null;
+        processed_by: string | null;
+        processed_at: string | null;
+        created_at: string;
+        updated_at: string;
+      }>;
     };
     Views: { [_ in never]: never };
     Functions: {
@@ -1883,6 +1901,24 @@ export type Database = {
         }[];
       };
       admin_customer_summary: { Args: { p_user: string }; Returns: Json };
+      hit_rate_limit: {
+        Args: { p_bucket: string; p_limit: number; p_window_seconds: number };
+        Returns: { allowed: boolean; hits: number; retry_after: number }[];
+      };
+      purge_rate_limits: { Args: Record<string, never>; Returns: number };
+      account_deletion_blockers: { Args: { p_user: string }; Returns: number };
+      request_account_deletion: { Args: { p_user: string; p_reason: string | null }; Returns: string };
+      cancel_account_deletion: { Args: { p_user: string }; Returns: boolean };
+      log_data_export: { Args: { p_user: string }; Returns: string };
+      resolve_privacy_request: {
+        Args: {
+          p_actor: string;
+          p_id: string;
+          p_status: Database["public"]["Enums"]["privacy_request_status"];
+          p_note: string | null;
+        };
+        Returns: boolean;
+      };
     };
     Enums: {
       service_kind: "bookable" | "enquiry";
@@ -1996,6 +2032,8 @@ export type Database = {
       wishlist_subject: "hotel" | "package" | "store";
       loyalty_kind: "earn" | "reverse" | "redeem" | "restore" | "referral" | "review" | "adjust" | "expire";
       referral_status: "pending" | "rewarded" | "void";
+      privacy_request_kind: "export" | "delete";
+      privacy_request_status: "pending" | "completed" | "cancelled" | "rejected";
     };
     CompositeTypes: { [_ in never]: never };
   };
