@@ -1,7 +1,12 @@
 import "server-only";
 import { getVendorContext, type VendorContext } from "@/lib/delivery/vendor";
 import { hasServiceRole } from "@/lib/env.server";
-import { payoutReference, type StatementRow } from "@/lib/settlements/statement";
+import {
+  payoutReference,
+  sumLedger,
+  type LedgerTotals,
+  type StatementRow,
+} from "@/lib/settlements/statement";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { bankDetailsSchema, type BankDetailsInput } from "@/schemas/partners";
@@ -121,23 +126,78 @@ export type PayoutRow = {
   paymentReference: string | null;
 };
 
-export type VendorEarnings = { ledger: LedgerRow[]; payouts: PayoutRow[] };
+export type VendorEarnings = {
+  /** Newest first; the latest 500 rows on screen, every row when `all` is asked for. */
+  ledger: LedgerRow[];
+  /** More rows exist than `ledger` holds (screen view only). */
+  truncated: boolean;
+  /** Every unsettled row, however many: what the next payout would settle. */
+  unsettled: LedgerTotals;
+  payouts: PayoutRow[];
+};
 
 const LEDGER_LIMIT = 500;
+const PAGE = 1000;
+const LEDGER_COLUMNS =
+  "id, booking_id, kind, entry_date, gross_paise, platform_collected_paise, vendor_collected_paise, commission_paise, commission_tax_paise, tcs_paise, tds_paise, adjustment_paise, net_paise, note, payout_id, created_at";
+const AMOUNT_COLUMNS =
+  "gross_paise, platform_collected_paise, vendor_collected_paise, commission_paise, commission_tax_paise, tcs_paise, tds_paise, adjustment_paise, net_paise";
 
-/** The vendor's ledger (newest first, up to 500 rows) and payouts, read under RLS. */
-export async function getVendorEarnings(vendorId: string): Promise<VendorEarnings> {
+/** Reads every page of a query (PostgREST caps a single response). */
+async function readAll<T>(
+  page: (from: number, to: number) => PromiseLike<{ data: T[] | null; error: { message: string } | null }>,
+  scope: string,
+): Promise<T[]> {
+  const out: T[] = [];
+  for (let from = 0; ; from += PAGE) {
+    const { data, error } = await page(from, from + PAGE - 1);
+    if (error) throw new Error(`[vendor portal] ${scope}: ${error.message}`);
+    const rows = data ?? [];
+    out.push(...rows);
+    if (rows.length < PAGE) return out;
+  }
+}
+
+async function readPage<T>(
+  query: PromiseLike<{ data: T[] | null; error: { message: string } | null }>,
+  scope: string,
+): Promise<T[]> {
+  const { data, error } = await query;
+  if (error) throw new Error(`[vendor portal] ${scope}: ${error.message}`);
+  return data ?? [];
+}
+
+/**
+ * The vendor's ledger (newest first) and payouts, read under RLS. The
+ * caller must already have checked the user belongs to the vendor
+ * (`getPortalContext`, or the statement route's membership check).
+ * `all` reads every ledger row (the CSV statement); otherwise the latest
+ * 500. The unsettled balance always counts every open row.
+ */
+export async function getVendorEarnings(vendorId: string, { all = false } = {}): Promise<VendorEarnings> {
   const supabase = await createClient();
-  const [ledger, payouts] = await Promise.all([
+  const ledgerPage = (from: number, to: number) =>
     supabase
       .from("vendor_ledger_entries")
-      .select(
-        "id, booking_id, kind, entry_date, gross_paise, platform_collected_paise, vendor_collected_paise, commission_paise, commission_tax_paise, tcs_paise, tds_paise, adjustment_paise, net_paise, note, payout_id, created_at",
-      )
+      .select(LEDGER_COLUMNS)
       .eq("vendor_id", vendorId)
       .order("entry_date", { ascending: false })
       .order("created_at", { ascending: false })
-      .limit(LEDGER_LIMIT),
+      .order("id")
+      .range(from, to);
+  const [ledger, open, payouts] = await Promise.all([
+    all ? readAll(ledgerPage, "ledger") : readPage(ledgerPage(0, LEDGER_LIMIT), "ledger"),
+    readAll(
+      (from, to) =>
+        supabase
+          .from("vendor_ledger_entries")
+          .select(AMOUNT_COLUMNS)
+          .eq("vendor_id", vendorId)
+          .is("payout_id", null)
+          .order("id")
+          .range(from, to),
+      "unsettled",
+    ),
     supabase
       .from("vendor_payouts")
       .select("id, number, period_end, entries_count, amount_paise, status, paid_at, method, reference")
@@ -145,15 +205,19 @@ export async function getVendorEarnings(vendorId: string): Promise<VendorEarning
       .order("created_at", { ascending: false })
       .limit(100),
   ]);
-  if (ledger.error) throw new Error(`[vendor portal] ledger: ${ledger.error.message}`);
   if (payouts.error) throw new Error(`[vendor portal] payouts: ${payouts.error.message}`);
+  // Screen view asks for one row more than it shows, to know whether there are more.
+  const truncated = !all && ledger.length > LEDGER_LIMIT;
+  const rows = truncated ? ledger.slice(0, LEDGER_LIMIT) : ledger;
 
   const payoutRefs = new Map(payouts.data.map((p) => [p.id, payoutReference(p.number)]));
-  const bookingIds = [...new Set(ledger.data.flatMap((r) => (r.booking_id ? [r.booking_id] : [])))];
+  const bookingIds = [...new Set(rows.flatMap((r) => (r.booking_id ? [r.booking_id] : [])))];
   const codes = await bookingCodes(bookingIds);
 
   return {
-    ledger: ledger.data.map((r) => ({
+    truncated,
+    unsettled: sumLedger(open),
+    ledger: rows.map((r) => ({
       id: r.id,
       payout_id: r.payout_id,
       entry_date: r.entry_date,
@@ -190,14 +254,22 @@ export async function getVendorEarnings(vendorId: string): Promise<VendorEarning
  * (so they belong to the vendor). Only the code is read.
  */
 async function bookingCodes(ids: string[]): Promise<Map<string, string>> {
-  if (ids.length === 0) return new Map();
+  const out = new Map<string, string>();
+  if (ids.length === 0) return out;
   const client = hasServiceRole() ? createAdminClient() : await createClient();
-  const { data, error } = await client.from("bookings").select("id, code").in("id", ids);
-  if (error) {
-    console.error("[vendor portal] booking codes", error);
-    return new Map();
+  // Chunked: a full statement can name thousands of bookings (URL length).
+  for (let i = 0; i < ids.length; i += 200) {
+    const { data, error } = await client
+      .from("bookings")
+      .select("id, code")
+      .in("id", ids.slice(i, i + 200));
+    if (error) {
+      console.error("[vendor portal] booking codes", error);
+      return out;
+    }
+    for (const b of data) out.set(b.id, b.code);
   }
-  return new Map(data.map((b) => [b.id, b.code]));
+  return out;
 }
 
 export type VendorDocumentRow = {
@@ -211,8 +283,14 @@ export type VendorDocumentRow = {
   url: string | null;
 };
 
-/** The vendor's documents with short-lived signed links (10 minutes). */
-export async function getVendorDocuments(vendorId: string): Promise<VendorDocumentRow[]> {
+/**
+ * The portal vendor's documents with short-lived signed links (10 minutes).
+ * Takes the portal context so links are only ever signed for a vendor the
+ * signed-in user is a member of (RLS alone would also let staff through).
+ */
+export async function getVendorDocuments(portal: PortalContext): Promise<VendorDocumentRow[]> {
+  const vendorId = portal.vendor.id;
+  if (!portal.ctx.vendorIds.includes(vendorId)) return [];
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("vendor_documents")

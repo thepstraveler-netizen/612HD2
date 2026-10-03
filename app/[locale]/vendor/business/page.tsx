@@ -14,7 +14,11 @@ type Props = {
   searchParams: Promise<{ v?: string }>;
 };
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "vendorBusiness" });
   return { title: t("title") };
@@ -33,7 +37,7 @@ export default async function VendorBusinessPage({ params, searchParams }: Props
   const portal = await getPortalContext(v);
   if (!portal) return <VendorNoBusiness />;
   const { vendor } = portal;
-  const [documents, settings] = await Promise.all([getVendorDocuments(vendor.id), getPartnersSettings()]);
+  const [documents, settings] = await Promise.all([getVendorDocuments(portal), getPartnersSettings()]);
 
   const overview: { label: string; value: string; tone?: string }[] = [
     { label: t("overview.name"), value: vendor.name },

@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { AuthorizationError, assertPermission } from "@/lib/auth/guards";
+import { indiaToday } from "@/lib/partners/ui";
 import { getVendorEarnings } from "@/lib/partners/vendor-queries";
 import { statementCsv } from "@/lib/settlements/statement";
 import { createClient } from "@/lib/supabase/server";
@@ -21,7 +22,8 @@ export async function GET(request: NextRequest) {
   try {
     userId = (await assertPermission("vendor.portal")).user.id;
   } catch (error) {
-    if (error instanceof AuthorizationError) return NextResponse.json({ error: "forbidden" }, { status: 403 });
+    if (error instanceof AuthorizationError)
+      return NextResponse.json({ error: "forbidden" }, { status: 403 });
     throw error;
   }
   const parsed = querySchema.safeParse({ v: request.nextUrl.searchParams.get("v") });
@@ -37,8 +39,8 @@ export async function GET(request: NextRequest) {
     .maybeSingle();
   if (!member) return NextResponse.json({ error: "forbidden" }, { status: 403 });
 
-  const { ledger } = await getVendorEarnings(vendorId);
-  const today = new Date().toISOString().slice(0, 10);
+  const { ledger } = await getVendorEarnings(vendorId, { all: true });
+  const today = indiaToday();
   // BOM so spreadsheet apps read the file as UTF-8.
   return new NextResponse(`﻿${statementCsv(ledger)}\n`, {
     headers: {

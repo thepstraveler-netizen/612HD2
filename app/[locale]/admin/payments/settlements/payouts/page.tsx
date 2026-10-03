@@ -95,7 +95,7 @@ export default async function PayoutsPage({
             {t("payouts.amount")}
           </span>,
           t("payouts.status"),
-          t("payouts.created"),
+          t("payouts.createdAt"),
         ]}
         rows={rows.map((p) => ({
           key: p.id,

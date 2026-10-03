@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { formatPaise } from "@/lib/money";
-import { formatDay, indiaToday, nextCycleEnd, unsettledTotals, vendorHref } from "@/lib/partners/ui";
+import { formatDay, indiaToday, nextCycleEnd, vendorHref } from "@/lib/partners/ui";
 import { getVendorEarnings, type PortalContext } from "@/lib/partners/vendor-queries";
 import { getSettlementsSettings } from "@/lib/settlements/settings";
 import { balanceDirection } from "@/lib/settlements/statement";
@@ -13,11 +13,10 @@ import { cn } from "@/lib/utils";
 export async function VendorHomeSummary({ portal, locale }: { portal: PortalContext; locale: string }) {
   const t = await getTranslations("vendorEarnings");
   const { vendor } = portal;
-  const [{ ledger, payouts }, settings] = await Promise.all([
+  const [{ unsettled: open, payouts }, settings] = await Promise.all([
     getVendorEarnings(vendor.id),
     getSettlementsSettings(),
   ]);
-  const open = unsettledTotals(ledger);
   const direction = balanceDirection(open.net_paise);
   const lastPaid = payouts.find((p) => p.status === "paid");
   const multiple = portal.vendors.length > 1;

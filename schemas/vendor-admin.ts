@@ -23,7 +23,15 @@ export type VendorKind = (typeof VENDOR_KINDS)[number];
 export const VENDOR_STATUSES = ["pending", "active", "suspended"] as const;
 export type VendorStatus = (typeof VENDOR_STATUSES)[number];
 
-const trimmed = (max: number) => z.string().trim().max(max);
+const trimmed = (max: number) => z.string().trim().max(max, { error: "invalid" });
+
+/** A whole number typed into a form field, with a translatable message. */
+const wholeNumber = (min: number, max: number) =>
+  z.coerce
+    .number({ error: "invalid" })
+    .int({ error: "invalid" })
+    .min(min, { error: "invalid" })
+    .max(max, { error: "invalid" });
 
 const optionalPhone = z
   .string()
@@ -38,7 +46,7 @@ const optionalPhone = z
     return phone;
   });
 
-const optionalEmail = z.union([z.literal(""), z.email({ error: "invalidEmail" }).max(200)]);
+const optionalEmail = z.union([z.literal(""), z.email({ error: "invalidEmail" }).max(200, { error: "invalidEmail" })]);
 
 const optionalUpper = (pattern: RegExp, error: string) =>
   z
@@ -51,7 +59,7 @@ const optionalUpper = (pattern: RegExp, error: string) =>
 export const vendorAdminSchema = z.object({
   id: z.uuid().or(z.literal("")).default(""),
   kind: z.enum(VENDOR_KINDS),
-  name: z.string().trim().min(2, { error: "required" }).max(160),
+  name: z.string().trim().min(2, { error: "required" }).max(160, { error: "invalid" }),
   status: z.enum(VENDOR_STATUSES),
   commission_percent: percentField(100),
   contact_name: trimmed(120),
@@ -101,8 +109,8 @@ export const partnersSettingsFormSchema = z.object({
       typeof typeSettings
     >,
   ),
-  max_file_mb: z.coerce.number().int().min(1).max(20),
-  agreement_version: z.string().trim().min(1, { error: "required" }).max(40),
+  max_file_mb: wholeNumber(1, 20),
+  agreement_version: z.string().trim().min(1, { error: "required" }).max(40, { error: "invalid" }),
   agreement_body: localizedSchema,
 });
 export type PartnersSettingsFormInput = z.input<typeof partnersSettingsFormSchema>;
@@ -113,7 +121,7 @@ export const settlementsSettingsFormSchema = z.object({
   commission_tax_percent: percentField(28),
   tcs_percent: percentField(10),
   tds_percent: percentField(10),
-  cycle_days: z.coerce.number().int().min(1).max(60),
+  cycle_days: wholeNumber(1, 60),
 });
 export type SettlementsSettingsFormInput = z.input<typeof settlementsSettingsFormSchema>;
 export type SettlementsSettingsForm = z.output<typeof settlementsSettingsFormSchema>;

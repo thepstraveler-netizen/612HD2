@@ -157,7 +157,11 @@ export function PartnerApplyForm({
       detailErrors(type, (form.getValues("details") ?? {}) as Record<string, string>),
     );
     for (const [key, message] of problems) {
-      form.setError(`details.${key}`, { type: "custom", message }, { shouldFocus: ok && key === problems[0][0] });
+      form.setError(
+        `details.${key}`,
+        { type: "custom", message },
+        { shouldFocus: ok && key === problems[0][0] },
+      );
     }
     return ok && problems.length === 0;
   }
@@ -231,7 +235,8 @@ export function PartnerApplyForm({
       toast.error(t("form.checkStep"));
       const first = Object.keys(errors)[0] ?? "";
       if (first === "businessType") goTo("type");
-      else if ((STEP_FIELDS.details as readonly string[]).includes(first) || first === "details") goTo("details");
+      else if ((STEP_FIELDS.details as readonly string[]).includes(first) || first === "details")
+        goTo("details");
     },
   );
 
@@ -263,7 +268,7 @@ export function PartnerApplyForm({
                 <span className={cn("block h-1.5 rounded-full", i <= index ? "bg-primary" : "bg-muted")} />
                 <span
                   className={cn(
-                    "hidden text-xs sm:block",
+                    "sr-only text-xs sm:not-sr-only sm:block",
                     s === step ? "font-semibold" : "text-muted-foreground",
                   )}
                 >
@@ -314,7 +319,9 @@ export function PartnerApplyForm({
                           </span>
                           <span className="space-y-0.5">
                             <span className="block font-semibold">{t(`types.${value}.name`)}</span>
-                            <span className="block text-sm text-muted-foreground">{t(`types.${value}.hint`)}</span>
+                            <span className="block text-sm text-muted-foreground">
+                              {t(`types.${value}.hint`)}
+                            </span>
                           </span>
                         </label>
                       );
@@ -330,11 +337,45 @@ export function PartnerApplyForm({
         {step === "details" ? (
           <div className="space-y-6">
             <div className="grid gap-4 sm:grid-cols-2">
-              <TextField form={form} name="businessName" label={t("form.fields.businessName")} error={fieldError} autoComplete="organization" className="sm:col-span-2" />
-              <TextField form={form} name="contactName" label={t("form.fields.contactName")} error={fieldError} autoComplete="name" />
-              <TextField form={form} name="phone" label={t("form.fields.phone")} error={fieldError} autoComplete="tel" type="tel" inputMode="tel" />
-              <TextField form={form} name="email" label={t("form.fields.email")} error={fieldError} autoComplete="email" type="email" />
-              <TextField form={form} name="city" label={t("form.fields.city")} error={fieldError} autoComplete="address-level2" />
+              <TextField
+                form={form}
+                name="businessName"
+                label={t("form.fields.businessName")}
+                error={fieldError}
+                autoComplete="organization"
+                className="sm:col-span-2"
+              />
+              <TextField
+                form={form}
+                name="contactName"
+                label={t("form.fields.contactName")}
+                error={fieldError}
+                autoComplete="name"
+              />
+              <TextField
+                form={form}
+                name="phone"
+                label={t("form.fields.phone")}
+                error={fieldError}
+                autoComplete="tel"
+                type="tel"
+                inputMode="tel"
+              />
+              <TextField
+                form={form}
+                name="email"
+                label={t("form.fields.email")}
+                error={fieldError}
+                autoComplete="email"
+                type="email"
+              />
+              <TextField
+                form={form}
+                name="city"
+                label={t("form.fields.city")}
+                error={fieldError}
+                autoComplete="address-level2"
+              />
               <FormField
                 control={form.control}
                 name="address"
@@ -350,7 +391,13 @@ export function PartnerApplyForm({
               />
               <TextField form={form} name="gstin" label={t("form.fields.gstin")} error={fieldError} upper />
               <TextField form={form} name="pan" label={t("form.fields.pan")} error={fieldError} upper />
-              <TextField form={form} name="website" label={t("form.fields.website")} error={fieldError} className="sm:col-span-2" />
+              <TextField
+                form={form}
+                name="website"
+                label={t("form.fields.website")}
+                error={fieldError}
+                className="sm:col-span-2"
+              />
             </div>
 
             {type ? (
@@ -450,7 +497,13 @@ export function PartnerApplyForm({
             >
               {settings.agreement.body}
             </div>
-            <TextField form={form} name="agreementName" label={t("agreement.name")} error={fieldError} autoComplete="name" />
+            <TextField
+              form={form}
+              name="agreementName"
+              label={t("agreement.name")}
+              error={fieldError}
+              autoComplete="name"
+            />
             <FormField
               control={form.control}
               name="acceptAgreement"
@@ -500,7 +553,8 @@ export function PartnerApplyForm({
   );
 }
 
-type TextName = "businessName" | "contactName" | "phone" | "email" | "city" | "gstin" | "pan" | "website" | "agreementName";
+type TextName =
+  "businessName" | "contactName" | "phone" | "email" | "city" | "gstin" | "pan" | "website" | "agreementName";
 
 function TextField({
   form,
@@ -527,7 +581,12 @@ function TextField({
         <FormItem className={className}>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <Input {...field} value={String(field.value ?? "")} {...input} className={upper ? "uppercase" : undefined} />
+            <Input
+              {...field}
+              value={String(field.value ?? "")}
+              {...input}
+              className={upper ? "uppercase" : undefined}
+            />
           </FormControl>
           <FormMessage translateKey={error} />
         </FormItem>
