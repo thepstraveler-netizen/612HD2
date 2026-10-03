@@ -1,7 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { getSession } from "@/lib/auth/session";
+import { AuthorizationError, assertPermission } from "@/lib/auth/guards";
 import { todayInIndia } from "@/lib/dates";
-import { hasPermission } from "@/lib/permissions/check";
 import { getCommissionReport } from "@/lib/settlements/admin-queries";
 import { commissionReportCsv, defaultReportRange } from "@/lib/settlements/admin-rows";
 import { reportRangeSchema } from "@/schemas/vendor-admin";
@@ -10,9 +9,13 @@ export const dynamic = "force-dynamic";
 
 /** Commission report (per vendor, ledger rows dated in a range) as CSV for staff with payments.read. */
 export async function GET(request: NextRequest) {
-  const session = await getSession();
-  if (!session || session.profile?.is_blocked || !hasPermission(session.permissions, "payments.read")) {
-    return NextResponse.json({ error: "forbidden" }, { status: 403 });
+  // assertPermission also enforces two-step sign-in (mfaSatisfied).
+  try {
+    await assertPermission("payments.read");
+  } catch (error) {
+    if (error instanceof AuthorizationError)
+      return NextResponse.json({ error: "forbidden" }, { status: 403 });
+    throw error;
   }
   const parsed = reportRangeSchema.parse(Object.fromEntries(request.nextUrl.searchParams));
   const fallback = defaultReportRange(todayInIndia());

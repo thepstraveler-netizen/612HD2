@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { ReactNode } from "react";
+import { ErrorReporting } from "@/components/observability/error-reporting";
 import { VercelInsights } from "@/components/observability/vercel-insights";
 import { Providers } from "@/components/providers";
 import { ServiceWorkerRegistration } from "@/components/pwa/service-worker";
@@ -16,6 +17,9 @@ const devanagari = Noto_Sans_Devanagari({
   subsets: ["devanagari"],
   variable: "--font-devanagari",
   display: "swap",
+  // Only Hindi text needs it (unicode-range), so English pages never fetch it;
+  // a preload would make every page download it before the hero renders.
+  preload: false,
 });
 const script = Dancing_Script({ subsets: ["latin"], variable: "--font-script", display: "swap" });
 
@@ -74,6 +78,7 @@ export default async function LocaleLayout({
           <Providers>{children}</Providers>
         </NextIntlClientProvider>
         <ServiceWorkerRegistration />
+        <ErrorReporting />
         {process.env.VERCEL ? <VercelInsights /> : null}
       </body>
     </html>

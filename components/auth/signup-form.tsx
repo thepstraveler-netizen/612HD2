@@ -1,12 +1,13 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from "@/lib/forms/zod-resolver";
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
+import { TurnstileWidget } from "@/components/security/turnstile-widget";
 import { signUpWithPassword } from "@/lib/auth/actions";
 import { signUpSchema, type SignUpInput } from "@/schemas/auth";
 import { TextField } from "./fields";
@@ -15,6 +16,8 @@ export function SignupForm({ next }: { next?: string }) {
   const t = useTranslations("auth");
   const [pending, startTransition] = useTransition();
   const [sent, setSent] = useState(false);
+  const [captcha, setCaptcha] = useState<string | null>(null);
+  const [captchaKey, setCaptchaKey] = useState(0);
   const form = useForm<SignUpInput>({
     resolver: zodResolver(signUpSchema),
     defaultValues: { fullName: "", email: "", password: "" },
@@ -22,10 +25,13 @@ export function SignupForm({ next }: { next?: string }) {
 
   const onSubmit = (values: SignUpInput) =>
     startTransition(async () => {
-      const result = await signUpWithPassword(values, next);
+      const result = await signUpWithPassword({ ...values, turnstileToken: captcha ?? undefined }, next);
       if (!result) return;
       if (result.ok) setSent(true);
-      else toast.error(t(`errors.${result.error}`));
+      else {
+        toast.error(t(`errors.${result.error}`));
+        setCaptchaKey((k) => k + 1);
+      }
     });
 
   if (sent) {
@@ -48,6 +54,7 @@ export function SignupForm({ next }: { next?: string }) {
           type="password"
           autoComplete="new-password"
         />
+        <TurnstileWidget action="signup" onToken={setCaptcha} resetKey={captchaKey} />
         <Button type="submit" className="w-full" disabled={pending}>
           {t("submitSignup")}
         </Button>

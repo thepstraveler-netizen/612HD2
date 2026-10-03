@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { AuthorizationError, assertPermission } from "@/lib/auth/guards";
+import { enforceRateLimit } from "@/lib/security/rate-limit";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { vendorDocumentSchema, vendorProfileSchema, vendorUploadSchema } from "@/schemas/partners";
 import { getPartnersSettings } from "./settings";
@@ -84,6 +85,7 @@ export async function createVendorUpload(input: unknown): Promise<VendorBusiness
     return { ok: false, error: parsed.error.issues[0]?.message === "tooLarge" ? "tooLarge" : "badFile" };
   }
   if (!(await isMember(parsed.data.vendorId, user))) return { ok: false, error: "forbidden" };
+  if (!(await enforceRateLimit("upload", { userId: user })).ok) return { ok: false, error: "rateLimited" };
   const settings = await getPartnersSettings();
   if (parsed.data.size_bytes > settings.max_file_mb * 1024 * 1024) return { ok: false, error: "tooLarge" };
   const path = `vendors/${parsed.data.vendorId}/${crypto.randomUUID()}.${documentExtension(parsed.data.mime_type)}`;

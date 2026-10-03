@@ -101,8 +101,10 @@ export type StatementRow = LedgerAmounts & {
   note: string | null;
 };
 
-// Shared escaping: quotes, and neutralises cells a spreadsheet would run as formulas.
-const cell = (value: string | number | null): string => csvCell(value);
+// Shared escaping: quotes, and neutralises cells a spreadsheet would run as
+// formulas. Formatted amounts such as "-0.05" are numbers and pass through.
+const cell = (value: string | number | null): string =>
+  typeof value === "string" && /^-?\d+(\.\d+)?$/.test(value) ? value : csvCell(value);
 
 const rupees = (paise: number) => (paise / 100).toFixed(2);
 

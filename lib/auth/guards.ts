@@ -3,6 +3,7 @@ import { getLocale } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";
 import { hasPermission } from "@/lib/permissions/check";
 import type { PermissionKey } from "@/lib/permissions/constants";
+import { enforceMfa, mfaSatisfied } from "@/lib/mfa/server";
 import { getSession, type SessionContext } from "./session";
 
 export class AuthorizationError extends Error {
@@ -12,8 +13,17 @@ export class AuthorizationError extends Error {
   }
 }
 
-/** For pages and layouts: redirects to login when signed out. */
-export async function requireUser(nextPath?: string): Promise<SessionContext> {
+/**
+ * For pages and layouts: redirects to login when signed out, and to the
+ * two-step code prompt when an enrolled user's session has not passed it
+ * (or, in the admin area, to set it up when staff must have it).
+ * `mfa: false` skips that, for the code prompt itself and for guards that
+ * check permissions first and then call enforceMfa().
+ */
+export async function requireUser(
+  nextPath?: string,
+  { mfa = true }: { mfa?: boolean } = {},
+): Promise<SessionContext> {
   const session = await getSession();
   if (!session) {
     const locale = await getLocale();
@@ -24,6 +34,7 @@ export async function requireUser(nextPath?: string): Promise<SessionContext> {
     const locale = await getLocale();
     return redirect({ href: "/forbidden?reason=blocked", locale });
   }
+  if (mfa) await enforceMfa(session, nextPath ?? "/account");
   return session;
 }
 
@@ -36,11 +47,12 @@ export async function requirePermission(
   permission: PermissionKey,
   nextPath?: string,
 ): Promise<SessionContext> {
-  const session = await requireUser(nextPath);
+  const session = await requireUser(nextPath, { mfa: false });
   if (!hasPermission(session.permissions, permission)) {
     const locale = await getLocale();
     return redirect({ href: "/forbidden", locale });
   }
+  await enforceMfa(session, nextPath ?? "/account");
   return session;
 }
 
@@ -54,5 +66,7 @@ export async function assertPermission(permission: PermissionKey): Promise<Sessi
   if (session.profile?.is_blocked || !hasPermission(session.permissions, permission)) {
     throw new AuthorizationError(permission);
   }
+  // An enrolled user must have entered their code before any staff action.
+  if (!(await mfaSatisfied(session))) throw new AuthorizationError(permission);
   return session;
 }

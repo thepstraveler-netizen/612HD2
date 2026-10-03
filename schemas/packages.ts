@@ -115,6 +115,8 @@ const contact = {
   message: z.string().trim().max(2000).default(""),
   /** Honeypot: real visitors never fill it. */
   website: z.string().max(0).optional().default(""),
+  /** Cloudflare Turnstile token (checked server-side only when configured). */
+  turnstileToken: z.string().trim().max(2048).optional(),
   attribution: attributionSchema,
   locale,
 };

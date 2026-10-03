@@ -4,6 +4,8 @@ import { z } from "zod";
 import { getSession } from "@/lib/auth/session";
 import { hasServiceRole } from "@/lib/env.server";
 import { notify } from "@/lib/notifications/service";
+import { enforceRateLimit } from "@/lib/security/rate-limit";
+import { verifyCaptcha } from "@/lib/security/turnstile";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { partnerApplicationSchema, partnerUploadSchema } from "@/schemas/partners";
 import { getPartnersSettings } from "./settings";
@@ -18,13 +20,21 @@ import { applicationReference, documentExtension, missingDocuments } from "./sta
 
 export type PartnerUploadResult =
   | { ok: true; path: string; token: string }
-  | { ok: false; error: "signIn" | "badFile" | "tooLarge" | "unavailable" | "uploadFailed" };
+  | { ok: false; error: "signIn" | "badFile" | "tooLarge" | "unavailable" | "uploadFailed" | "rateLimited" };
 
 export type PartnerApplyResult =
   | { ok: true; reference: string }
   | {
       ok: false;
-      error: "signIn" | "invalid" | "missingDocuments" | "applicationOpen" | "unavailable" | "unknown";
+      error:
+        | "signIn"
+        | "invalid"
+        | "missingDocuments"
+        | "applicationOpen"
+        | "unavailable"
+        | "rateLimited"
+        | "captcha"
+        | "unknown";
       field?: string;
       missing?: string[];
     };
@@ -37,6 +47,8 @@ export async function createPartnerUpload(input: unknown): Promise<PartnerUpload
   if (!parsed.success) {
     return { ok: false, error: parsed.error.issues[0]?.message === "tooLarge" ? "tooLarge" : "badFile" };
   }
+  if (!(await enforceRateLimit("upload", { userId: session.user.id })).ok)
+    return { ok: false, error: "rateLimited" };
   const settings = await getPartnersSettings();
   if (parsed.data.size_bytes > settings.max_file_mb * 1024 * 1024) return { ok: false, error: "tooLarge" };
   const path = `partners/${session.user.id}/${crypto.randomUUID()}.${documentExtension(parsed.data.mime_type)}`;
@@ -60,6 +72,9 @@ export async function submitPartnerApplication(input: unknown): Promise<PartnerA
   }
   if (!hasServiceRole()) return { ok: false, error: "unavailable" };
   const a = parsed.data;
+  if (!(await enforceRateLimit("partner", { userId: session.user.id })).ok)
+    return { ok: false, error: "rateLimited" };
+  if (!(await verifyCaptcha(a.turnstileToken)).ok) return { ok: false, error: "captcha" };
   const settings = await getPartnersSettings();
 
   if (!settings.business_types.includes(a.businessType))

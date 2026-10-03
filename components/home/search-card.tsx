@@ -5,7 +5,6 @@ import { useTranslations } from "next-intl";
 import { useState, type FormEvent, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
@@ -29,12 +28,13 @@ const ICON = { hotels: Building2, cabs: Car, rides: Bike, packages: Map, travel:
 
 const today = () => new Date().toISOString().slice(0, 10);
 
+/** The <label> wraps its control, so every input gets an accessible name without ids. */
 function Field({ label, children, className }: { label: string; children: ReactNode; className?: string }) {
   return (
-    <div className={cn("grid gap-1.5", className)}>
-      <Label className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">{label}</Label>
+    <label className={cn("grid gap-1.5", className)}>
+      <span className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">{label}</span>
       {children}
-    </div>
+    </label>
   );
 }
 

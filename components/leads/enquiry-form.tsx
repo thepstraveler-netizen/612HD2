@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState, useTransition } from "react";
 import { useForm, type FieldErrors, type Resolver } from "react-hook-form";
 import { toast } from "sonner";
+import { TurnstileWidget } from "@/components/security/turnstile-widget";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -75,6 +76,8 @@ export function EnquiryForm({
   const t = useTranslations("enquiry");
   const [pending, start] = useTransition();
   const [reference, setReference] = useState<string | null>(null);
+  const [captcha, setCaptcha] = useState<string | null>(null);
+  const [captchaKey, setCaptchaKey] = useState(0);
 
   const defaults: EnquiryFormValues = {
     startDate: "",
@@ -140,9 +143,12 @@ export function EnquiryForm({
   const onSubmit = form.handleSubmit(
     (values) =>
       start(async () => {
-        const result = await submitEnquiry(
-          enquiryPayload(target, values, { locale, attribution: readAttribution() }),
-        );
+        const result = await submitEnquiry({
+          ...enquiryPayload(target, values, { locale, attribution: readAttribution() }),
+          turnstileToken: captcha ?? undefined,
+        });
+        // Turnstile tokens are single use.
+        setCaptchaKey((k) => k + 1);
         if (result.ok) {
           setReference(result.reference);
           return;
@@ -432,6 +438,8 @@ export function EnquiryForm({
             <input type="text" tabIndex={-1} autoComplete="off" {...form.register("website")} />
           </label>
         </div>
+
+        <TurnstileWidget action="enquiry" onToken={setCaptcha} resetKey={captchaKey} />
 
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-xs text-muted-foreground">{t("privacy")}</p>

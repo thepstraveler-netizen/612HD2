@@ -379,3 +379,53 @@ Every public page sets its own canonical URL and `hreflang` links (en, hi, x-def
 ### D-092 · The PWA is a hand-written service worker; analytics only on Vercel
 
 The site installs as an app (manifest and icons). A small service worker loads pages from the network first and falls back to an offline page; static files and images are cached with size limits; a booking page the customer opened while online (My Trips → a booking) is kept, up to 20, so it opens without signal, and the saved copies are deleted on sign-out. Admin, account forms, checkout, API and auth requests are never cached. Vercel Web Analytics and Speed Insights (free, cookieless) load only on Vercel, with booking codes and tokens stripped from the URLs they report; they must be switched on in the Vercel project.
+
+## Phase 11 · Hardening
+
+### D-093 · Rate limits: fixed windows, database by default, Upstash optional
+
+Sign-in, sign-up, magic link, password reset, enquiries, partner applications, coupon lookups, review submissions, upload links and data exports are limited per visitor in fixed windows set in Admin → Settings → Security (`security.defaults.rate_limits`). Each request counts against its IP (Vercel's forwarded-for header first) and, when signed in, the account; magic link and reset are also counted per email address, hashed before it is stored. Sign-in is never limited by email alone, so nobody can lock another person out. Counts live in `rate_limit_hits` through `hit_rate_limit()` (a pg_cron job clears old windows hourly); when `UPSTASH_REDIS_REST_URL` and its token are set, Upstash is used instead. If the limiter itself fails the request is allowed and the error logged. Coupon lookups include price previews, so a customer re-pricing many times could reach the limit (30 per 10 minutes by default).
+
+### D-094 · Cloudflare Turnstile on public forms, optional
+
+Sign-in, sign-up, magic link, password reset, enquiry and partner forms carry a Turnstile check when both `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY` are set and `turnstile_enabled` is on. Without keys the widget isn't loaded and nothing is checked. Tokens are single use and renewed after each submit; if Cloudflare can't be reached the visitor is let through rather than locked out.
+
+### D-095 · Data export and account deletion (DPDP)
+
+Account → Privacy & security downloads everything tied to the account as JSON (explicit columns only: no gateway payloads, tokens, OTPs, staff notes or storage paths) and logs each download as a completed `privacy_requests` row. Deletion is a request: the customer can ask at any time and cancel; staff complete it in Admin → Customers → Privacy requests once no booking is awaiting payment or confirmed. Completing deletes the auth user, which removes the profile, addresses, travellers, wishlist, points, reviews and roles; bookings, payments and invoices are kept without the account link because tax law requires them. The request keeps the email as the record of who asked. Uploaded files (prescriptions, partner documents, review photos) are not deleted yet and need a manual clean-up.
+
+### D-096 · Content-Security-Policy without nonces
+
+Every route sends a fixed CSP built at build time (`lib/security/csp.ts`) that allows only this site, Supabase, Razorpay, Cloudflare Turnstile, Vercel Analytics and, when configured, Sentry; framing by other sites is refused. Nonces would make every page render per request and lose static caching, so inline scripts are allowed with `'unsafe-inline'`; the protection comes from the short list of origins, `object-src 'none'`, `base-uri 'self'` and `form-action 'self'`. Zod runs in its no-`eval` mode in the browser. Supabase URL and the browser Sentry DSN must be set when building.
+
+### D-097 · Two-step sign-in (TOTP) for staff
+
+Anyone can add an authenticator app in Account → Privacy & security (Supabase Auth MFA, free). Once a factor is verified, every guarded page, server action and admin export asks for the 6-digit code while the session is single-step. Staff (anyone with an admin module read permission) must set one up when Settings → Security → "Require two-step sign-in for staff" is on. The check is in the app (`lib/mfa`, `assertPermission`, the admin layout and export routes); RLS does not look at the session level, so a staff token that skipped the code is still limited only by RLS if used against the database API directly. Making RLS check the level is left for when staff accounts warrant it.
+
+### D-098 · Security review fixes
+
+A review of the code before launch led to these changes. Post-login redirects reject control characters and backslashes, so `/%09/evil.example` can't leave the site. Pickup OTPs for cabs and rides are no longer in the database API grant (a driver with a linked login could read them); customers and staff get them through `trip_otp` / `ride_otp`. Every OTP check from a driver, rider or store is limited to 5 tries per trip or order per 15 minutes, counted before the check and reported like a wrong code. Only medicine staff can create or change medicine quotes (pharmacies read them). Blocking or unblocking a staff account needs `users.manage_roles`, so a manager can't lock out an admin. Hotel commission rates are hidden from visitors. Settlement CSVs neutralise spreadsheet formulas. CMS links can't start with `//`. Saved offline trip pages are cleared whenever a page redirects to sign-in, not only on the sign-out button. Grant-narrowing changes like these must reach the live database only after the matching code is deployed.
+
+### D-099 · Maintenance mode
+
+The `site.maintenance_mode` flag shows a branded English / Hindi page (not indexed) on public pages. It is read from the cached flags, so pages stay static; the page is served with status 200 because a static layout can't set 503. Staff open "Staff preview", which turns on Next draft mode after checking their permission, to browse the real site with a banner. Admin, account, sign-in and the vendor, driver and rider pages stay reachable. Server actions already in progress (such as a checkout) are not blocked. Saving the flag takes effect at once; otherwise within 5 minutes.
+
+### D-100 · SMS through MSG91 and WhatsApp through the Cloud API
+
+Both are optional and used only when their keys are set; otherwise messages are logged as skipped, as before. Indian DLT rules and WhatsApp both require pre-approved templates, so each template key's MSG91 flow id and WhatsApp template name live in the `notifications.providers` setting, and the approved provider template (not the stored body text) is what customers receive. Variables are sent in the order given there or the order of placeholders in the stored body. Only Indian mobile numbers (+91, starting 6 to 9) are messaged. Every attempt is logged with provider, message id and an error with credentials removed.
+
+### D-101 · Error reporting without an SDK
+
+Server errors (`onRequestError`) and browser errors (error boundaries and window listeners) are sent to Sentry's envelope endpoint with `fetch` when `SENTRY_DSN` / `NEXT_PUBLIC_SENTRY_DSN` are set, after removing emails, phone numbers, tokens, cookies and auth headers; otherwise they are written to the logs as one JSON line. This keeps the Sentry SDK out of the bundle and works on Sentry's free plan. Logs use a small JSON-lines logger with the same scrubbing.
+
+### D-102 · Database advisor findings
+
+All 79 foreign keys the Supabase performance advisor listed as unindexed now have indexes. Accepted as they are: the security advisor's warnings about `can_read_*`, `has_permission`, `is_staff` and similar functions being callable by signed-in users and visitors (RLS policies call them and they only reveal the caller's own access), "multiple permissive policies" (a small cost per query, kept for readable policies), "unused index" (no traffic yet) and `invoice_counters` having RLS without policies (only server functions touch it). Leaked-password protection needs a paid Supabase plan and stays off.
+
+### D-103 · Upload scanning hook
+
+`lib/security/file-scan.ts` defines a `FileScanner` interface with a no-op default. Browsers upload straight to Supabase Storage, so there is no single server step to scan in; when a scanner is chosen it should run from the actions that record an upload (partner application, vendor document, prescription, review) or a Storage webhook.
+
+### D-104 · A refund that fails stops counting
+
+When Razorpay reports a refund as failed after it was recorded, its amount is taken off the booking's refunded total, the payment and booking status are worked out again from the refunds that didn't fail (a fully failed refund puts the booking back to cancelled), and staff can issue the refund again. A failed refund stays failed even if an older webhook for it arrives later.

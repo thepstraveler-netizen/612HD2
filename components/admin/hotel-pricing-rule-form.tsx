@@ -1,6 +1,6 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from "@/lib/forms/zod-resolver";
 import { useTranslations } from "next-intl";
 import { useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";

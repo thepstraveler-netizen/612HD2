@@ -1,6 +1,6 @@
 -- Phase 11 performance pass: covering indexes for every foreign key the
 -- Supabase performance advisor listed as unindexed (2026-10-03). Joins and
--- ON DELETE checks on these columns no longer scan the child table (D-097).
+-- ON DELETE checks on these columns no longer scan the child table (D-102).
 -- Idempotent and additive.
 
 create index if not exists addresses_zone_id_fk_idx on public.addresses (zone_id);

@@ -1,6 +1,6 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from "@/lib/forms/zod-resolver";
 import { ArrowDown, ArrowUp, ImagePlus, Loader2, X } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";

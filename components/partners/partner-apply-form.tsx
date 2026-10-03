@@ -1,6 +1,6 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from "@/lib/forms/zod-resolver";
 import {
   Building2,
   Car,
@@ -17,6 +17,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState, useTransition, type ComponentProps } from "react";
 import { useForm, type FieldPath } from "react-hook-form";
 import { toast } from "sonner";
+import { TurnstileWidget } from "@/components/security/turnstile-widget";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -84,6 +85,8 @@ export function PartnerApplyForm({
   const [docs, setDocs] = useState<DocItem[]>([]);
   const [docError, setDocError] = useState<string | null>(null);
   const [submitting, startSubmit] = useTransition();
+  const [captcha, setCaptcha] = useState<string | null>(null);
+  const [captchaKey, setCaptchaKey] = useState(0);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const moved = useRef(false);
 
@@ -187,7 +190,10 @@ export function PartnerApplyForm({
           details: normalizeDetails(type, (values.details ?? {}) as Record<string, string>),
           documents: uploadedDocs(docs),
           locale,
+          turnstileToken: captcha ?? undefined,
         });
+        // Turnstile tokens are single use.
+        setCaptchaKey((k) => k + 1);
         if (result.ok) {
           toast.success(t("status.sent", { reference: result.reference }));
           router.replace("/partner");
@@ -528,6 +534,7 @@ export function PartnerApplyForm({
               )}
             />
             <p className="text-xs text-muted-foreground">{t("agreement.note")}</p>
+            <TurnstileWidget action="partner" onToken={setCaptcha} resetKey={captchaKey} />
           </div>
         ) : null}
 

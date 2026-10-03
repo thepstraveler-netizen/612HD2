@@ -1,17 +1,20 @@
 import { NextResponse } from "next/server";
-import { getSession } from "@/lib/auth/session";
+import { AuthorizationError, assertPermission } from "@/lib/auth/guards";
 import { getHotelExportRows } from "@/lib/hotels/admin";
 import { hotelsToCsv } from "@/lib/hotels/csv";
 import { todayInIndia } from "@/lib/dates";
-import { hasPermission } from "@/lib/permissions/check";
 
 export const dynamic = "force-dynamic";
 
 /** CSV of every hotel's rooms and rate plans (one row per plan) for staff with hotels.read. */
 export async function GET() {
-  const session = await getSession();
-  if (!session || session.profile?.is_blocked || !hasPermission(session.permissions, "hotels.read")) {
-    return NextResponse.json({ error: "forbidden" }, { status: 403 });
+  // assertPermission also enforces two-step sign-in (mfaSatisfied).
+  try {
+    await assertPermission("hotels.read");
+  } catch (error) {
+    if (error instanceof AuthorizationError)
+      return NextResponse.json({ error: "forbidden" }, { status: 403 });
+    throw error;
   }
   const csv = hotelsToCsv(await getHotelExportRows());
   return new NextResponse(`﻿${csv}`, {

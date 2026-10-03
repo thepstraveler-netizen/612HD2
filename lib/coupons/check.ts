@@ -1,5 +1,6 @@
 import "server-only";
 import { hasServiceRole } from "@/lib/env.server";
+import { enforceRateLimit } from "@/lib/security/rate-limit";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
   canUseCoupon,
@@ -61,6 +62,9 @@ export async function checkCoupon(
   error: CouponRejection | null;
 }> {
   if (!hasServiceRole()) return { coupon: null, error: "not_found" };
+  // Every lookup counts (previews and bookings alike), so codes can't be guessed in bulk.
+  if (!(await enforceRateLimit("coupon", { userId: ctx.userId })).ok)
+    return { coupon: null, error: "rateLimited" };
   const admin = createAdminClient();
   const { data } = await admin.from("coupons").select("*").eq("code", code).maybeSingle();
   if (!data) return { coupon: null, error: "not_found" };

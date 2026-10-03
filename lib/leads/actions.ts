@@ -4,6 +4,8 @@ import { getSession } from "@/lib/auth/session";
 import { hasServiceRole } from "@/lib/env.server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getLivePackage } from "@/lib/packages/queries";
+import { enforceRateLimit } from "@/lib/security/rate-limit";
+import { verifyCaptcha } from "@/lib/security/turnstile";
 import { enquirySchema, type Enquiry } from "@/schemas/packages";
 import type { Json } from "@/types/database";
 import { createLead, LeadError, type NewLead } from "./capture";
@@ -33,7 +35,7 @@ export type EnquiryResult =
   | { ok: true; reference: string }
   | {
       ok: false;
-      error: "invalid" | "rate_limited" | "not_found" | "unavailable" | "unknown";
+      error: "invalid" | "rate_limited" | "rateLimited" | "captcha" | "not_found" | "unavailable" | "unknown";
       field?: string;
     };
 
@@ -69,6 +71,10 @@ export async function submitEnquiry(input: unknown): Promise<EnquiryResult> {
   if (!hasServiceRole()) return { ok: false, error: "unavailable" };
 
   const session = await getSession();
+  // Per visitor (IP / account); the database separately throttles per phone number.
+  if (!(await enforceRateLimit("enquiry", { userId: session?.user.id })).ok)
+    return { ok: false, error: "rateLimited" };
+  if (!(await verifyCaptcha(e.turnstileToken)).ok) return { ok: false, error: "captcha" };
   const plan = "planId" in e && e.planId ? await getServicePlan(e.planId, e.serviceSlug) : null;
   if ("planId" in e && e.planId && !plan) return { ok: false, error: "not_found" };
   let pkg: { id: string; title: string } | null = null;

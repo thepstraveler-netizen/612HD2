@@ -12,6 +12,9 @@ import { DeliverySettingsForm } from "@/components/admin/delivery-settings-form"
 import { PackagesSettingsForms } from "@/components/admin/packages-settings-form";
 import { PartnersSettingsForms } from "@/components/admin/partners-settings-form";
 import { EngagementSettingsForms } from "@/components/admin/engagement-settings-form";
+import { SecuritySettingsForm } from "@/components/mfa/security-settings-form";
+import { getSecuritySettings } from "@/lib/security/settings";
+import { securitySettingsFormValues } from "@/schemas/security";
 import { requirePermission } from "@/lib/auth/guards";
 import { invoiceSettingsFormValues, paymentSettingsFormValues } from "@/lib/bookings/admin-forms";
 import { cabSettingsFormValues } from "@/lib/cabs/admin-rows";
@@ -154,6 +157,9 @@ export default async function AdminSettingsPage() {
           )}
           loyalty={loyaltySettingsFormValues(parseLoyaltySettings(storedValue("loyalty.defaults")))}
         />
+      ) : null}
+      {canWrite ? (
+        <SecuritySettingsForm defaultValues={securitySettingsFormValues(await getSecuritySettings())} />
       ) : null}
       <FeatureFlagList flags={flags ?? []} canWrite={canWrite} />
     </div>

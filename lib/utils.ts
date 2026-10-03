@@ -12,7 +12,6 @@ export function cn(...inputs: ClassValue[]) {
  * tabs and newlines, so `/\t/evil.example` would otherwise become `//evil.example`.
  */
 export function safeNextPath(next: string | null | undefined, fallback = "/account"): string {
-  // eslint-disable-next-line no-control-regex
   if (!next || /[\u0000-\u001F\u007F\\]/.test(next) || !next.startsWith("/") || next.startsWith("//")) {
     return fallback;
   }

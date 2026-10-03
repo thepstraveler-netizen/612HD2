@@ -1,6 +1,6 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from "@/lib/forms/zod-resolver";
 import { BadgePercent, Banknote, CheckCircle2, CreditCard, Loader2, Lock, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRef, useState, useTransition, type ReactNode } from "react";

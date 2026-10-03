@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getSession } from "@/lib/auth/session";
 import { invoiceRows, invoiceTotals, type InvoiceDocument } from "@/lib/invoices/document";
 import { renderInvoicePdf } from "@/lib/invoices/pdf";
+import { mfaSatisfied } from "@/lib/mfa/server";
 import { createClient } from "@/lib/supabase/server";
 
 const SERVICE_LABEL: Partial<Record<string, string>> = {
@@ -16,7 +17,8 @@ const SERVICE_LABEL: Partial<Record<string, string>> = {
 /**
  * GST invoice PDF for a booking. Read with the caller's own session, so
  * row-level security decides access: the guest, staff with bookings or
- * payments access, and the hotel's vendor.
+ * payments access, and the hotel's vendor. Reading another person's invoice
+ * also needs the two-step sign-in rule met (mfaSatisfied).
  */
 
 export const runtime = "nodejs";
@@ -64,6 +66,11 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
   const supabase = await createClient();
   const { data: booking } = await supabase.from("bookings").select("*").eq("code", code).maybeSingle();
   if (!booking) return NextResponse.json({ error: "not found" }, { status: 404 });
+  // Someone else's invoice (staff or vendor access) needs the two-step rule met;
+  // a customer's own invoice does not.
+  if (booking.user_id !== session.user.id && !(await mfaSatisfied(session))) {
+    return NextResponse.json({ error: "forbidden" }, { status: 403 });
+  }
   const [{ data: invoice }, { data: items }] = await Promise.all([
     supabase.from("invoices").select("*").eq("booking_id", booking.id).maybeSingle(),
     supabase.from("booking_items").select("*").eq("booking_id", booking.id).order("sort_order"),

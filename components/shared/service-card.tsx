@@ -35,9 +35,8 @@ export function ServiceCard({
       <span className="flex min-w-0 flex-col gap-1">
         <span className="font-semibold text-heading">{pickLocalized(service.name, locale)}</span>
         <span className="text-sm text-muted-foreground">{pickLocalized(service.summary, locale)}</span>
-        <span
-          className={cn("mt-auto inline-flex items-center gap-1 pt-1 text-sm font-semibold", accent.text)}
-        >
+        {/* The accent colours are too light for small text on white (WCAG AA); the badge carries the accent. */}
+        <span className="mt-auto inline-flex items-center gap-1 pt-1 text-sm font-semibold text-primary">
           {service.ctaLabel ? pickLocalized(service.ctaLabel, locale) : cta}
           <ArrowRight className="size-4 transition group-hover:translate-x-0.5" aria-hidden="true" />
         </span>

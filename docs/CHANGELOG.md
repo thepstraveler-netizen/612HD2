@@ -1,5 +1,30 @@
 # Changelog
 
+## Phase 11 · Hardening
+
+### Added
+
+- Rate limits on sign-in, sign-up, magic link, password reset, enquiries, partner applications, coupon lookups, reviews, upload links and data exports, editable in Admin → Settings → Security. Counted in the database (`rate_limit_hits`) or in Upstash when its keys are set.
+- Cloudflare Turnstile on the sign-in, sign-up, magic-link, reset, enquiry and partner forms (only when the keys are set).
+- Content-Security-Policy on every route, allowing only this site, Supabase, Razorpay, Turnstile, Vercel Analytics and Sentry.
+- Maintenance mode: the `site.maintenance_mode` flag shows a branded English / Hindi page to visitors; staff can preview the real site with a banner.
+- Account → Privacy & security: download all your data as JSON, ask for your account to be deleted (and cancel), and set up two-step sign-in with an authenticator app.
+- Two-step sign-in: a code prompt for anyone who set it up; Settings → Security can require it for all staff.
+- Admin → Customers → Privacy requests: complete a deletion (once no booking is open) or reject it with a reason; the customer page lists their requests.
+- SMS through MSG91 and WhatsApp through the Cloud API, using the provider template ids in the `notifications.providers` setting; still logged as skipped without keys.
+- Error reporting to Sentry (server and browser) without the SDK, with emails, phones and tokens removed; a JSON logger. Localised error pages.
+- A hook for scanning uploads (does nothing until a scanner is chosen).
+- Docs: `ADMIN_GUIDE.md` for staff, `API.md` for developers, `ACCEPTANCE.md` mapping each acceptance criterion to its tests, and the go-live checklist in `DEPLOYMENT.md` §16.
+- Tests: acceptance tests for server-side pricing under tampering (hotel, cab, ride, food, package), double booking under racing requests, webhook replays and out-of-order events, RLS across two customers and two vendors, and admin edits refreshing the public site; database tests for rate limits, privacy requests and the review fixes; unit and browser tests for the CSP, Turnstile, rate limiter, two-step sign-in, data export, SMS / WhatsApp adapters and error reporting.
+
+### Changed
+
+- Security review fixes (D-098): post-login redirects can't be tricked off-site; pickup OTPs are no longer readable by drivers and every OTP allows 5 tries per 15 minutes; only medicine staff can change medicine quotes; managers can't block admins; hotel commission rates are hidden from visitors; settlement CSVs neutralise formulas; CMS links can't point off-site with `//`; saved offline trip pages are cleared when the session ends.
+- A refund Razorpay reports as failed is no longer counted, and staff can issue it again (D-104).
+- 79 new database indexes on foreign keys, from the Supabase performance advisor.
+- Faster public pages: supabase-js and the hotel map load only when needed, home banner text is prepared on the server, and the Hindi font is no longer preloaded. Lighthouse mobile (no data): home 84–89 performance, 100 accessibility, best practices and SEO; hotels 85–92 performance, 100 accessibility and best practices.
+- Admin export routes, the invoice PDF for staff and every guarded page check two-step sign-in.
+
 ## Phase 10 · Reviews, rewards, referrals, wishlist, PWA, SEO and reports
 
 ### Added

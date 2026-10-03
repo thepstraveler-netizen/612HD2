@@ -1,9 +1,9 @@
 import { Building2, List, Map as MapIcon, TicketPercent } from "lucide-react";
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { HotelCard } from "@/components/hotels/hotel-card";
 import { HotelFilters, type FilterOptions } from "@/components/hotels/hotel-filters";
-import { HotelMap } from "@/components/hotels/hotel-map";
 import { HotelSearchBar } from "@/components/hotels/hotel-search-bar";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,9 @@ import { formatPaise } from "@/lib/money";
 import { cn } from "@/lib/utils";
 import { HOTEL_SORTS, parseHotelSearch, PROPERTY_TYPES } from "@/schemas/hotels";
 import { pageMetadata } from "@/lib/seo/metadata";
+
+/** Leaflet and its stylesheet load only when the map view is open, not with the list. */
+const HotelMap = dynamic(() => import("@/components/hotels/hotel-map").then((m) => m.HotelMap));
 
 type Props = { params: Promise<{ locale: string }>; searchParams: Promise<RawParams> };
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from "@/lib/forms/zod-resolver";
 import { Ban, Trash2, Unlock } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useTransition } from "react";

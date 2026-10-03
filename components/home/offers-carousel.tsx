@@ -2,22 +2,30 @@
 
 import { Copy, TicketPercent } from "lucide-react";
 import Image from "next/image";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import type { Banner } from "@/lib/catalog/types";
-import { pickLocalized } from "@/lib/i18n/localized";
 import { ACCENT_CLASSES } from "@/lib/services";
 import { cn } from "@/lib/utils";
 
 const TABS = ["all", "hotels", "cabs", "food", "packages"] as const;
 
+/**
+ * A banner with its text already picked for the page's language on the server,
+ * so this client component doesn't ship the localized-JSON helpers (and zod).
+ */
+export type OfferBanner = Omit<Banner, "title" | "subtitle" | "ctaLabel"> & {
+  title: string;
+  subtitle: string | null;
+  ctaLabel: string | null;
+};
+
 /** Admin-managed offer banners with category tabs and copyable coupon codes. */
-export function OffersCarousel({ banners }: { banners: Banner[] }) {
+export function OffersCarousel({ banners }: { banners: OfferBanner[] }) {
   const t = useTranslations("offers");
-  const locale = useLocale();
   const [tab, setTab] = useState<(typeof TABS)[number]>("all");
   const visible = tab === "all" ? banners : banners.filter((b) => b.tab === tab);
   const tabsWithOffers = TABS.filter((key) => key === "all" || banners.some((b) => b.tab === key));
@@ -72,11 +80,9 @@ export function OffersCarousel({ banners }: { banners: Banner[] }) {
                     )}
                   </div>
                   <div className="flex flex-1 flex-col gap-2 p-4">
-                    <h3 className="text-lg font-bold">{pickLocalized(banner.title, locale)}</h3>
+                    <h3 className="text-lg font-bold">{banner.title}</h3>
                     {banner.subtitle ? (
-                      <p className="text-sm text-muted-foreground">
-                        {pickLocalized(banner.subtitle, locale)}
-                      </p>
+                      <p className="text-sm text-muted-foreground">{banner.subtitle}</p>
                     ) : null}
                     <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-2">
                       {banner.couponCode ? (
@@ -94,9 +100,7 @@ export function OffersCarousel({ banners }: { banners: Banner[] }) {
                       )}
                       {banner.href ? (
                         <Button asChild size="sm" className="h-10">
-                          <Link href={banner.href}>
-                            {banner.ctaLabel ? pickLocalized(banner.ctaLabel, locale) : "→"}
-                          </Link>
+                          <Link href={banner.href}>{banner.ctaLabel ?? "→"}</Link>
                         </Button>
                       ) : null}
                     </div>

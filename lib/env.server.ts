@@ -38,3 +38,19 @@ export function emailConfig(): EmailConfig | null {
   if (!apiKey) return null;
   return { apiKey, from: process.env.NOTIFY_FROM_EMAIL || "The P & S Traveler Group <bookings@example.com>" };
 }
+
+/** MSG91 SMS (optional). Without MSG91_AUTH_KEY, SMS notifications are logged as skipped. */
+export function msg91Config(): { authKey: string; senderId: string | null } | null {
+  const authKey = process.env.MSG91_AUTH_KEY;
+  if (!authKey) return null;
+  return { authKey, senderId: process.env.MSG91_SENDER_ID || null };
+}
+
+/** WhatsApp Cloud API (optional). Needs both the token and the phone number id. */
+export function whatsAppConfig(): { token: string; phoneNumberId: string; apiVersion: string } | null {
+  const token = process.env.WHATSAPP_CLOUD_TOKEN;
+  const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
+  if (!token || !phoneNumberId) return null;
+  const version = process.env.WHATSAPP_API_VERSION;
+  return { token, phoneNumberId, apiVersion: version && /^v\d+\.\d+$/.test(version) ? version : "v21.0" };
+}

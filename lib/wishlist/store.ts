@@ -1,6 +1,5 @@
 "use client";
 
-import { createClient } from "@/lib/supabase/client";
 import { wishlistKey, type WishlistSubject } from "./types";
 
 /**
@@ -16,6 +15,9 @@ export type WishlistState = {
 };
 
 const configured = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+
+/** supabase-js is imported on first use, so listing pages don't ship it in their first load. */
+const browserClient = async () => (await import("@/lib/supabase/client")).createClient();
 
 const IDLE: WishlistState = { status: "idle", signedIn: false, keys: new Set() };
 let state: WishlistState = IDLE;
@@ -37,7 +39,7 @@ export function loadWishlist(): Promise<void> {
   set({ ...state, status: "loading" });
   loading = (async () => {
     try {
-      const supabase = createClient();
+      const supabase = await browserClient();
       const { data } = await supabase.auth.getUser();
       if (!data.user) {
         set({ status: "ready", signedIn: false, keys: new Set() });
@@ -91,7 +93,7 @@ export async function toggleWishlist(type: WishlistSubject, id: string): Promise
     set({ ...state, keys });
   };
   apply(!wasSaved);
-  const supabase = createClient();
+  const supabase = await browserClient();
   const { error } = wasSaved
     ? await supabase.from("wishlists").delete().eq("subject_type", type).eq("subject_id", id)
     : await supabase.from("wishlists").insert({ subject_type: type, subject_id: id });

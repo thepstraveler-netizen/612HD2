@@ -8,6 +8,7 @@ import { BookingError, expireStaleBookings } from "@/lib/bookings/service";
 import { getFeatureFlag, getInvoiceSettings, getPaymentSettings } from "@/lib/bookings/settings";
 import { hasServiceRole, razorpayConfig } from "@/lib/env.server";
 import { finalizePrice } from "@/lib/pricing/booking";
+import { enforceRateLimit } from "@/lib/security/rate-limit";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -219,7 +220,8 @@ export type PrescriptionResult =
   | { ok: true; id: string }
   | {
       ok: false;
-      error: "signin" | "forbidden" | "invalid" | "booking_closed" | "invalid_file" | "unknown";
+      error:
+        "signin" | "forbidden" | "invalid" | "booking_closed" | "invalid_file" | "rateLimited" | "unknown";
       field?: string;
     };
 
@@ -238,6 +240,8 @@ export async function submitPrescription(input: unknown): Promise<PrescriptionRe
   }
   if (!hasServiceRole() || !(await getFeatureFlag("booking.medicine")))
     return { ok: false, error: "booking_closed" };
+  if (!(await enforceRateLimit("upload", { userId: session.user.id })).ok)
+    return { ok: false, error: "rateLimited" };
   const p = parsed.data;
   const { data, error } = await createAdminClient().rpc("submit_prescription", {
     p: {

@@ -352,7 +352,8 @@
         "tooLarge": "This file is larger than {mb} MB.",
         "uploadFailed": "The upload didn't go through. Check your connection and try again.",
         "signIn": "Your session has ended. Sign in again to continue.",
-        "unavailable": "Uploads aren't available right now. Please try again later."
+        "unavailable": "Uploads aren't available right now. Please try again later.",
+        "rateLimited": "Too many uploads. Please wait a few minutes and try again."
       }
     },
     "agreement": {
@@ -380,7 +381,9 @@
       "unavailable": "Applications can't be sent right now. Please try again later.",
       "unknown": "Something went wrong. Please try again.",
       "agreementChanged": "The partner agreement was just updated. Please read it again and sign.",
-      "signIn": "Your session has ended. Sign in again to continue."
+      "signIn": "Your session has ended. Sign in again to continue.",
+      "rateLimited": "Too many attempts. Please wait a few minutes and try again.",
+      "captcha": "We couldn't confirm you're not a robot. Please complete the check and try again."
     },
     "status": {
       "title": "Your partner application",
@@ -460,7 +463,8 @@
       "emailNotConfirmed": "Please confirm your email address first.",
       "rateLimited": "Too many attempts. Please wait a minute and try again.",
       "notConfigured": "Sign-in is not configured yet.",
-      "generic": "Something went wrong. Please try again."
+      "generic": "Something went wrong. Please try again.",
+      "captcha": "We couldn't confirm you're not a robot. Please complete the check and try again."
     }
   },
   "account": {
@@ -484,7 +488,8 @@
       "addresses": "Addresses",
       "profile": "Profile",
       "prescriptions": "Prescriptions",
-      "password": "Password"
+      "password": "Password",
+      "security": "Privacy & security"
     },
     "overview": {
       "pointsTitle": "P&S Rewards",
@@ -877,14 +882,14 @@
   },
   "vendor": {
     "title": "Vendor dashboard",
-    "lead": "Manage your listings, orders and settlements. Arrives with the partner programme in phase 9.",
+    "lead": "Manage your listings, orders and settlements.",
     "listings": "Listings",
     "orders": "Orders",
     "settlements": "Settlements"
   },
   "driver": {
     "title": "My trips",
-    "lead": "Assigned trips and status updates appear here from phase 5.",
+    "lead": "Your assigned trips and their status updates.",
     "empty": "No trips assigned right now."
   },
   "forbidden": {
@@ -897,6 +902,13 @@
     "title": "Page not found",
     "lead": "The page you are looking for does not exist or has moved.",
     "home": "Go to home"
+  },
+  "errorPage": {
+    "title": "Something went wrong",
+    "lead": "We hit a problem showing this page. Please try again, or go back to the home page.",
+    "retry": "Try again",
+    "home": "Go to home",
+    "reference": "Reference: {digest}"
   },
   "common": {
     "skipToContent": "Skip to content",
@@ -1655,7 +1667,8 @@
       "min_order": "Your booking is below this coupon's minimum amount.",
       "exhausted": "That coupon has been fully used.",
       "used": "You have already used this coupon.",
-      "first_booking": "This coupon is for your first booking only."
+      "first_booking": "This coupon is for your first booking only.",
+      "rateLimited": "Too many coupon attempts. Please wait a few minutes and try again."
     },
     "couponApplied": "Coupon applied. You save {amount}.",
     "paymentNotVerified": "We're confirming your payment. Your trip page will update shortly.",
@@ -2889,7 +2902,8 @@
         "min_order": "Your fare is below this coupon's minimum amount.",
         "exhausted": "That coupon has been fully used.",
         "used": "You have already used this coupon.",
-        "first_booking": "This coupon is for your first booking only."
+        "first_booking": "This coupon is for your first booking only.",
+        "rateLimited": "Too many coupon attempts. Please wait a few minutes and try again."
       },
       "passengerTitle": "Passenger details",
       "fields": {
@@ -3353,7 +3367,8 @@
         "min_order": "Your fare is below this coupon's minimum amount.",
         "exhausted": "That coupon has been fully used.",
         "used": "You have already used this coupon.",
-        "first_booking": "This coupon is for your first booking only."
+        "first_booking": "This coupon is for your first booking only.",
+        "rateLimited": "Too many coupon attempts. Please wait a few minutes and try again."
       },
       "passengerTitle": "Your details",
       "fields": {
@@ -4226,7 +4241,8 @@
         "min_order": "Your order is below this coupon's minimum amount.",
         "exhausted": "That coupon has been fully used.",
         "used": "You have already used this coupon.",
-        "first_booking": "This coupon is for your first order only."
+        "first_booking": "This coupon is for your first order only.",
+        "rateLimited": "Too many coupon attempts. Please wait a few minutes and try again."
       },
       "errors": {
         "item_unavailable": "{item} is no longer available. Please remove it to continue.",
@@ -4340,7 +4356,8 @@
         "invalid": "Something in the form needs fixing.",
         "booking_closed": "Prescription uploads are paused right now.",
         "invalid_file": "A file could not be accepted. Please upload it again.",
-        "unknown": "Something went wrong. Please try again."
+        "unknown": "Something went wrong. Please try again.",
+        "rateLimited": "Too many attempts. Please wait a few minutes and try again."
       }
     },
     "signin": {
@@ -5411,7 +5428,9 @@
       "rate_limited": "We already have your recent enquiry. Our team will call you soon.",
       "not_found": "This tour is no longer available. Please choose another.",
       "unavailable": "Enquiries can't be sent right now. Please call or message us on WhatsApp.",
-      "unknown": "Something went wrong. Please try again."
+      "unknown": "Something went wrong. Please try again.",
+      "rateLimited": "Too many enquiries from this device. Please wait a few minutes or call us.",
+      "captcha": "We couldn't confirm you're not a robot. Please complete the check and try again."
     },
     "success": {
       "title": "Thank you! Your enquiry is with us.",
@@ -5643,7 +5662,8 @@
       "invalid": "Some details need another look.",
       "badFile": "Use a PDF, JPG, PNG or WebP file.",
       "tooLarge": "This file is too large.",
-      "uploadFailed": "The upload didn't go through. Please try again."
+      "uploadFailed": "The upload didn't go through. Please try again.",
+      "rateLimited": "Too many uploads. Please wait a few minutes and try again."
     },
     "documents": {
       "title": "Documents",
@@ -6179,7 +6199,8 @@
       "unavailable": "Reviews are not available right now.",
       "submitFailed": "Could not send your review. Please try again.",
       "checkForm": "Please check the highlighted fields.",
-      "invalid": "Please check your review."
+      "invalid": "Please check your review.",
+      "rateLimited": "Too many attempts. Please wait a few minutes and try again."
     },
     "own": {
       "title": "Your review",
@@ -6814,6 +6835,176 @@
       "refereePoints": "Points for the new customer",
       "referralsHelp": "Both get their points when the new customer's first booking completes.",
       "frozenNote": "Changes apply from now on: points already earned keep the rate they were earned at, and reward codes already issued keep their value."
+    }
+  },
+  "security": {
+    "maintenance": {
+      "metaTitle": "Back soon",
+      "eyebrow": "Scheduled maintenance",
+      "title": "We're making a few improvements",
+      "body": "The P & S Traveler website is briefly offline for maintenance. Your bookings are safe, and we'll be back shortly.",
+      "trips": "Signed in? Your trips and bookings are still available in your account.",
+      "account": "Go to my account",
+      "retry": "Try again",
+      "staff": "Staff preview",
+      "banner": "Maintenance mode is on. Visitors see the maintenance page; you are viewing the site as staff.",
+      "exitPreview": "Leave preview"
+    }
+  },
+  "privacy": {
+    "title": "Privacy & security",
+    "lead": "Protect your sign-in, download a copy of your data or ask us to delete your account.",
+    "mfaRequired": "Staff accounts must use two-step sign-in. Set it up below to open the admin area.",
+    "mfaTitle": "Two-step sign-in",
+    "mfaLead": "After your password, Google or email link, also enter a 6-digit code from an authenticator app such as Google Authenticator, Microsoft Authenticator or Authy.",
+    "authenticatorN": "Authenticator {n}",
+    "exportTitle": "Download my data",
+    "exportLead": "A JSON file with your profile, addresses, travellers, wishlist, bookings and payments, orders, prescriptions (details only), reviews, points, referrals, enquiries, partner applications and privacy requests.",
+    "lastExport": "Last downloaded on {date}",
+    "deleteTitle": "Delete my account",
+    "deleteLead": "Ask us to close your account and remove your personal details.",
+    "export": {
+      "button": "Download my data",
+      "preparing": "Preparing…",
+      "done": "Your data file has been downloaded.",
+      "failed": "Could not prepare your data. Please try again.",
+      "signin": "Please sign in again (and enter your code if asked) to download your data.",
+      "rateLimited": "You have downloaded your data several times recently. Please try again in {minutes} min."
+    },
+    "delete": {
+      "whatGoes": "Your profile, saved addresses and travellers, wishlist, reward points and reviews are deleted, and you will no longer be able to sign in.",
+      "whatStays": "Bookings, payments and invoices are kept for tax records as the law requires, but no longer linked to any account.",
+      "howLong": "Our team completes requests within a few working days. You can cancel until then.",
+      "blockers": "{count, plural, one {# booking is} other {# bookings are}} still open. We can delete your account once they are completed or cancelled.",
+      "button": "Delete my account",
+      "reason": "Why are you leaving? (optional)",
+      "reasonPlaceholder": "Anything we could do better",
+      "understand": "I understand my account will be permanently deleted and this cannot be undone.",
+      "confirm": "Request deletion",
+      "back": "Keep my account",
+      "requested": "We have received your request.",
+      "pendingTitle": "Deletion requested",
+      "pendingBody": "You asked us to delete your account on {date}. Our team will complete it soon.",
+      "yourReason": "Your reason:",
+      "cancel": "Cancel request",
+      "cancelled": "Your deletion request was cancelled.",
+      "errors": {
+        "signin": "Please sign in again to continue.",
+        "invalid": "Please tick the box to confirm.",
+        "alreadyRequested": "You have already asked us to delete your account.",
+        "notFound": "There is no open deletion request.",
+        "unknown": "Something went wrong. Please try again."
+      }
+    }
+  },
+  "mfa": {
+    "none": "Two-step sign-in is off.",
+    "setUp": "Set up two-step sign-in",
+    "addAnother": "Add another authenticator",
+    "addedOn": "Added on {date}",
+    "remove": "Remove authenticator",
+    "confirmRemove": "Remove this authenticator? Your account will be less protected.",
+    "removed": "Authenticator removed.",
+    "enabled": "Two-step sign-in is on.",
+    "step1": "Open your authenticator app and add a new account.",
+    "step2": "Scan this QR code, or type the key shown next to it.",
+    "step3": "Enter the 6-digit code the app shows.",
+    "qrAlt": "QR code to add P&S Traveler to your authenticator app",
+    "cantScan": "Can't scan? Enter this key in the app:",
+    "copySecret": "Copy key",
+    "codeLabel": "6-digit code",
+    "verify": "Verify and turn on",
+    "cancel": "Cancel",
+    "continue": "Continue",
+    "challengeTitle": "Enter your code",
+    "challengeLead": "Open your authenticator app and enter the 6-digit code for P&S Traveler.",
+    "signOut": "Sign out",
+    "lostDevice": "Lost your phone? Contact our support team from your registered email to get back in.",
+    "errors": {
+      "signin": "Please sign in again.",
+      "invalid": "That authenticator was not found. Please reload the page.",
+      "codeInvalid": "That code is not right. Enter the current 6-digit code.",
+      "rateLimited": "Too many tries. Please wait a few minutes and try again.",
+      "needsCode": "Enter your current code first to change two-step sign-in.",
+      "unknown": "Something went wrong. Please try again."
+    }
+  },
+  "privacyAdmin": {
+    "title": "Privacy requests",
+    "lead": "Customers who asked for their account to be deleted.",
+    "back": "Customers",
+    "empty": "No open requests.",
+    "columns": {
+      "customer": "Customer",
+      "requested": "Requested",
+      "reason": "Reason",
+      "openBookings": "Open bookings",
+      "actions": "Actions"
+    },
+    "deletedAccount": "Deleted account",
+    "blockers": "{count, plural, one {# open} other {# open}}",
+    "noBlockers": "None",
+    "explain": "An account can be deleted once it has no bookings awaiting payment or confirmed. Deleting removes the sign-in, profile, addresses, travellers, wishlist, points and reviews; bookings, payments and invoices stay for tax records without the account link.",
+    "delete": "Delete account",
+    "reject": "Reject",
+    "blockedHint": "{count, plural, one {# booking is} other {# bookings are}} still open",
+    "deleteTitle": "Delete account",
+    "deleteLead": "Permanently delete the account of {who}. This cannot be undone.",
+    "rejectTitle": "Reject request",
+    "rejectLead": "Tell {who} why the account will not be deleted.",
+    "note": "Note (optional)",
+    "reason": "Reason",
+    "deleteExplain": "Bookings, payments and invoices are kept for tax records without the account link.",
+    "deleteSubmit": "Delete permanently",
+    "rejectSubmit": "Reject request",
+    "deleted": "Account deleted.",
+    "rejected": "Request rejected.",
+    "customerTitle": "Privacy requests",
+    "customerEmpty": "No privacy requests.",
+    "openList": "All requests",
+    "staffNote": "Staff note:",
+    "kind": {
+      "export": "Data download",
+      "delete": "Account deletion"
+    },
+    "status": {
+      "pending": "Pending",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "rejected": "Rejected"
+    },
+    "errors": {
+      "forbidden": "You don't have permission to do that.",
+      "saveFailed": "Could not save. Please try again.",
+      "invalid": "Please check this value.",
+      "notFound": "This request is no longer open.",
+      "openBookings": "This customer still has open bookings.",
+      "deleteFailed": "Could not delete the account. Please try again.",
+      "closeFailed": "The account was deleted but the request could not be closed. Try again to close it.",
+      "selfDelete": "You can't delete your own account here.",
+      "reasonRequired": "Please give a reason.",
+      "tooLong": "Please keep it under 1000 characters."
+    }
+  },
+  "securitySettings": {
+    "title": "Security",
+    "lead": "Two-step sign-in for staff, bot checks on public forms and how many requests each visitor may send.",
+    "requireAdminMfa": "Require two-step sign-in for staff",
+    "requireAdminMfaHelp": "Staff without an authenticator are sent to set one up before they can open the admin area. Turn it on after your own account has one.",
+    "turnstile": "Check public forms with Cloudflare Turnstile",
+    "turnstileHelp": "Only works when the Turnstile keys are set in the hosting environment.",
+    "rateLimits": "Rate limits",
+    "rateLimitsHelp": "Requests allowed per visitor (and per account) in each time window.",
+    "limit": "Requests",
+    "windowMinutes": "Window (minutes)",
+    "limits": {
+      "auth": "Sign-in and codes",
+      "enquiry": "Enquiries",
+      "coupon": "Coupon checks",
+      "partner": "Partner applications",
+      "review": "Reviews",
+      "upload": "Uploads",
+      "export": "Data downloads"
     }
   }
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from "@/lib/forms/zod-resolver";
 import { ChevronDown, Plus, Save } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useForm, type UseFormReturn } from "react-hook-form";

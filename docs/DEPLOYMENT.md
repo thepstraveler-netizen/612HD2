@@ -270,7 +270,43 @@ This creates the user with a confirmed email (or promotes an existing one) and g
 - [ ] Admin dashboard shows figures for the last 30 days; Reports → Sales downloads a CSV; Customers → a customer → adjust points and add a note.
 - [ ] `/robots.txt`, `/sitemap.xml` and `/manifest.webmanifest` load; on a phone, "Add to home screen" installs the app; with the phone offline, a booking you opened before still opens and other pages show the offline page.
 
-## Later phases (prepare when you reach them)
+## 16. Phase 11 setup, smoke test and go-live
+
+### Setup
+
+1. Apply the Phase 11 migrations in order: `20261011000100_hardening.sql`, `20261011000200_fk_indexes.sql`, `20261011000400_notification_providers.sql`, `20261011000500_refund_failed.sql`, and `20261011000300_security_fixes.sql` **last, only after this code is deployed** (it hides hotel commission and pickup OTPs from the API, and older code still reads them). On Supabase the first one schedules the hourly `purge-rate-limits` job.
+2. Vercel → Environment Variables (all optional; set the `NEXT_PUBLIC_` ones before building because the security header is built with them):
+   - `NEXT_PUBLIC_SITE_URL` must be the live address, or canonical links point at localhost.
+   - Turnstile (free): create a widget at dash.cloudflare.com → Turnstile for your domain, then set `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY`.
+   - Upstash (free): `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` move rate limits out of the database. Not needed at launch.
+   - Sentry (free Developer plan): `SENTRY_DSN` and `NEXT_PUBLIC_SENTRY_DSN` (the same DSN is fine).
+   - MSG91: `MSG91_AUTH_KEY` and optionally `MSG91_SENDER_ID`. Register the sender id and templates on DLT, create a Flow per template, and put each flow id in the `notifications.providers` setting under `sms.<template key>.template_id`.
+   - WhatsApp Cloud API: `WHATSAPP_CLOUD_TOKEN` (permanent system-user token) and `WHATSAPP_PHONE_NUMBER_ID`. Get templates approved in Meta Business Manager and put each name under `whatsapp.<template key>.name`, with the language code per locale.
+3. Supabase → Authentication → Multi-Factor: check TOTP is enabled (it is by default on the free plan).
+4. Every staff member sets up an authenticator in Account → Privacy & security. Then, and only then, turn on Admin → Settings → Security → "Require two-step sign-in for staff".
+
+### Smoke test
+
+- [ ] Response headers on any page include `Content-Security-Policy`; the home, hotel, checkout and admin pages show no CSP errors in the browser console, and Razorpay checkout still opens.
+- [ ] Submit the same enquiry six times in ten minutes; the sixth is refused with "too many attempts".
+- [ ] With Turnstile keys set, the sign-up and enquiry forms show the check and submit after it passes.
+- [ ] Account → Privacy & security: download your data (a JSON file); add an authenticator, sign out and in again, and you are asked for the code.
+- [ ] Ask for account deletion on a test account; Admin → Customers → Privacy requests shows it; reject it with a reason, ask again, then complete it; the account can no longer sign in and its bookings remain in Admin → Bookings.
+- [ ] Turn on `site.maintenance_mode` in Settings → Feature flags; a private window shows the maintenance page; "Staff preview" shows the real site with a banner; turn it off.
+- [ ] Book a cab as a customer: My Trips shows the pickup OTP; the driver link refuses after five wrong codes for 15 minutes.
+- [ ] With Sentry set, trigger an error (for example a stale admin link) and check it arrives in Sentry without emails or phone numbers.
+
+### Go-live checklist
+
+- [ ] Razorpay: live keys and the live webhook (§9). Until then only pay-at-hotel and pay-the-driver work.
+- [ ] Archive the demo content: the hotels, packages and stores whose names start with "Demo ·", demo rider Gopal and coupons `DEMO10`, `DEMOFLAT300`, `DEMOFIRST`, `DEMOFOOD20`; replace the example prices on the business service plans.
+- [ ] Turn on the booking flags you are ready for (`booking.hotels`, `booking.cabs`, `booking.rides`, `booking.food`, `booking.essentials`, `booking.medicine`, `booking.packages`).
+- [ ] Business profile (name, phone, WhatsApp, email, GSTIN) in Settings, and the TCS / TDS rates from your CA in Settings → Partners & settlements.
+- [ ] Custom domain in Vercel, then update `NEXT_PUBLIC_SITE_URL`, the Supabase Site URL and redirect URLs, the Razorpay webhook URL and the Turnstile widget domain.
+- [ ] Vercel Analytics and Speed Insights enabled (§15); submit `/sitemap.xml` in Google Search Console.
+- [ ] Re-run the Supabase security and performance advisors; the accepted findings are listed in D-102. Leaked-password protection needs a paid Supabase plan.
+- [ ] Delete the unused Vercel project `612-hd-2`.
+
+## Optional extras
 
 - **Optional:** a Google Maps key (`NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`), restricted to your domains, for road distances; cabs and rides work without it (D-046, D-053).
-- **Phase 11:** SMS (MSG91) and WhatsApp keys, Sentry DSN, Upstash Redis, Cloudflare Turnstile keys.
