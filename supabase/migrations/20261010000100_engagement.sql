@@ -117,9 +117,7 @@ alter table public.profiles
 alter table public.coupons add column user_id uuid references auth.users (id) on delete cascade;
 create index coupons_user_idx on public.coupons (user_id) where user_id is not null;
 -- Reward codes are never listed publicly, even if someone ticks "public" on one.
-drop policy "public coupons are visible" on public.coupons;
-create policy "public coupons are visible" on public.coupons
-  for select to anon, authenticated
+alter policy "public coupons are visible" on public.coupons
   using (
     (is_public and is_active and user_id is null
       and (starts_at is null or starts_at <= now()) and (ends_at is null or ends_at > now()))
