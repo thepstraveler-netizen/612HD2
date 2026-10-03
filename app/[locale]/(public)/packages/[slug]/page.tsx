@@ -19,8 +19,11 @@ import { HotelGallery } from "@/components/hotels/hotel-gallery";
 import { EnquiryForm } from "@/components/leads/enquiry-form";
 import { PackageBookingWidget } from "@/components/packages/booking-widget";
 import { DurationText, PackageImage } from "@/components/packages/package-card";
+import { ReviewsSection } from "@/components/reviews/reviews-section";
+import { JsonLd } from "@/components/seo/json-ld";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { WishlistButton } from "@/components/wishlist/wishlist-button";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { getFeatureFlag } from "@/lib/bookings/settings";
@@ -39,6 +42,10 @@ import {
   sortedTiers,
   travellerLimits,
 } from "@/lib/packages/ui";
+import { breadcrumbJsonLd, packageJsonLd } from "@/lib/seo/jsonld";
+import { pageMetadata } from "@/lib/seo/metadata";
+import { getRatingSummary } from "@/lib/seo/queries";
+import { absoluteUrl, ogImageUrl, siteUrl } from "@/lib/seo/site";
 import { cn } from "@/lib/utils";
 
 type Props = { params: Promise<{ locale: string; slug: string }> };
@@ -54,11 +61,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, slug } = await params;
   const pkg = await getPackage(slug);
   if (!pkg) return {};
-  return {
+  return pageMetadata({
+    locale,
+    path: `/packages/${pkg.slug}`,
     title: pickLocalized(pkg.title, locale),
     description: pickLocalized(pkg.summary, locale),
-    openGraph: pkg.imageUrl ? { images: [pkg.imageUrl] } : undefined,
-  };
+    images: [ogImageUrl("package", pkg.slug), pkg.imageUrl].filter((u): u is string => Boolean(u)),
+  });
 }
 
 /**
@@ -78,6 +87,11 @@ export default async function PackagePage({ params }: Props) {
   ]);
   if (!pkg) notFound();
   const t = await getTranslations("packages");
+  const [tSeo, tNav, ratingSummary] = await Promise.all([
+    getTranslations("seo"),
+    getTranslations("nav"),
+    getRatingSummary("packages", pkg.id),
+  ]);
   const td = (key: string, values?: Record<string, string | number>) => t(`detail.${key}`, values);
   const today = todayInIndia();
   const title = pickLocalized(pkg.title, locale);
@@ -96,26 +110,27 @@ export default async function PackagePage({ params }: Props) {
     : humanizeSlug(pkg.category);
   const money = (paise: number) => formatPaise(paise, locale);
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "TouristTrip",
-    name: title,
-    description: pickLocalized(pkg.summary, locale),
-    image: images.slice(0, 5).map((i) => i.url),
-    touristType: categoryLabel,
-    itinerary: {
-      "@type": "ItemList",
-      itemListElement: pkg.itinerary.map((d) => ({
-        "@type": "ListItem",
-        position: d.day,
-        name: pickLocalized(d.title, locale),
-      })),
-    },
-    offers:
-      pkg.fromPaise !== null
-        ? { "@type": "Offer", price: pkg.fromPaise / 100, priceCurrency: "INR" }
-        : undefined,
-  };
+  const pageUrl = absoluteUrl(`/packages/${pkg.slug}`, locale);
+  const jsonLd = [
+    packageJsonLd({
+      name: title,
+      url: pageUrl,
+      description: pickLocalized(pkg.summary, locale),
+      images: images.map((i) => i.url),
+      category: categoryLabel,
+      itinerary: pkg.itinerary.map((d) => ({ day: d.day, title: pickLocalized(d.title, locale) })),
+      fromPaise: pkg.fromPaise,
+      rating: ratingSummary.rating ?? pkg.rating,
+      ratingCount: ratingSummary.count,
+      providerName: business.name,
+      siteUrl: siteUrl(),
+    }),
+    breadcrumbJsonLd([
+      { name: tSeo("home"), url: absoluteUrl("/", locale) },
+      { name: tNav("packages"), url: absoluteUrl("/packages", locale) },
+      { name: title, url: pageUrl },
+    ]),
+  ];
 
   const side = (
     <div className="space-y-4 rounded-2xl border bg-card p-5 shadow-sm lg:sticky lg:top-20">
@@ -163,10 +178,7 @@ export default async function PackagePage({ params }: Props) {
 
   return (
     <div className="mx-auto max-w-6xl space-y-6 px-4 py-6 sm:py-8">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
-      />
+      <JsonLd data={jsonLd} />
       <Link
         href="/packages"
         className="inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-primary"
@@ -189,7 +201,10 @@ export default async function PackagePage({ params }: Props) {
             </span>
           ) : null}
         </div>
-        <h1 className="text-[length:var(--text-title)] leading-tight font-extrabold">{title}</h1>
+        <div className="flex items-start justify-between gap-3">
+          <h1 className="text-[length:var(--text-title)] leading-tight font-extrabold">{title}</h1>
+          <WishlistButton type="package" id={pkg.id} name={title} variant="inline" />
+        </div>
         {pkg.destinations.length ? (
           <p className="flex items-start gap-1 text-sm text-muted-foreground">
             <MapPin className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
@@ -451,6 +466,8 @@ export default async function PackagePage({ params }: Props) {
               </>
             ) : null}
           </section>
+
+          <ReviewsSection target={{ type: "package", id: pkg.id }} service="package" />
 
           <section id="enquire" aria-labelledby="enquire-title" className="scroll-mt-20 space-y-3">
             <div>

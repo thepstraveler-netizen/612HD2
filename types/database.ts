@@ -1766,10 +1766,123 @@ export type Database = {
         Args: { p_user: string; p_points: number };
         Returns: Database["public"]["Tables"]["coupons"]["Row"];
       };
-      adjust_points: { Args: { p_user: string; p_points: number; p_note: string; p_actor: string }; Returns: string };
+      adjust_points: {
+        Args: { p_user: string; p_points: number; p_note: string; p_actor: string };
+        Returns: string;
+      };
       expire_loyalty_points: { Args: Record<string, never>; Returns: number };
       ensure_referral_code: { Args: { p_user: string }; Returns: string };
       claim_referral: { Args: { p_user: string; p_code: string }; Returns: string };
+      report_dashboard: { Args: { p_from: string; p_to: string }; Returns: Json };
+      report_pending_actions: { Args: { p_low_stock?: number }; Returns: Json };
+      report_sales: {
+        Args: { p_from: string; p_to: string };
+        Returns: {
+          day: string;
+          service: Database["public"]["Enums"]["booking_service"];
+          created: number;
+          bookings: number;
+          subtotal_paise: number;
+          discount_paise: number;
+          tax_paise: number;
+          total_paise: number;
+          paid_paise: number;
+          refunded_paise: number;
+          revenue_paise: number;
+        }[];
+      };
+      report_occupancy: {
+        Args: { p_from: string; p_to: string };
+        Returns: {
+          hotel_id: string;
+          hotel_name: Json;
+          rooms: number;
+          available_nights: number;
+          sold_nights: number;
+          occupancy_bps: number;
+          room_revenue_paise: number;
+          adr_paise: number;
+        }[];
+      };
+      report_vendor_performance: {
+        Args: { p_from: string; p_to: string };
+        Returns: {
+          vendor_id: string;
+          vendor_name: string;
+          vendor_kind: Database["public"]["Enums"]["vendor_kind"];
+          bookings: number;
+          cancelled: number;
+          gmv_paise: number;
+          commission_paise: number;
+          net_paise: number;
+          rating_avg: number | null;
+          rating_count: number;
+        }[];
+      };
+      report_agent_performance: {
+        Args: { p_from: string; p_to: string };
+        Returns: {
+          agent_id: string | null;
+          agent_name: string | null;
+          agent_email: string | null;
+          leads: number;
+          contacted: number;
+          quoted: number;
+          won: number;
+          lost: number;
+          open: number;
+          won_value_paise: number;
+          calls: number;
+          win_rate_bps: number;
+        }[];
+      };
+      report_coupon_usage: {
+        Args: { p_from: string; p_to: string };
+        Returns: {
+          coupon_id: string | null;
+          code: string;
+          kind: string;
+          redemptions: number;
+          released: number;
+          customers: number;
+          discount_paise: number;
+          gmv_paise: number;
+        }[];
+      };
+      report_cancellations: {
+        Args: { p_from: string; p_to: string };
+        Returns: {
+          service: Database["public"]["Enums"]["booking_service"];
+          cancelled_by: string;
+          reason: string;
+          cancellations: number;
+          total_paise: number;
+          paid_paise: number;
+          refunded_paise: number;
+        }[];
+      };
+      admin_customers: {
+        Args: {
+          p_search?: string | null;
+          p_blocked?: boolean | null;
+          p_has_bookings?: boolean | null;
+          p_limit?: number;
+          p_offset?: number;
+        };
+        Returns: {
+          id: string;
+          email: string | null;
+          full_name: string | null;
+          phone: string | null;
+          is_blocked: boolean;
+          created_at: string;
+          bookings: number;
+          spend_paise: number;
+          last_booking_at: string | null;
+          total_count: number;
+        }[];
+      };
+      admin_customer_summary: { Args: { p_user: string }; Returns: Json };
     };
     Enums: {
       service_kind: "bookable" | "enquiry";

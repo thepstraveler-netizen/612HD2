@@ -1,6 +1,7 @@
 import { Clock, ImageOff, Leaf, Moon, Star, Truck } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { WishlistButton } from "@/components/wishlist/wishlist-button";
 import { Link } from "@/i18n/navigation";
 import type { Store } from "@/lib/delivery/types";
 import { weekdayName, type OpenState } from "@/lib/delivery/ui";
@@ -81,6 +82,7 @@ export function StoreCard({
             <ImageOff className="size-8" aria-hidden="true" />
           </span>
         )}
+        <WishlistButton type="store" id={store.id} name={name} className="absolute end-2 top-2" />
         <div className="absolute start-2 top-2 flex flex-wrap gap-1.5">
           {store.pureVeg ? (
             <ShopTag tone="green" className="bg-card/95">

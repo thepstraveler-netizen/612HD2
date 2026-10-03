@@ -4,8 +4,12 @@ import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { ReactNode } from "react";
+import { VercelInsights } from "@/components/observability/vercel-insights";
 import { Providers } from "@/components/providers";
+import { ServiceWorkerRegistration } from "@/components/pwa/service-worker";
 import { routing } from "@/i18n/routing";
+import { BRAND } from "@/lib/pwa/brand";
+import { defaultOgImage, siteUrl } from "@/lib/seo/site";
 
 const sans = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
 const devanagari = Noto_Sans_Devanagari({
@@ -33,16 +37,22 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "metadata" });
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  // Canonical + hreflang are per page (lib/seo/metadata.ts); setting them here
+  // would make every page without its own claim to be the home page.
   return {
-    metadataBase: new URL(siteUrl),
+    metadataBase: new URL(siteUrl()),
+    applicationName: t("title"),
     title: { default: t("title"), template: `%s · ${t("title")}` },
     description: t("description"),
-    alternates: {
-      canonical: locale === routing.defaultLocale ? "/" : `/${locale}`,
-      languages: { en: "/", hi: "/hi" },
+    icons: { apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }] },
+    appleWebApp: { capable: true, title: BRAND.shortName, statusBarStyle: "default" },
+    openGraph: {
+      siteName: t("title"),
+      locale: locale === "hi" ? "hi_IN" : "en_IN",
+      type: "website",
+      images: [defaultOgImage()],
     },
-    openGraph: { siteName: t("title"), locale: locale === "hi" ? "hi_IN" : "en_IN", type: "website" },
+    twitter: { card: "summary_large_image", images: [defaultOgImage()] },
   };
 }
 
@@ -63,6 +73,8 @@ export default async function LocaleLayout({
         <NextIntlClientProvider>
           <Providers>{children}</Providers>
         </NextIntlClientProvider>
+        <ServiceWorkerRegistration />
+        {process.env.VERCEL ? <VercelInsights /> : null}
       </body>
     </html>
   );

@@ -19,8 +19,11 @@ import { HotelGallery } from "@/components/hotels/hotel-gallery";
 import { HotelMap } from "@/components/hotels/hotel-map";
 import { HotelSearchBar } from "@/components/hotels/hotel-search-bar";
 import { RatingBadge, StarRow } from "@/components/hotels/rating";
+import { ReviewsSection } from "@/components/reviews/reviews-section";
+import { JsonLd } from "@/components/seo/json-ld";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { WishlistButton } from "@/components/wishlist/wishlist-button";
 import { Link } from "@/i18n/navigation";
 import { bestOffer, indexCalendar, quoteStay, type QuoteResult } from "@/lib/availability/engine";
 import { getFeatureFlag } from "@/lib/bookings/settings";
@@ -40,6 +43,9 @@ import { cancellationText } from "@/lib/hotels/policy-text";
 import { pickLocalized } from "@/lib/i18n/localized";
 import { getIcon } from "@/lib/icons";
 import { formatPaise } from "@/lib/money";
+import { breadcrumbJsonLd, hotelJsonLd } from "@/lib/seo/jsonld";
+import { pageMetadata } from "@/lib/seo/metadata";
+import { absoluteUrl, ogImageUrl } from "@/lib/seo/site";
 import { cn } from "@/lib/utils";
 import { parseHotelSearch } from "@/schemas/hotels";
 
@@ -50,11 +56,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const hotel = await getHotelBySlug(slug);
   if (!hotel) return {};
   const name = pickLocalized(hotel.name, locale);
-  return {
+  return pageMetadata({
+    locale,
+    path: `/hotels/${hotel.slug}`,
     title: hotel.seo.title || name,
     description: hotel.seo.description || (hotel.summary ? pickLocalized(hotel.summary, locale) : undefined),
-    openGraph: hotel.images[0] ? { images: [hotel.images[0].url] } : undefined,
-  };
+    images: [ogImageUrl("hotel", hotel.slug), hotel.images[0]?.url].filter((u): u is string => Boolean(u)),
+  });
 }
 
 type Translate = (key: string, values?: Record<string, string | number>) => string;
@@ -76,6 +84,7 @@ export default async function HotelPage({ params, searchParams }: Props) {
   const query = toQuery(raw);
   const search = parseHotelSearch(raw);
   const t = await getTranslations("hotels");
+  const [tSeo, tNav] = await Promise.all([getTranslations("seo"), getTranslations("nav")]);
   const td: Translate = (key, values) => t(`detail.${key}`, values);
   const today = todayInIndia();
   const stay = stayFromSearch(search, defaults, today);
@@ -149,42 +158,36 @@ export default async function HotelPage({ params, searchParams }: Props) {
   });
   const stayQuery = pickStay(query);
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Hotel",
-    name,
-    description: hotel.summary ? pickLocalized(hotel.summary, locale) : undefined,
-    image: images.slice(0, 5).map((i) => i.url),
-    address: hotel.address ?? undefined,
-    geo:
-      hotel.lat !== null
-        ? { "@type": "GeoCoordinates", latitude: hotel.lat, longitude: hotel.lng }
-        : undefined,
-    starRating: hotel.starRating ? { "@type": "Rating", ratingValue: hotel.starRating } : undefined,
-    aggregateRating:
-      hotel.ratingAvg !== null && hotel.ratingCount > 0
-        ? {
-            "@type": "AggregateRating",
-            ratingValue: hotel.ratingAvg,
-            reviewCount: hotel.ratingCount,
-            bestRating: 5,
-          }
-        : undefined,
-    checkinTime: hotel.checkInTime,
-    checkoutTime: hotel.checkOutTime,
-    amenityFeature: amenities.map((a) => ({
-      "@type": "LocationFeatureSpecification",
-      name: a.name.en,
-      value: true,
-    })),
-  };
+  const pageUrl = absoluteUrl(`/hotels/${hotel.slug}`, locale);
+  const jsonLd = [
+    hotelJsonLd({
+      name,
+      url: pageUrl,
+      description: hotel.summary ? pickLocalized(hotel.summary, locale) : null,
+      images: images.map((i) => i.url),
+      address: hotel.address,
+      locality: place || null,
+      lat: hotel.lat,
+      lng: hotel.lng,
+      starRating: hotel.starRating,
+      ratingAvg: hotel.ratingAvg,
+      ratingCount: hotel.ratingCount,
+      pricesPaise: hotel.plans.filter((p) => p.isActive).map((p) => p.basePricePaise),
+      amenities: amenities.map((a) => pickLocalized(a.name, locale)),
+      checkInTime: hotel.checkInTime,
+      checkOutTime: hotel.checkOutTime,
+      telephone: business.phone,
+    }),
+    breadcrumbJsonLd([
+      { name: tSeo("home"), url: absoluteUrl("/", locale) },
+      { name: tNav("hotels"), url: absoluteUrl("/hotels", locale) },
+      { name, url: pageUrl },
+    ]),
+  ];
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:py-8">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
-      />
+      <JsonLd data={jsonLd} />
       <Link
         href={{ pathname: "/hotels", query: stayQuery }}
         className="inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-primary"
@@ -201,7 +204,10 @@ export default async function HotelPage({ params, searchParams }: Props) {
             ) : null}
             {hotel.isCoupleFriendly ? <Badge variant="secondary">{t("card.coupleFriendly")}</Badge> : null}
           </div>
-          <h1 className="text-[length:var(--text-title)] leading-tight font-extrabold">{name}</h1>
+          <div className="flex items-start justify-between gap-3">
+            <h1 className="text-[length:var(--text-title)] leading-tight font-extrabold">{name}</h1>
+            <WishlistButton type="hotel" id={hotel.id} name={name} variant="inline" />
+          </div>
           <p className="flex items-start gap-1 text-sm text-muted-foreground">
             <MapPin className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
             <span>
@@ -512,19 +518,7 @@ export default async function HotelPage({ params, searchParams }: Props) {
             </section>
           ) : null}
 
-          <section aria-labelledby="reviews" className="space-y-3">
-            <h2 id="reviews" className="text-xl font-bold">
-              {td("reviews")}
-            </h2>
-            {hotel.ratingAvg !== null && hotel.ratingCount > 0 ? (
-              <RatingBadge
-                rating={hotel.ratingAvg}
-                count={hotel.ratingCount}
-                className="flex-row-reverse justify-end"
-              />
-            ) : null}
-            <p className="text-sm text-muted-foreground">{td("reviewsSoon")}</p>
-          </section>
+          <ReviewsSection target={{ type: "hotel", id: hotel.id }} service="hotel" />
         </div>
 
         <aside id="book" aria-labelledby="book-title" className="scroll-mt-20">

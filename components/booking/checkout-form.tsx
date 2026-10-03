@@ -18,6 +18,7 @@ import { formatPaise } from "@/lib/money";
 import { openRazorpay } from "@/lib/payments/checkout-client";
 import type { AddonKey } from "@/lib/pricing/booking";
 import { cn } from "@/lib/utils";
+import { SavedTravellerPicker } from "./saved-traveller-picker";
 import { guestDetailsFormSchema, type GuestDetailsInput, type PaymentModeKey } from "@/schemas/booking";
 
 type Request = {
@@ -45,6 +46,7 @@ export function CheckoutForm({
   defaults,
   coupons,
   hotelName,
+  savedTravellers = [],
   children,
 }: {
   request: Request;
@@ -53,6 +55,8 @@ export function CheckoutForm({
   defaults: { name: string; email: string; phone: string };
   coupons: { code: string; description: string }[];
   hotelName: string;
+  /** The customer's saved travellers (account → Travellers), to fill guest names. */
+  savedTravellers?: { id: string; name: string; phone: string | null }[];
   children: ReactNode;
 }) {
   const t = useTranslations("checkout");
@@ -325,6 +329,15 @@ export function CheckoutForm({
             <h2 id="guest" className="text-base font-bold">
               {t("guestTitle")}
             </h2>
+            {savedTravellers.length ? (
+              <SavedTravellerPicker
+                travellers={savedTravellers}
+                onPick={(p) => {
+                  form.setValue("name", p.name, { shouldDirty: true, shouldValidate: true });
+                  if (p.phone) form.setValue("phone", p.phone, { shouldDirty: true, shouldValidate: true });
+                }}
+              />
+            ) : null}
             <div className="grid gap-4 sm:grid-cols-2">
               <FormField
                 control={form.control}
@@ -375,6 +388,7 @@ export function CheckoutForm({
                       key={i}
                       aria-label={t("fields.guestN", { n: i + 2 })}
                       placeholder={t("fields.guestN", { n: i + 2 })}
+                      list={savedTravellers.length ? "saved-traveller-names" : undefined}
                       {...form.register(`guests.${i}`)}
                     />
                   ))}

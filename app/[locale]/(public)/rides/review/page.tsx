@@ -49,6 +49,7 @@ async function suggestedCoupons(locale: string) {
     .from("coupons")
     .select("code, description, services")
     .eq("is_public", true)
+    .is("user_id", null)
     .order("code")
     .limit(10);
   return (data ?? [])

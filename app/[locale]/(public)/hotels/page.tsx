@@ -18,13 +18,14 @@ import { pickLocalized } from "@/lib/i18n/localized";
 import { formatPaise } from "@/lib/money";
 import { cn } from "@/lib/utils";
 import { HOTEL_SORTS, parseHotelSearch, PROPERTY_TYPES } from "@/schemas/hotels";
+import { pageMetadata } from "@/lib/seo/metadata";
 
 type Props = { params: Promise<{ locale: string }>; searchParams: Promise<RawParams> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "hotels.listing" });
-  return { title: t("metaTitle"), description: t("metaDescription") };
+  return pageMetadata({ locale, path: "/hotels", title: t("metaTitle"), description: t("metaDescription") });
 }
 
 /**

@@ -148,6 +148,14 @@ next-intl with `localePrefix: "as-needed"`: English at `/`, Hindi at `/hi`. All 
 - Ledger: the `bookings_sync_vendor_ledger` trigger calls `sync_vendor_ledger` whenever a completed booking's status, payments or refunds change. `booking_settlement_vendor` picks the vendor (booking's own, else the cab / ride vehicle's, else the driver's). Payouts: `create_vendor_payout`, `mark_vendor_payout_paid`, `cancel_vendor_payout`; manual credits / debits with `add_vendor_adjustment`.
 - Server: `lib/partners` (settings, pure helpers in `status.ts`, public `actions.ts`, staff `admin-actions.ts`, vendor `vendor-actions.ts`), `lib/settlements` (settings, pure statement helpers in `statement.ts`, `admin-actions.ts`, and the `PayoutProvider` adapter in `provider.ts`, `manual` today).
 
+## Reviews, rewards, referrals and reports
+
+- Data: `reviews` and `review_media` (photos in the public `media` bucket under `reviews/<user id>/`), `wishlists`, `travellers`, `loyalty_ledger`, `referrals`, `customer_notes`; `profiles.referral_code`, `coupons.user_id` (personal reward codes), `packages.rating_count`, `stores.rating_count`. Settings in `reviews.defaults` and `loyalty.defaults` (both public).
+- Reviews: `review_target` decides eligibility, `submit_review`, `moderate_review`, `reply_review`; the `reviews_refresh_stats` trigger keeps cached ratings in step. Public reads see only public columns.
+- Points: `bookings_sync_loyalty` → `sync_booking_loyalty` on completion and refunds (also pays referral bonuses), `redeem_points` (creates a personal coupon; a trigger on `coupon_redemptions` blocks anyone else), `adjust_points`, `expire_loyalty_points` (pg_cron daily). Referrals: `ensure_referral_code`, `claim_referral`.
+- Reports: `report_*` and `admin_customer*` functions in `20261010000300_reports.sql`, service role only.
+- Server: `lib/reviews`, `lib/loyalty`, `lib/referrals`, `lib/wishlist`, `lib/account`, `lib/reports`, `lib/customers`, `lib/engagement` (settings), `lib/seo` (metadata, JSON-LD, sitemap), `lib/pwa`; `public/sw.js` is the service worker.
+
 ## Design system
 
 Brand and accent tokens from the poster are CSS variables in `app/globals.css`, mapped onto the shadcn semantic tokens and exposed to Tailwind (`bg-brand-navy`, `text-accent-teal`, …). Dark mode via `next-themes` (`.dark` class). Buttons and inputs default to 44px height for tap targets.
@@ -164,6 +172,7 @@ Brand and accent tokens from the poster are CSS variables in `app/globals.css`, 
 | 7     | food, essentials, medicine: stores, menus, cart, orders board, vendor dashboard, prescriptions (`lib/delivery`)           |
 | 8     | packages, flight / train / bus enquiries, leads CRM, quotes with payment links (`lib/packages`, `lib/leads`)              |
 | 9     | B2B service plans and portfolio, Partner With Us, vendor portal earnings, settlements (`lib/partners`, `lib/settlements`) |
-| 10–11 | reviews/loyalty/PWA/SEO, hardening (CSP, rate limits, Turnstile)                                                          |
+| 10    | reviews, P&S Rewards, referrals, wishlist, account pages, dashboard, reports, customers, SEO, PWA                         |
+| 11    | hardening (CSP, rate limits, Turnstile)                                                                                   |
 
-A dedicated folder (e.g. `app/[locale]/admin/hotels/page.tsx`) takes precedence over the generic `admin/[module]` placeholder, so modules can be replaced one at a time.
+Every admin module now has its own folder under `app/[locale]/admin`.

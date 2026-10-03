@@ -2,6 +2,7 @@ import { CalendarDays, MapPin, Sparkles, Star } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { PeacockFeather, TempleSkyline } from "@/components/shared/motifs";
+import { WishlistButton } from "@/components/wishlist/wishlist-button";
 import { Link } from "@/i18n/navigation";
 import { pickLocalized } from "@/lib/i18n/localized";
 import { formatPaise } from "@/lib/money";
@@ -67,6 +68,7 @@ export function PackageCard({
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
           className="aspect-[16/10]"
         />
+        <WishlistButton type="package" id={pkg.id} name={title} className="absolute end-2 top-2" />
         <div className="absolute start-2 top-2 flex flex-wrap gap-1.5">
           {pkg.isFeatured ? (
             <span className="inline-flex items-center gap-1 rounded-full bg-accent-orange px-2.5 py-0.5 text-xs font-bold text-white">

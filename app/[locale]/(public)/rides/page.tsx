@@ -31,6 +31,7 @@ import { getRideCatalog, getRideSettings } from "@/lib/rides/queries";
 import { planRide } from "@/lib/rides/search";
 import { ridePlanErrorValues, rideSearchQuery, rideSearchSubmitted } from "@/lib/rides/ui";
 import { parseRideSearch } from "@/schemas/rides";
+import { pageMetadata } from "@/lib/seo/metadata";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -40,7 +41,7 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "rides.landing" });
-  return { title: t("metaTitle"), description: t("metaDescription") };
+  return pageMetadata({ locale, path: "/rides", title: t("metaTitle"), description: t("metaDescription") });
 }
 
 /**

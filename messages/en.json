@@ -472,7 +472,87 @@
     "tripsEmpty": "No trips yet. Your hotel and cab bookings will show up here.",
     "security": "Security",
     "changePassword": "Change password",
-    "allTrips": "All trips"
+    "allTrips": "All trips",
+    "nav": {
+      "label": "Account sections",
+      "overview": "Overview",
+      "trips": "My trips",
+      "wishlist": "Wishlist",
+      "rewards": "P&S Rewards",
+      "refer": "Refer & earn",
+      "travellers": "Travellers",
+      "addresses": "Addresses",
+      "profile": "Profile",
+      "prescriptions": "Prescriptions",
+      "password": "Password"
+    },
+    "overview": {
+      "pointsTitle": "P&S Rewards",
+      "points": "{points, plural, one {# point} other {# points}}",
+      "worth": "Worth {amount} off your next booking",
+      "viewRewards": "View rewards",
+      "quickLinks": "Quick links"
+    },
+    "profile": {
+      "title": "Profile",
+      "lead": "Your name and contact details, used to pre-fill bookings.",
+      "fullName": "Full name",
+      "email": "Email",
+      "emailHint": "Your sign-in email can't be changed here.",
+      "phone": "Mobile number",
+      "phoneHint": "We send booking updates to this number.",
+      "language": "Preferred language",
+      "languageHint": "Used for emails and messages we send you.",
+      "languages": {
+        "en": "English",
+        "hi": "हिन्दी"
+      },
+      "save": "Save profile",
+      "saved": "Profile saved"
+    },
+    "addresses": {
+      "title": "Addresses",
+      "lead": "Delivery addresses for food, essentials and medicine orders.",
+      "add": "Add address",
+      "edit": "Edit address",
+      "editNamed": "Edit address {label}",
+      "deleteNamed": "Delete address {label}",
+      "deleteConfirm": "Delete the address \"{label}\"?",
+      "makeDefault": "Make default",
+      "default": "Default",
+      "empty": "No saved addresses",
+      "emptyBody": "Save an address to check out faster next time.",
+      "noZones": "Delivery isn't available in any area yet, so new addresses can't be added.",
+      "save": "Save address",
+      "cancel": "Cancel",
+      "saved": "Address saved",
+      "deleted": "Address deleted",
+      "fields": {
+        "label": "Label (Home, Hotel…)",
+        "contactName": "Contact name",
+        "phone": "Mobile number",
+        "line1": "House, building, street",
+        "line2": "Area, colony (optional)",
+        "landmark": "Landmark (optional)",
+        "pincode": "PIN code (optional)",
+        "zone": "Delivery area",
+        "zonePick": "Choose an area",
+        "isDefault": "Use as my default address"
+      }
+    },
+    "errors": {
+      "required": "This field is required.",
+      "nameTooShort": "Please enter at least 2 characters.",
+      "tooLong": "This is too long.",
+      "invalidPhone": "Enter a valid mobile number.",
+      "invalidDate": "Enter a valid date in the past.",
+      "invalidPincode": "Enter a valid 6-digit PIN code.",
+      "invalidPoints": "Enter a whole number of points.",
+      "zoneRequired": "Choose a delivery area.",
+      "generic": "Something went wrong. Please try again.",
+      "signin": "Please sign in again.",
+      "invalid": "Please check the details and try again."
+    }
   },
   "admin": {
     "title": "Admin",
@@ -5992,6 +6072,748 @@
       "invalidAmount": "Enter an amount greater than zero.",
       "notFound": "This record no longer exists.",
       "actionFailed": "Something went wrong. Please try again."
+    }
+  },
+  "reviews": {
+    "title": "Guest reviews",
+    "emptyTitle": "No reviews yet",
+    "emptyBody": {
+      "stay": "Only guests who stayed here through P&S can review it. Reviews will appear here after their stay.",
+      "trip": "Only travellers who booked this trip through P&S can review it. Reviews will appear here after their trip.",
+      "order": "Only customers who ordered here through P&S can review it. Reviews will appear here after their order."
+    },
+    "verified": {
+      "stay": "Verified stay",
+      "trip": "Verified booking",
+      "order": "Verified order"
+    },
+    "allVerified": {
+      "stay": "Every review is from a verified stay",
+      "trip": "Every review is from a verified booking",
+      "order": "Every review is from a verified order"
+    },
+    "averageLabel": "Average rating {rating} out of 5",
+    "count": "{count, plural, one {# review} other {# reviews}}",
+    "distributionLabel": "How guests rated it",
+    "starsShort": "{count, plural, one {# star} other {# stars}}",
+    "barLabel": "{stars} stars: {count} ({percent}%)",
+    "starsLabel": "Rated {rating} out of 5",
+    "staffReply": "Reply from P&S Traveler",
+    "loadMore": "Load more reviews",
+    "loading": "Loading…",
+    "loadFailed": "Could not load more reviews. Please try again.",
+    "photoOf": "Photo {n} of {total}",
+    "openPhoto": "Open photo {n} of {total}",
+    "closePhoto": "Close photo",
+    "previousPhoto": "Previous photo",
+    "nextPhoto": "Next photo",
+    "photosBy": "Photos by {name}",
+    "serviceNames": {
+      "hotel": "your hotel stay",
+      "cab": "your cab trip",
+      "ride": "your ride",
+      "food": "your food order",
+      "medicine": "your medicine order",
+      "package": "your tour package",
+      "travel": "your trip",
+      "essentials": "your essentials order"
+    },
+    "email": {
+      "pointsLine": "You have earned {points} P&S Rewards points for it."
+    },
+    "rate": {
+      "stay": "Rate your stay",
+      "trip": "Rate your trip",
+      "order": "Rate your order"
+    },
+    "rateLead": "Your honest review helps other pilgrims and travellers choose well.",
+    "writePrompt": "Write a review",
+    "form": {
+      "rating": "Your rating",
+      "starOption": "{count, plural, one {# star} other {# stars}}",
+      "ratingWords": {
+        "1": "Poor",
+        "2": "Fair",
+        "3": "Good",
+        "4": "Very good",
+        "5": "Excellent"
+      },
+      "title": "Title (optional)",
+      "titlePlaceholder": {
+        "stay": "Sum up your stay",
+        "trip": "Sum up your trip",
+        "order": "Sum up your order"
+      },
+      "body": "Your review",
+      "bodyPlaceholder": {
+        "stay": "What did you like? Room, cleanliness, staff, food, location…",
+        "trip": "How was the trip? Driver, vehicle, guide, timing, value…",
+        "order": "How was the order? Quality, packing, delivery time…"
+      },
+      "bodyHint": "{count} / {max} characters",
+      "bodyHintMin": "At least {min} characters ({count} so far)",
+      "photos": "Photos (optional)",
+      "photosHint": "Up to {max} photos, JPG, PNG or WebP, each up to {mb} MB.",
+      "photoPreview": "Photo {n}",
+      "uploading": "Uploading…",
+      "removePhoto": "Remove photo {n}",
+      "addPhoto": "Add photo",
+      "publicNote": "Your first name and initial are shown with your review. We check reviews before they appear.",
+      "submit": "Submit review",
+      "sending": "Sending…",
+      "thanksPublished": "Thank you! Your review is live.",
+      "thanksPending": "Thank you! We will publish your review after a quick check."
+    },
+    "errors": {
+      "ratingRequired": "Choose a rating from 1 to 5 stars.",
+      "titleTooLong": "The title is too long.",
+      "bodyTooLong": "The review is too long.",
+      "bodyTooShort": "Please write at least {min} characters.",
+      "tooManyPhotos": "You can add up to {max} photos.",
+      "badFile": "Use a JPG, PNG or WebP photo.",
+      "tooLarge": "Each photo must be {mb} MB or smaller.",
+      "uploadFailed": "Upload failed. Please try again.",
+      "notEligible": "This booking cannot be reviewed now.",
+      "alreadyReviewed": "You have already reviewed this booking.",
+      "signIn": "Please sign in again.",
+      "unavailable": "Reviews are not available right now.",
+      "submitFailed": "Could not send your review. Please try again.",
+      "checkForm": "Please check the highlighted fields.",
+      "invalid": "Please check your review."
+    },
+    "own": {
+      "title": "Your review",
+      "written": "Written on {date}",
+      "published": "Published — thank you for sharing.",
+      "pending": "Waiting for a quick check before it is published.",
+      "rejected": "This review was not published.",
+      "rejectedNote": "Reason: {note}"
+    }
+  },
+  "reviewsAdmin": {
+    "title": "Reviews",
+    "lead": "Check reviews from verified bookings before they go live, and reply on behalf of P&S.",
+    "pendingCount": "{count, plural, one {# review waiting} other {# reviews waiting}}",
+    "results": "{count, plural, =0 {No reviews} one {# review} other {# reviews}}",
+    "empty": "No reviews match these filters.",
+    "photoCount": "{count, plural, one {# photo} other {# photos}}",
+    "replied": "Replied",
+    "viewOnSite": "View on site",
+    "moderated": "{status} by {who} on {when}",
+    "filters": {
+      "search": "Search",
+      "searchPlaceholder": "Words, guest name or booking ID",
+      "status": "Status",
+      "all": "All",
+      "subject": "About",
+      "rating": "Rating",
+      "anyRating": "Any rating",
+      "apply": "Apply",
+      "reset": "Clear"
+    },
+    "status": {
+      "pending": "Waiting",
+      "published": "Published",
+      "rejected": "Rejected"
+    },
+    "subjects": {
+      "hotel": "Hotel",
+      "package": "Package",
+      "store": "Store",
+      "service": "Service"
+    },
+    "services": {
+      "hotel": "Hotel stay",
+      "cab": "Cab",
+      "ride": "Bike & auto ride",
+      "food": "Food delivery",
+      "medicine": "Medicine",
+      "package": "Tour package",
+      "travel": "Travel booking",
+      "essentials": "Essentials"
+    },
+    "pagination": {
+      "label": "Pages",
+      "page": "Page {page} of {pages}",
+      "prev": "Previous",
+      "next": "Next"
+    },
+    "detail": {
+      "review": "Review",
+      "noText": "Rating only, no written review.",
+      "photos": "Review photos",
+      "booking": "Booking and guest",
+      "author": "Customer",
+      "email": "Email",
+      "publicName": "Shown as",
+      "language": "Language",
+      "written": "Written",
+      "service": "Service",
+      "bookingCode": "Booking ID",
+      "guest": "Booking contact",
+      "openBooking": "Open booking {code}",
+      "replyTitle": "Public reply",
+      "repliedBy": "Replied by {who} on {when}",
+      "noReply": "No reply yet."
+    },
+    "actions": {
+      "publish": "Publish",
+      "published": "Review published",
+      "unpublish": "Unpublish",
+      "reject": "Reject",
+      "rejectTitle": "Reject this review",
+      "rejectLead": "The customer sees this reason on their booking. Keep it short and polite.",
+      "confirmReject": "Reject review",
+      "rejected": "Review rejected",
+      "reason": "Reason",
+      "reasonHelp": "For example: mentions phone numbers, not about this booking, abusive language.",
+      "reply": "Reply shown under the review",
+      "replyPlaceholder": "Thank the guest and answer their points…",
+      "replyHelp": "Shown publicly once the review is published. Save it empty to remove the reply.",
+      "saveReply": "Post reply",
+      "updateReply": "Update reply",
+      "replySaved": "Reply saved",
+      "replyRemoved": "Reply removed"
+    },
+    "errors": {
+      "actionFailed": "That did not work. Please try again.",
+      "reasonRequired": "Write a reason for rejecting.",
+      "notFound": "This review no longer exists.",
+      "forbidden": "You do not have permission to do this.",
+      "invalid": "Please check the form.",
+      "noteTooLong": "The reason is too long.",
+      "replyTooLong": "The reply is too long."
+    }
+  },
+  "wishlist": {
+    "title": "Wishlist",
+    "lead": "Hotels, tours and shops you've saved for later.",
+    "toggle": "Save {name} to wishlist",
+    "saveHint": "Save to wishlist",
+    "savedHint": "Saved. Tap to remove",
+    "added": "{name} saved to your wishlist",
+    "removed": "{name} removed from your wishlist",
+    "error": "We couldn't update your wishlist. Please try again.",
+    "empty": "Your wishlist is empty",
+    "emptyBody": "Tap the heart on a hotel, package or shop to save it here.",
+    "explore": "Explore hotels",
+    "groups": {
+      "hotel": "Hotels",
+      "package": "Packages",
+      "store": "Restaurants & shops"
+    },
+    "from": "From {price}",
+    "perNight": "per night",
+    "perPerson": "per person"
+  },
+  "rewards": {
+    "title": "P&S Rewards",
+    "lead": "Earn points on every trip and turn them into discounts.",
+    "disabledTitle": "Rewards are taking a short break",
+    "disabledBody": "P&S Rewards isn't running right now. Your points are safe and will be here when it's back.",
+    "balance": "Your balance",
+    "points": "{points, plural, one {# point} other {# points}}",
+    "worth": "Worth {amount}",
+    "howTitle": "How it works",
+    "how": {
+      "earn": "Earn {percent}% of what you pay back as points when a booking is completed.",
+      "pointValue": "Each point is worth {amount}.",
+      "review": "Get {points} bonus points when your review is published.",
+      "referral": "Get {points} points when a friend you invite completes their first booking.",
+      "redeem": "Redeem from {min} points for a reward code, valid for {days} days at checkout.",
+      "expiry": "Points expire {days} days after you earn them, oldest first.",
+      "noExpiry": "Your points never expire."
+    },
+    "referLink": "Invite friends and earn more",
+    "redeemTitle": "Redeem points",
+    "redeemLabel": "Points to redeem",
+    "redeemHint": "Between {min} and {max} points",
+    "preview": "= {amount} off",
+    "redeemCta": "Get reward code",
+    "redeeming": "Creating code…",
+    "notEnough": "You need at least {min} points to redeem. Keep booking to earn more.",
+    "issuedToast": "Your reward code is ready",
+    "newCode": "Your new reward code",
+    "newCodeBody": "{amount} off your next booking. Valid until {date}.",
+    "codeValue": "{amount} off",
+    "copy": "Copy code",
+    "copied": "Copied",
+    "copyFailed": "Couldn't copy. Please copy it by hand.",
+    "codesTitle": "Your reward codes",
+    "codesEmpty": "No active reward codes",
+    "validUntil": "valid until {date}",
+    "historyTitle": "Points history",
+    "historyEmpty": "No points yet",
+    "historyEmptyBody": "Points appear here after your first completed booking.",
+    "booking": "Booking {code}",
+    "rewardCode": "Code {code}",
+    "expires": "expires {date}",
+    "kinds": {
+      "earn": "Earned on a booking",
+      "reverse": "Taken back after a refund",
+      "redeem": "Redeemed for a reward code",
+      "restore": "Unused reward code returned",
+      "referral": "Referral bonus",
+      "review": "Review bonus",
+      "adjustCredit": "Added by the P&S team",
+      "adjustDebit": "Removed by the P&S team",
+      "expire": "Points expired"
+    },
+    "errors": {
+      "invalid": "Enter a whole number of points.",
+      "loyalty_disabled": "Rewards are paused right now. Please try later.",
+      "below_minimum": "Redeem at least {min} points.",
+      "above_maximum": "You can redeem at most {max} points at a time.",
+      "insufficient_points": "You have only {balance} points.",
+      "signin": "Please sign in again.",
+      "unknown": "We couldn't create your code. Please try again."
+    }
+  },
+  "referrals": {
+    "title": "Refer & earn",
+    "how": "Share your link. When a friend signs up with it and completes their first booking, you get {referrer} points and they get {referee} points.",
+    "disabledTitle": "Referrals are paused",
+    "disabledBody": "Refer & earn isn't running right now. Please check back soon.",
+    "codeLabel": "Your referral code",
+    "copyCode": "Copy code",
+    "linkLabel": "Your invite link",
+    "copyLink": "Copy link",
+    "whatsapp": "Share on WhatsApp",
+    "shareText": "Planning a trip to Vrindavan? Book hotels, cabs and more with P&S Traveler. Sign up with my link and we both earn reward points: {link}",
+    "unavailable": "Your referral code isn't available right now. Please try again later.",
+    "friendsTitle": "Friends you invited",
+    "friendsEmpty": "No friends yet",
+    "friendsEmptyBody": "Friends who sign up with your link will show here.",
+    "friend": "A friend",
+    "joined": "Joined {date}",
+    "status": {
+      "pending": "Waiting for first trip",
+      "rewarded": "Bonus earned",
+      "void": "Not eligible"
+    },
+    "claim": {
+      "claimed": "Referral applied! You'll both get bonus points after your first completed booking.",
+      "invalid_code": "That referral link isn't valid, so no referral was added.",
+      "self_referral": "That's your own referral link. Share it with friends instead!",
+      "already_referred": "You've already joined with a friend's referral.",
+      "not_eligible": "Referral links work only before your first completed booking.",
+      "referrals_disabled": "Referrals are paused right now.",
+      "unknown": "We couldn't apply the referral. Please try again later."
+    }
+  },
+  "travellers": {
+    "title": "Saved travellers",
+    "lead": "Save family and friends you travel with to fill bookings faster.",
+    "add": "Add traveller",
+    "edit": "Edit traveller",
+    "editNamed": "Edit {name}",
+    "deleteNamed": "Remove {name}",
+    "deleteConfirm": "Remove {name} from your saved travellers?",
+    "makeDefault": "Make default",
+    "default": "Default",
+    "empty": "No saved travellers",
+    "emptyBody": "Add the people you usually travel with.",
+    "save": "Save traveller",
+    "cancel": "Cancel",
+    "saved": "Traveller saved",
+    "deleted": "Traveller removed",
+    "fields": {
+      "fullName": "Full name (as on ID)",
+      "relation": "Relation (optional)",
+      "relationHint": "e.g. Mother, Friend",
+      "dateOfBirth": "Date of birth (optional)",
+      "gender": "Gender (optional)",
+      "genderPick": "Prefer not to say",
+      "phone": "Mobile number (optional)",
+      "isDefault": "Use as my default traveller"
+    },
+    "genders": {
+      "female": "Female",
+      "male": "Male",
+      "other": "Other"
+    },
+    "pickTitle": "Saved travellers",
+    "pickHint": "tap to fill the main guest"
+  },
+  "pwa": {
+    "offline": {
+      "metaTitle": "You are offline",
+      "title": "You are offline",
+      "lead": "Check your internet connection and try again. Pages you have opened before may still work.",
+      "retry": "Try again",
+      "home": "Go to home",
+      "savedTitle": "Trips saved on this device",
+      "savedLead": "Booking details you opened while online are available offline.",
+      "savedTrip": "Booking {code}"
+    }
+  },
+  "seo": {
+    "home": "Home",
+    "breadcrumbServices": "Services"
+  },
+  "dashboardAdmin": {
+    "lead": "Sales, bookings and the work waiting for your team, for the dates you choose.",
+    "leadAgent": "The work waiting for you, and the modules you can open.",
+    "modules": "All modules",
+    "empty": "Nothing in this period yet.",
+    "basis": "Figures use India dates and bookings created in the period. Revenue is what was collected (paid minus refunds) on confirmed, completed and partly refunded bookings; booked value is their total minus refunds. Conversion is bookings that were confirmed out of every booking started, including unpaid ones that expired or failed.",
+    "attention": {
+      "title": "Needs attention",
+      "clear": "All clear: nothing is waiting right now.",
+      "items": {
+        "unassigned_trips": "{count, plural, one {# paid cab trip needs a driver} other {# paid cab trips need a driver}}",
+        "requested_rides": "{count, plural, one {# ride request is waiting} other {# ride requests are waiting}}",
+        "new_leads": "{count, plural, one {# new lead to contact} other {# new leads to contact}}",
+        "overdue_follow_ups": "{count, plural, one {# lead follow-up is overdue} other {# lead follow-ups are overdue}}",
+        "pending_applications": "{count, plural, one {# partner application to review} other {# partner applications to review}}",
+        "pending_reviews": "{count, plural, one {# review waiting for moderation} other {# reviews waiting for moderation}}",
+        "open_refunds": "{count, plural, one {# refund is pending or failed} other {# refunds are pending or failed}}",
+        "pending_payouts": "{count, plural, one {# vendor payout to pay} other {# vendor payouts to pay}}",
+        "low_stock_food": "{count, plural, one {# food or essentials item is low on stock} other {# food or essentials items are low on stock}}",
+        "low_stock_medicine": "{count, plural, one {# medicine is low on stock} other {# medicines are low on stock}}"
+      }
+    },
+    "kpi": {
+      "revenue": "Revenue",
+      "revenueHint": "Collected, minus refunds",
+      "bookings": "Bookings",
+      "bookingsHint": "Confirmed, completed or partly refunded",
+      "conversion": "Conversion",
+      "conversionHint": "{converted} of {created} bookings started",
+      "aov": "Average order value",
+      "aovHint": "Booked value per booking",
+      "gmv": "Booked value",
+      "gmvHint": "Booking totals, minus refunds",
+      "discounts": "Discounts given",
+      "cancelled": "Cancellations",
+      "newCustomers": "New customers"
+    },
+    "charts": {
+      "trend": "Revenue and bookings by day",
+      "metric": "Show",
+      "byService": "By service"
+    },
+    "table": {
+      "service": "Service"
+    },
+    "top": {
+      "hotels": "Top hotels",
+      "routes": "Top cab routes",
+      "occupancy": "Occupancy report",
+      "bookings": "{count, plural, one {# booking} other {# bookings}}"
+    },
+    "links": {
+      "reports": "All reports and exports",
+      "commission": "Vendor commission report"
+    }
+  },
+  "reportsAdmin": {
+    "title": "Reports & exports",
+    "lead": "Sales, occupancy, vendor and agent performance, coupons and cancellations for any period, each with a CSV export.",
+    "basis": "All reports use India dates. Amounts in CSV files are in rupees.",
+    "back": "All reports",
+    "empty": "No data in this period.",
+    "total": "Total",
+    "unassigned": "Unassigned",
+    "rewardCodes": "P&S Rewards codes",
+    "noReason": "No reason given",
+    "commission": {
+      "title": "Vendor commission",
+      "lead": "Commission, GST, TCS / TDS and net payable per vendor, in Payments → Settlements."
+    },
+    "range": {
+      "label": "Date range",
+      "presets": {
+        "7": "Last 7 days",
+        "30": "Last 30 days",
+        "90": "Last 90 days"
+      },
+      "from": "From",
+      "to": "To",
+      "apply": "Apply",
+      "csv": "Download CSV",
+      "showing": "Showing {from} to {to}"
+    },
+    "charts": {
+      "metric": "Show",
+      "salesTrend": "Revenue and bookings by day",
+      "occupancy": "Room-nights sold (top 10 hotels)",
+      "cancellations": "Cancellations by service"
+    },
+    "cancelledBy": {
+      "customer": "Customer",
+      "staff": "Staff",
+      "system": "System (unpaid or expired)"
+    },
+    "columns": {
+      "date": "Date",
+      "service": "Service",
+      "created": "Started",
+      "bookings": "Bookings",
+      "total": "Total",
+      "discount": "Discount",
+      "tax": "Tax",
+      "paid": "Paid",
+      "refunded": "Refunded",
+      "revenue": "Revenue",
+      "hotel": "Hotel",
+      "rooms": "Rooms",
+      "availableNights": "Room-nights on sale",
+      "soldNights": "Room-nights sold",
+      "occupancy": "Occupancy",
+      "roomRevenue": "Room revenue",
+      "adr": "Average daily rate",
+      "vendor": "Vendor",
+      "cancelled": "Cancelled",
+      "gmv": "Booked value",
+      "commission": "Commission",
+      "net": "Net payable",
+      "rating": "Rating",
+      "agent": "Agent",
+      "leads": "Leads",
+      "contacted": "Contacted",
+      "quoted": "Quoted",
+      "won": "Won",
+      "lost": "Lost",
+      "open": "Open",
+      "winRate": "Win rate",
+      "wonValue": "Won value",
+      "calls": "Calls",
+      "code": "Code",
+      "redemptions": "Used",
+      "released": "Released",
+      "customers": "Customers",
+      "cancelledBy": "Cancelled by",
+      "reason": "Reason",
+      "cancellations": "Cancellations"
+    },
+    "reports": {
+      "sales": {
+        "title": "Sales",
+        "short": "Sales",
+        "lead": "Bookings, totals, discounts, tax, refunds and revenue per day and service.",
+        "basis": "Bookings created in the period (India dates). Amounts count confirmed, completed and partly refunded bookings; \"Started\" counts every booking begun, paid or not."
+      },
+      "occupancy": {
+        "title": "Hotel occupancy",
+        "short": "Occupancy",
+        "lead": "Room-nights sold against room-nights on sale, room revenue and average daily rate per hotel.",
+        "basis": "Uses stay dates: nights in the period. Rooms on sale use each day's inventory, or the room's total units; closed days are left out. Room revenue counts room lines of confirmed, completed and partly refunded bookings, before tax."
+      },
+      "vendors": {
+        "title": "Vendor performance",
+        "short": "Vendors",
+        "lead": "Bookings, booked value, cancellations, ratings, commission and net payable per vendor.",
+        "basis": "Bookings created in the period that settle with the vendor. Commission and net payable come from settlement ledger rows dated in the period."
+      },
+      "agents": {
+        "title": "Agent performance",
+        "short": "Agents",
+        "lead": "Leads assigned to each agent and how far they got, won value and calls logged.",
+        "basis": "Leads created in the period, by who they are assigned to now. Won value is the booking total (minus refunds) when the lead is linked to a booking, else the quoted value. Win rate is won out of won and lost."
+      },
+      "coupons": {
+        "title": "Coupon usage",
+        "short": "Coupons",
+        "lead": "How often each coupon was used, the discount given and the value of the bookings.",
+        "basis": "Coupon use on bookings created in the period. \"Released\" means the booking was never paid, so the coupon was given back. Personal P&S Rewards codes are shown together in one row."
+      },
+      "cancellations": {
+        "title": "Cancellations",
+        "short": "Cancellations",
+        "lead": "Cancelled bookings by service, who cancelled and why, and the amount refunded.",
+        "basis": "Bookings cancelled in the period (India dates of the cancellation)."
+      }
+    }
+  },
+  "customersAdmin": {
+    "title": "Customers",
+    "lead": "Find a customer by name, email or phone to see their bookings, points, referrals, reviews and staff notes.",
+    "empty": "No customers match.",
+    "noName": "No name",
+    "back": "All customers",
+    "system": "System",
+    "filters": {
+      "search": "Search",
+      "searchPlaceholder": "Name, email or phone",
+      "blocked": "Account",
+      "booked": "Bookings",
+      "any": "Any",
+      "active": "Active",
+      "blockedOnly": "Blocked",
+      "withBookings": "Has bookings",
+      "noBookings": "No bookings",
+      "apply": "Search",
+      "results": "{count, plural, =0 {No customers} one {# customer} other {# customers}}"
+    },
+    "columns": {
+      "customer": "Customer",
+      "phone": "Phone",
+      "bookings": "Bookings",
+      "spend": "Spend",
+      "lastBooking": "Last booking",
+      "joined": "Joined",
+      "status": "Status"
+    },
+    "status": {
+      "active": "Active",
+      "blocked": "Blocked"
+    },
+    "pagination": {
+      "label": "Pages",
+      "page": "Page {page} of {pages}",
+      "prev": "Previous",
+      "next": "Next"
+    },
+    "profile": {
+      "title": "Profile",
+      "email": "Email",
+      "phone": "Phone",
+      "joined": "Joined",
+      "language": "Language",
+      "referralCode": "Referral code",
+      "status": "Status",
+      "roles": "Roles"
+    },
+    "summary": {
+      "bookings": "Bookings",
+      "bookingsHint": "Bookings that were confirmed",
+      "spend": "Spend",
+      "spendHint": "Paid, minus refunds",
+      "completed": "Completed",
+      "points": "Points balance"
+    },
+    "bookings": {
+      "title": "Bookings",
+      "empty": "No bookings yet.",
+      "code": "Booking",
+      "service": "Service",
+      "status": "Status",
+      "total": "Total",
+      "paid": "Paid (net)",
+      "date": "Booked on"
+    },
+    "points": {
+      "title": "P&S Rewards points",
+      "balance": "Balance:",
+      "empty": "No points activity yet.",
+      "adjust": "Adjust points",
+      "amount": "Points",
+      "reason": "Reason",
+      "help": "Use + to credit and − to debit. The reason is kept in the ledger and the audit log.",
+      "submit": "Save adjustment",
+      "saved": "Points updated."
+    },
+    "ledgerKinds": {
+      "earn": "Earned on a booking",
+      "reverse": "Taken back after a refund",
+      "redeem": "Turned into a reward code",
+      "restore": "Given back (code not used)",
+      "referral": "Referral bonus",
+      "review": "Review bonus",
+      "adjust": "Staff adjustment",
+      "expire": "Expired"
+    },
+    "referrals": {
+      "title": "Referrals",
+      "empty": "No referrals.",
+      "referrer": "Referred",
+      "referee": "Referred by",
+      "status": {
+        "pending": "Waiting for first trip",
+        "rewarded": "Rewarded",
+        "void": "Void"
+      }
+    },
+    "reviews": {
+      "title": "Reviews",
+      "empty": "No reviews.",
+      "rating": "{rating} out of 5",
+      "status": {
+        "pending": "Waiting",
+        "published": "Published",
+        "rejected": "Rejected"
+      }
+    },
+    "notes": {
+      "title": "Staff notes",
+      "empty": "No notes yet.",
+      "add": "Add note",
+      "placeholder": "Only staff can see these notes.",
+      "saved": "Note added.",
+      "delete": "Delete note",
+      "confirmDelete": "Delete this note?",
+      "deleted": "Note deleted."
+    },
+    "block": {
+      "block": "Block",
+      "unblock": "Unblock",
+      "confirmBlock": "Block this customer? They will not be able to use their account or book until unblocked.",
+      "confirmUnblock": "Unblock this customer?",
+      "blocked": "Customer blocked.",
+      "unblocked": "Customer unblocked.",
+      "explain": "Blocked customers cannot open their account pages, book or redeem points."
+    },
+    "errors": {
+      "forbidden": "You don't have permission to do that.",
+      "saveFailed": "Could not save. Please try again.",
+      "invalid": "Please check this value.",
+      "required": "Required.",
+      "invalidAmount": "Enter a whole number of points other than 0.",
+      "invalid_amount": "Enter a whole number of points other than 0.",
+      "reasonRequired": "Please give a reason.",
+      "reason_required": "Please give a reason.",
+      "insufficient_points": "The customer doesn't have that many points.",
+      "not_found": "Customer not found.",
+      "notFound": "Customer not found.",
+      "selfBlock": "You can't block your own account."
+    }
+  },
+  "engagementSettings": {
+    "title": "Reviews & rewards",
+    "errors": {
+      "maxBelowMin": "Must be at least the smallest redemption."
+    },
+    "reviews": {
+      "title": "Reviews",
+      "lead": "Who sees new reviews and what customers may attach.",
+      "autoPublish": "Publish reviews without moderation",
+      "autoPublishHelp": "Off (recommended): new reviews wait in Admin → Reviews until staff publish them.",
+      "windowDays": "Days to write a review",
+      "windowDaysHelp": "How long after the booking ends the customer can still review it.",
+      "minBodyChars": "Shortest written review (characters)",
+      "minBodyCharsHelp": "0 = a star rating alone is enough.",
+      "maxPhotos": "Photos per review",
+      "maxPhotosHelp": "0 turns photo uploads off (up to 10).",
+      "maxPhotoMb": "Largest photo (MB)",
+      "maxPhotoMbHelp": "Between 0.1 and 10 MB."
+    },
+    "loyalty": {
+      "title": "P&S Rewards",
+      "lead": "Points customers earn on completed bookings and spend as a personal coupon.",
+      "enabled": "P&S Rewards is on",
+      "pointValue": "Value of one point (₹)",
+      "pointValueHelp": "What one point is worth when turned into a reward code.",
+      "earnPercent": "Earned back (%)",
+      "earnPercentHelp": "Share of a completed booking's total (minus refunds) given back as points.",
+      "earnServices": "Services that earn points",
+      "earnServicesHelp": "Tick none to let every service earn.",
+      "minRedeem": "Smallest redemption (points)",
+      "minRedeemHelp": "Fewest points a customer can turn into a code.",
+      "maxRedeem": "Largest redemption (points)",
+      "maxRedeemHelp": "Leave blank for no upper limit.",
+      "codeValidDays": "Reward code valid for (days)",
+      "codeValidDaysHelp": "Unused codes give their points back when they lapse.",
+      "expiryDays": "Points expire after (days)",
+      "expiryDaysHelp": "0 = earned points never expire.",
+      "reviewPoints": "Points for a published review",
+      "reviewPointsHelp": "0 = no review bonus.",
+      "referrals": "Referrals",
+      "referralsEnabled": "Referral programme is on",
+      "referrerPoints": "Points for the customer who referred",
+      "refereePoints": "Points for the new customer",
+      "referralsHelp": "Both get their points when the new customer's first booking completes.",
+      "frozenNote": "Changes apply from now on: points already earned keep the rate they were earned at, and reward codes already issued keep their value."
     }
   }
 }

@@ -1,5 +1,27 @@
 # Changelog
 
+## Phase 10 · Reviews, rewards, referrals, wishlist, PWA, SEO and reports
+
+### Added
+
+- Database: verified reviews with photos and a staff reply, wishlist, saved travellers, a P&S Rewards points ledger, referrals and staff notes on customers. RLS and audit on every table. Reviews, points and referrals change only through server functions (`submit_review`, `moderate_review`, `reply_review`, `redeem_points`, `adjust_points`, `claim_referral`, `ensure_referral_code`, `expire_loyalty_points`); triggers keep hotel, package and store ratings in step with published reviews and award points when a booking completes (taken back on refunds). Reward codes are personal coupons only their owner can use. Daily job: lapsed reward codes give their points back and old points expire.
+- Reports: database functions for the dashboard, sales, occupancy, vendor performance, agent performance, coupon usage, cancellations, pending actions and the customer list.
+- Starter data: `reviews.defaults` (moderation, review window, photos) and `loyalty.defaults` (earn rate, point value, redemption limits, code validity, expiry, review and referral bonuses); "review is live" email template.
+- My Trips: rate a finished stay, trip or order (stars, title, text, photos) and see its status; "Write a review" hints in the list.
+- Hotel, package and food / essentials store pages: reviews with average, star breakdown, photos, staff replies and "Load more".
+- Account: menu with Overview, Wishlist, Rewards, Refer & earn, Travellers, Addresses and Profile. Hearts on hotel, package and store cards and pages. Rewards page with balance, history and "turn points into a code". Refer & earn with a share link and WhatsApp share; `?ref=` links are remembered and claimed after sign-up. Saved travellers can fill the hotel booking guest form.
+- Admin: a real dashboard (date range, KPIs, revenue and bookings charts, by-service split, top hotels and routes, "needs attention"); Reports with six reports and CSV export; Customers (search, profile, bookings, points with adjustments, referrals, reviews, notes, block / unblock); Reviews moderation queue (publish, reject with a note, reply); Settings → Reviews & rewards.
+- SEO: canonical and hreflang on every public page, `sitemap.xml`, `robots.txt`, structured data (Organization / TravelAgency, Hotel, TaxiService, Product + TouristTrip, Restaurant / GroceryStore, Service, breadcrumbs, ratings), branded share images.
+- PWA: installable app with icons, an offline page in English and Hindi, and booking pages you opened while online available offline.
+- Vercel Web Analytics and Speed Insights (on Vercel only).
+- Tests: database tests for reviews, points, referrals, privacy of wishlists, travellers and notes, and every report; unit and browser tests for the new screens, sitemap, robots, manifest, offline page and structured data.
+
+### Changed
+
+- The admin dashboard replaces the module grid as the landing view (the grid moved to the bottom); the generic "coming in a later phase" admin placeholder is gone.
+- Personal reward codes never appear in coupon suggestions or public coupon lists.
+- The site layout no longer marks every page as a copy of the home page (each page has its own canonical URL).
+
 ## Phase 9 · B2B services, partner onboarding and vendor settlements
 
 ### Added

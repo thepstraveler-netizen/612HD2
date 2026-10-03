@@ -9,6 +9,7 @@ import { todayInIndia } from "@/lib/dates";
 import { pickLocalized } from "@/lib/i18n/localized";
 import { getTravelSettings } from "@/lib/packages/queries";
 import { parseTravelMode, travelPrefill } from "@/lib/packages/ui";
+import { pageMetadata } from "@/lib/seo/metadata";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -18,7 +19,7 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "travel" });
-  return { title: t("metaTitle"), description: t("metaDescription") };
+  return pageMetadata({ locale, path: "/travel", title: t("metaTitle"), description: t("metaDescription") });
 }
 
 /**

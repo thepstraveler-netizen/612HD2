@@ -1,6 +1,7 @@
 import { ArrowLeft, CheckCircle2, Clock, Download, MapPin, XCircle } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import type { ReactNode } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { BookingStatusBadge } from "@/components/booking/status-badge";
 import { formatStayDate } from "@/components/booking/trip-card";
@@ -9,6 +10,7 @@ import { CabTripDetail } from "@/components/cabs/cab-trip-detail";
 import { CUSTOMER_ORDER_COLUMNS, OrderTripDetail } from "@/components/delivery/order-trip-detail";
 import { PackageTripDetail, QuoteTripDetail } from "@/components/packages/package-trip-detail";
 import { CUSTOMER_RIDE_COLUMNS, RideTripDetail } from "@/components/rides/ride-trip-detail";
+import { TripReview } from "@/components/reviews/trip-review";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { requireUser } from "@/lib/auth/guards";
@@ -21,6 +23,7 @@ import { pickLocalized } from "@/lib/i18n/localized";
 import { formatPaise } from "@/lib/money";
 import { packageSnapshot } from "@/lib/packages/ui";
 import { checkInInstant, quoteRefund } from "@/lib/refunds/policy";
+import { getTripReviewState } from "@/lib/reviews/trips";
 import { createClient } from "@/lib/supabase/server";
 
 type Props = { params: Promise<{ locale: string; code: string }> };
@@ -38,7 +41,18 @@ export default async function TripPage({ params }: Props) {
   if (!/^[A-Z0-9]{6,16}$/.test(code)) notFound();
   const trip = await getMyTrip(session.user.id, code);
   if (!trip) notFound();
-  const settings = await getPaymentSettings();
+  const [settings, reviewState] = await Promise.all([
+    getPaymentSettings(),
+    getTripReviewState(session.user.id, trip.booking.id),
+  ]);
+  const review = <TripReview state={reviewState} code={trip.booking.code} locale={locale} />;
+  // Service-specific detail views, with the review card below them.
+  const withReview = (detail: ReactNode) => (
+    <div className="space-y-6">
+      {detail}
+      {review}
+    </div>
+  );
   if (trip.booking.service === "cab") {
     const supabase = await createClient();
     const { data: cabTrip } = await supabase
@@ -48,13 +62,13 @@ export default async function TripPage({ params }: Props) {
       )
       .eq("booking_id", trip.booking.id)
       .maybeSingle();
-    return (
+    return withReview(
       <CabTripDetail
         data={trip}
         trip={cabTrip}
         locale={locale}
         cancellationEnabled={settings.customer_cancellation_enabled}
-      />
+      />,
     );
   }
   if (trip.booking.service === "ride") {
@@ -65,13 +79,13 @@ export default async function TripPage({ params }: Props) {
       .select(CUSTOMER_RIDE_COLUMNS)
       .eq("booking_id", trip.booking.id)
       .maybeSingle();
-    return (
+    return withReview(
       <RideTripDetail
         data={trip}
         ride={ride}
         locale={locale}
         cancellationEnabled={settings.customer_cancellation_enabled}
-      />
+      />,
     );
   }
   if (
@@ -96,7 +110,7 @@ export default async function TripPage({ params }: Props) {
           supabase.rpc("my_order_otp", { p_order_id: order.id }),
         ])
       : [{ data: [] }, { data: null }];
-    return (
+    return withReview(
       <OrderTripDetail
         data={trip}
         order={order}
@@ -104,7 +118,7 @@ export default async function TripPage({ params }: Props) {
         otp={otp ?? null}
         settings={deliverySettings}
         locale={locale}
-      />
+      />,
     );
   }
   if (trip.booking.service === "package" || trip.booking.service === "travel") {
@@ -116,9 +130,9 @@ export default async function TripPage({ params }: Props) {
         .select("travellers, pickup_point")
         .eq("booking_id", trip.booking.id)
         .maybeSingle();
-      return <PackageTripDetail data={trip} row={row} locale={locale} />;
+      return withReview(<PackageTripDetail data={trip} row={row} locale={locale} />);
     }
-    return <QuoteTripDetail data={trip} locale={locale} />;
+    return withReview(<QuoteTripDetail data={trip} locale={locale} />);
   }
   const t = await getTranslations("trips");
   const th = await getTranslations("hotels");
@@ -326,6 +340,7 @@ export default async function TripPage({ params }: Props) {
           ) : null}
         </section>
       </div>
+      {review}
     </div>
   );
 }

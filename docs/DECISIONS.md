@@ -355,3 +355,27 @@ Points live in a ledger. A completed booking earns `earn_bps` (1%) of its total 
 ### D-086 · Referral bonuses are paid on the friend's first completed booking
 
 Every customer gets a referral code. A new customer can claim a friend's code until their first booking completes; when it does, both get points (`referrer_points`, `referee_points`). Paying on completion rather than signup stops self-referral farming with throwaway accounts.
+
+### D-087 · Wishlist hearts load in the browser; referrals are claimed on the first account visit
+
+Catalog pages stay static or cached: each page loads the signed-in customer's wishlist once in the browser and every heart shares it; saving writes straight to `wishlists` under RLS. A `?ref=CODE` link stores the code in a first-party cookie for 30 days, and the claim runs once the customer opens their account (where sign-up lands), then the cookie is deleted whatever the result. A reward code used by anyone but its owner is reported as "not found", and reward codes never show in public coupon lists.
+
+### D-088 · Review summaries are cached for ten minutes
+
+The rating summary and first page of reviews on hotel, package and store pages are cached under a `reviews` tag and refreshed when staff publish, reject or reply. Photos are uploaded before the review is sent, so an abandoned form can leave an unused photo in `media/reviews/<user id>/`.
+
+### D-089 · How report numbers are counted
+
+Dashboard and report figures are summed in SQL functions only the server can call, after it checks the viewer's permission, using India dates. Most reports count a booking on the day it was created; occupancy uses stay dates, cancellations the day of cancellation and vendor commission the ledger date. A booking counts as sold while it is confirmed, completed or partially refunded; revenue is paid minus refunded and booked value is total minus refunded. Conversion is bookings that ever confirmed divided by all bookings created (including expired and failed). Agent figures follow the lead's current assignee. Reward codes are grouped into one "PSR" row in coupon usage. The figures need `reports.read` or `payments.read`; the "needs attention" list needs `dashboard.read` and shows each item only to staff who can open it. Low stock means 5 units or fewer.
+
+### D-090 · Staff actions on customers
+
+Staff notes and block / unblock are written as the signed-in staff member, so RLS and the audit log apply, and staff cannot block themselves. Points adjustments need a reason and record the staff member. A blocked customer cannot use their account, book, redeem points or write reviews.
+
+### D-091 · SEO: canonical and hreflang per page, sitemap from the catalog
+
+Every public page sets its own canonical URL and `hreflang` links (en, hi, x-default = English) through one helper; the layout only sets the site defaults. `sitemap.xml` lists every public page and every published hotel, package and store in both languages, read from the public catalog and falling back to the static pages if the database is unreachable. `robots.txt` keeps admin, account, partner, driver, rider, checkout, quote, auth and API pages out of search. Structured data: Organization / TravelAgency on the home page, Hotel, TaxiService, Product + TouristTrip for packages, Restaurant / GroceryStore for stores, Service for business services and breadcrumbs on detail pages; ratings appear only once there is at least one published review. Share images and app icons are drawn by the app, so no image files are committed; they are English-only because the image font has no Devanagari.
+
+### D-092 · The PWA is a hand-written service worker; analytics only on Vercel
+
+The site installs as an app (manifest and icons). A small service worker loads pages from the network first and falls back to an offline page; static files and images are cached with size limits; a booking page the customer opened while online (My Trips → a booking) is kept, up to 20, so it opens without signal, and the saved copies are deleted on sign-out. Admin, account forms, checkout, API and auth requests are never cached. Vercel Web Analytics and Speed Insights (free, cookieless) load only on Vercel, with booking codes and tokens stripped from the URLs they report; they must be switched on in the Vercel project.

@@ -11,6 +11,7 @@ import {
 import { DeliverySettingsForm } from "@/components/admin/delivery-settings-form";
 import { PackagesSettingsForms } from "@/components/admin/packages-settings-form";
 import { PartnersSettingsForms } from "@/components/admin/partners-settings-form";
+import { EngagementSettingsForms } from "@/components/admin/engagement-settings-form";
 import { requirePermission } from "@/lib/auth/guards";
 import { invoiceSettingsFormValues, paymentSettingsFormValues } from "@/lib/bookings/admin-forms";
 import { cabSettingsFormValues } from "@/lib/cabs/admin-rows";
@@ -22,6 +23,9 @@ import {
 } from "@/lib/packages/admin-rows";
 import { partnersSettingsFormValues } from "@/lib/partners/admin-rows";
 import { rideSettingsFormValues } from "@/lib/rides/admin-rows";
+import { loyaltySettingsFormValues, reviewsSettingsFormValues } from "@/lib/engagement/admin-rows";
+import { parseLoyaltySettings } from "@/lib/loyalty/rules";
+import { reviewsSettingsSchema } from "@/schemas/reviews";
 import { settlementsSettingsFormValues } from "@/lib/settlements/admin-rows";
 import { hasPermission } from "@/lib/permissions/check";
 import { createClient } from "@/lib/supabase/server";
@@ -65,6 +69,8 @@ export default async function AdminSettingsPage() {
         "travel.defaults",
         "partners.defaults",
         "settlements.defaults",
+        "reviews.defaults",
+        "loyalty.defaults",
       ]),
   ]);
   // Fill gaps so an older or partial row still opens in the form.
@@ -85,6 +91,7 @@ export default async function AdminSettingsPage() {
   const partners = partnersSettingsSchema.safeParse(storedValue("partners.defaults"));
   const settlements = settlementsSettingsSchema.safeParse(storedValue("settlements.defaults"));
   const settlementsValue = settlements.success ? settlements.data : settlementsSettingsSchema.parse({});
+  const reviewsSettings = reviewsSettingsSchema.safeParse(storedValue("reviews.defaults"));
 
   return (
     <div className="space-y-6">
@@ -138,6 +145,14 @@ export default async function AdminSettingsPage() {
           )}
           settlements={settlementsSettingsFormValues(settlementsValue)}
           provider={settlementsValue.provider}
+        />
+      ) : null}
+      {canWrite ? (
+        <EngagementSettingsForms
+          reviews={reviewsSettingsFormValues(
+            reviewsSettings.success ? reviewsSettings.data : reviewsSettingsSchema.parse({}),
+          )}
+          loyalty={loyaltySettingsFormValues(parseLoyaltySettings(storedValue("loyalty.defaults")))}
         />
       ) : null}
       <FeatureFlagList flags={flags ?? []} canWrite={canWrite} />

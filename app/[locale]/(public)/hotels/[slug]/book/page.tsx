@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { CheckoutForm } from "@/components/booking/checkout-form";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
+import { listTravellers } from "@/lib/account/travellers";
 import { requireUser } from "@/lib/auth/guards";
 import { prepareHotelCheckout } from "@/lib/bookings/hotel-checkout";
 import { toPreview } from "@/lib/bookings/preview";
@@ -28,6 +29,7 @@ async function suggestedCoupons(hotelId: string, locale: string) {
     .from("coupons")
     .select("code, description, services, hotel_ids")
     .eq("is_public", true)
+    .is("user_id", null)
     .order("code")
     .limit(10);
   return (data ?? [])
@@ -66,7 +68,10 @@ export default async function BookHotelPage({ params, searchParams }: Props) {
   }
 
   const { hotel, room, plan, stay, quote } = result;
-  const coupons = await suggestedCoupons(hotel.id, locale);
+  const [coupons, travellers] = await Promise.all([
+    suggestedCoupons(hotel.id, locale),
+    listTravellers(session.user.id).catch(() => []),
+  ]);
   const name = pickLocalized(hotel.name, locale);
   const image = hotel.images.find((i) => i.roomId === room.id) ?? hotel.images[0];
   const dateFormat = new Intl.DateTimeFormat(locale === "hi" ? "hi-IN" : "en-IN", {
@@ -214,6 +219,7 @@ export default async function BookHotelPage({ params, searchParams }: Props) {
         }}
         coupons={coupons}
         hotelName={name}
+        savedTravellers={travellers.map((tr) => ({ id: tr.id, name: tr.fullName, phone: tr.phone }))}
       >
         {details}
       </CheckoutForm>
