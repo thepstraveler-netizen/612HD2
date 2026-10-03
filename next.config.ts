@@ -1,14 +1,27 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
+import { buildCsp } from "./lib/security/csp";
 
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
+const isDev = process.env.NODE_ENV !== "production";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "";
+
 /**
- * Security headers applied to every route. A strict CSP with nonces lands in
- * the hardening phase (Phase 11) once Razorpay/Maps script origins are final;
- * see docs/DECISIONS.md (D-012).
+ * Security headers applied to every route, including a static
+ * Content-Security-Policy built in lib/security/csp.ts (D-096). Env values
+ * are read at build time, so the Supabase URL must be set when building.
  */
 const securityHeaders = [
+  {
+    key: "Content-Security-Policy",
+    value: buildCsp({
+      isDev,
+      upgradeInsecure: Boolean(process.env.VERCEL) || siteUrl.startsWith("https://"),
+      supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
+      sentryDsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+    }),
+  },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "DENY" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },

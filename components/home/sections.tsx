@@ -136,7 +136,14 @@ export async function HomeSectionView({ section, data }: { section: HomeSection;
         <section className="mx-auto max-w-7xl px-4 pt-16">
           <SectionTitle lead={subtitle}>{title}</SectionTitle>
           <div className="mt-6">
-            <OffersCarousel banners={data.banners} />
+            <OffersCarousel
+              banners={data.banners.map((banner) => ({
+                ...banner,
+                title: pickLocalized(banner.title, locale),
+                subtitle: banner.subtitle ? pickLocalized(banner.subtitle, locale) : null,
+                ctaLabel: banner.ctaLabel ? pickLocalized(banner.ctaLabel, locale) : null,
+              }))}
+            />
           </div>
         </section>
       );

@@ -127,6 +127,8 @@ export const partnerApplicationSchema = partnerDetailsSchema.extend({
   agreementName: z.string().trim().min(2, { error: "required" }).max(120),
   acceptAgreement: z.literal(true, { error: "acceptAgreement" }),
   locale: z.enum(["en", "hi"]).default("en"),
+  /** Cloudflare Turnstile token (checked server-side only when configured). */
+  turnstileToken: z.string().trim().max(2048).optional(),
 });
 export type PartnerApplicationInput = z.input<typeof partnerApplicationSchema>;
 export type PartnerApplication = z.output<typeof partnerApplicationSchema>;

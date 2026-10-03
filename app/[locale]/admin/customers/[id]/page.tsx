@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { Link } from "@/i18n/navigation";
 import { requirePermission } from "@/lib/auth/guards";
 import { getCustomer } from "@/lib/customers/queries";
+import { listCustomerPrivacyRequests } from "@/lib/privacy/queries";
 import { formatPaise } from "@/lib/money";
 import { ROLE_LABELS, type RoleKey } from "@/lib/permissions/constants";
 import { hasPermission } from "@/lib/permissions/check";
@@ -38,11 +39,12 @@ export default async function AdminCustomerPage({ params }: { params: Promise<{ 
   const { id } = await params;
   if (!z.uuid().safeParse(id).success) notFound();
   const session = await requirePermission("customers.read", `/admin/customers/${id}`);
-  const customer = await getCustomer(id);
+  const [customer, privacyRequests] = await Promise.all([getCustomer(id), listCustomerPrivacyRequests(id)]);
   if (!customer) notFound();
-  const [t, tBookings, locale, format] = await Promise.all([
+  const [t, tBookings, tPrivacy, locale, format] = await Promise.all([
     getTranslations("customersAdmin"),
     getTranslations("bookingsAdmin"),
+    getTranslations("privacyAdmin"),
     getLocale(),
     getFormatter(),
   ]);
@@ -248,6 +250,50 @@ export default async function AdminCustomerPage({ params }: { params: Promise<{ 
               </ul>
             ) : (
               <p className="text-sm text-muted-foreground">{t("referrals.empty")}</p>
+            )}
+          </InsightCard>
+
+          <InsightCard
+            title={tPrivacy("customerTitle")}
+            action={
+              <Link href="/admin/customers/privacy" className="text-sm text-primary">
+                {tPrivacy("openList")}
+              </Link>
+            }
+          >
+            {privacyRequests.length ? (
+              <ul className="grid gap-2 text-sm">
+                {privacyRequests.map((r) => (
+                  <li key={r.id} className="flex items-start justify-between gap-2 border-t pt-2">
+                    <span className="min-w-0">
+                      <span className="block font-medium">{tPrivacy(`kind.${r.kind}`)}</span>
+                      {r.reason ? (
+                        <span className="block break-words text-muted-foreground">{r.reason}</span>
+                      ) : null}
+                      {r.note ? (
+                        <span className="block break-words text-muted-foreground">
+                          {tPrivacy("staffNote")} {r.note}
+                        </span>
+                      ) : null}
+                      <span className="block text-xs text-muted-foreground">{dateTime(r.created_at)}</span>
+                    </span>
+                    <ToneBadge
+                      tone={
+                        r.status === "pending"
+                          ? "warning"
+                          : r.status === "completed"
+                            ? "success"
+                            : r.status === "rejected"
+                              ? "danger"
+                              : "muted"
+                      }
+                      label={tPrivacy(`status.${r.status}`)}
+                    />
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-muted-foreground">{tPrivacy("customerEmpty")}</p>
             )}
           </InsightCard>
 

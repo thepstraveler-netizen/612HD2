@@ -1,4 +1,4 @@
-import { Search } from "lucide-react";
+import { Search, ShieldCheck } from "lucide-react";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 import { ToneBadge } from "@/components/admin/booking-status";
 import { AdminPageHeader } from "@/components/admin/page-header";
@@ -21,8 +21,9 @@ export default async function AdminCustomersPage({
 }) {
   await requirePermission("customers.read", "/admin/customers");
   const filters = parseCustomerFilters(await searchParams);
-  const [t, locale, format, list] = await Promise.all([
+  const [t, tPrivacy, locale, format, list] = await Promise.all([
     getTranslations("customersAdmin"),
+    getTranslations("privacyAdmin"),
     getLocale(),
     getFormatter(),
     listCustomers(filters),
@@ -32,7 +33,13 @@ export default async function AdminCustomersPage({
 
   return (
     <div className="space-y-6">
-      <AdminPageHeader title={t("title")} lead={t("lead")} />
+      <AdminPageHeader title={t("title")} lead={t("lead")}>
+        <Button asChild variant="outline">
+          <Link href="/admin/customers/privacy">
+            <ShieldCheck /> {tPrivacy("title")}
+          </Link>
+        </Button>
+      </AdminPageHeader>
       <form method="get" className="flex flex-wrap items-end gap-3 rounded-2xl border bg-card p-4">
         <div className="grid min-w-56 flex-1 gap-1.5">
           <Label htmlFor="cf-q">{t("filters.search")}</Label>

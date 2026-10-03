@@ -53,7 +53,9 @@ export type CouponRejection =
   | "min_order"
   | "exhausted"
   | "used"
-  | "first_booking";
+  | "first_booking"
+  /** Too many coupon lookups from this visitor (lib/coupons/check.ts, never from the engine). */
+  | "rateLimited";
 
 export type CouponResult = { ok: true; discountPaise: number } | { ok: false; reason: CouponRejection };
 

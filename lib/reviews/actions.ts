@@ -4,6 +4,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { getSession } from "@/lib/auth/session";
 import { CATALOG_TAG } from "@/lib/catalog/queries";
 import { hasServiceRole } from "@/lib/env.server";
+import { enforceRateLimit } from "@/lib/security/rate-limit";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
   publicReviewsQuerySchema,
@@ -28,7 +29,8 @@ export type ReviewUploadResult =
   | { ok: true; path: string; token: string }
   | {
       ok: false;
-      error: "signIn" | "badFile" | "tooLarge" | "tooManyPhotos" | "unavailable" | "uploadFailed";
+      error:
+        "signIn" | "badFile" | "tooLarge" | "tooManyPhotos" | "unavailable" | "uploadFailed" | "rateLimited";
     };
 
 export type SubmitReviewResult =
@@ -48,6 +50,8 @@ export async function createReviewUpload(input: unknown, alreadyUploaded = 0): P
     return { ok: false, error: "tooManyPhotos" };
   }
   if (parsed.data.size_bytes > settings.max_photo_mb * 1024 * 1024) return { ok: false, error: "tooLarge" };
+  if (!(await enforceRateLimit("upload", { userId: session.user.id })).ok)
+    return { ok: false, error: "rateLimited" };
   const path = `reviews/${session.user.id}/${crypto.randomUUID()}.${photoExtension(parsed.data.mime_type)}`;
   const { data, error } = await createAdminClient().storage.from("media").createSignedUploadUrl(path);
   if (error) {
@@ -67,6 +71,8 @@ export async function submitReview(input: unknown): Promise<SubmitReviewResult> 
     return { ok: false, error: issue?.message ?? "invalid", field: issue?.path.join(".") };
   }
   if (!hasServiceRole()) return { ok: false, error: "unavailable" };
+  if (!(await enforceRateLimit("review", { userId: session.user.id })).ok)
+    return { ok: false, error: "rateLimited" };
   const values = parsed.data;
   const settings = await getReviewsSettings();
   const issue = reviewSettingsIssue(values, settings);

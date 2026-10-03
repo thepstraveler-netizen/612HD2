@@ -18,7 +18,6 @@ import { Link } from "@/i18n/navigation";
 import { signOut } from "@/lib/auth/actions";
 import { STAFF_ROLES, type RoleKey } from "@/lib/permissions/constants";
 import { clearOfflineTrips } from "@/lib/pwa/client";
-import { createClient } from "@/lib/supabase/client";
 
 const configured = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 
@@ -34,22 +33,32 @@ export function UserMenu() {
 
   useEffect(() => {
     if (!configured) return;
-    const supabase = createClient();
-    const load = async (u: User | null) => {
-      setUser(u);
-      if (u) {
-        const { data } = await supabase.rpc("current_user_roles");
-        setRoles(data ?? []);
-      } else {
-        setRoles([]);
-      }
-      setReady(true);
-    };
-    supabase.auth.getUser().then(({ data }) => load(data.user));
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      void load(session?.user ?? null);
+    let unsubscribe = () => {};
+    let cancelled = false;
+    // Loaded after hydration so supabase-js (~60 KB gzipped) stays out of every public page's first load.
+    void import("@/lib/supabase/client").then(({ createClient }) => {
+      if (cancelled) return;
+      const supabase = createClient();
+      const load = async (u: User | null) => {
+        setUser(u);
+        if (u) {
+          const { data } = await supabase.rpc("current_user_roles");
+          setRoles(data ?? []);
+        } else {
+          setRoles([]);
+        }
+        setReady(true);
+      };
+      supabase.auth.getUser().then(({ data }) => load(data.user));
+      const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+        void load(session?.user ?? null);
+      });
+      unsubscribe = () => sub.subscription.unsubscribe();
     });
-    return () => sub.subscription.unsubscribe();
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
   }, []);
 
   if (!ready) return <div className="size-11" aria-hidden="true" />;

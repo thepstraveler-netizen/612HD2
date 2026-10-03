@@ -321,9 +321,9 @@ export async function tripLookups(locale: string): Promise<TripLookups> {
 }
 
 const TRIP_COLUMNS =
-  "id, booking_id, trip_type, category_id, route_id, package_id, pickup_place_id, drop_place_id, pickup_address, drop_address, stops, pickup_at, return_at, passengers, distance_km, status, driver_id, vehicle_id, driver_name, driver_phone, vehicle_label, vehicle_registration, assigned_at, started_at, picked_up_at, completed_at, pickup_otp, created_at, updated_at";
+  "id, booking_id, trip_type, category_id, route_id, package_id, pickup_place_id, drop_place_id, pickup_address, drop_address, stops, pickup_at, return_at, passengers, distance_km, status, driver_id, vehicle_id, driver_name, driver_phone, vehicle_label, vehicle_registration, assigned_at, started_at, picked_up_at, completed_at, created_at, updated_at";
 
-export type AdminTrip = Omit<Tables<"trips">, "driver_token" | "driver_token_expires_at"> & {
+export type AdminTrip = Omit<Tables<"trips">, "driver_token" | "driver_token_expires_at" | "pickup_otp"> & {
   booking: BookingContact | null;
 };
 
@@ -362,16 +362,22 @@ export async function listTrips(filters: TripFilters): Promise<{ rows: AdminTrip
 
 export async function getTrip(id: string) {
   const supabase = await createClient();
-  const [trip, events] = await Promise.all([
+  // The pickup OTP is not in the column grant (D-098); trip_otp returns it to cab staff.
+  const [trip, events, otp] = await Promise.all([
     supabase.from("trips").select(TRIP_COLUMNS).eq("id", id).maybeSingle(),
     supabase.from("trip_events").select("*").eq("trip_id", id).order("created_at"),
+    supabase.rpc("trip_otp", { p_trip_id: id }),
   ]);
   if (trip.error) fail("trip", trip.error);
   if (events.error) fail("trip events", events.error);
   if (!trip.data) return null;
   const contacts = await bookingContacts([trip.data.booking_id]);
   return {
-    trip: { ...trip.data, booking: contacts.get(trip.data.booking_id) ?? null } as AdminTrip,
+    trip: {
+      ...trip.data,
+      pickup_otp: otp.data ?? null,
+      booking: contacts.get(trip.data.booking_id) ?? null,
+    } as AdminTrip & { pickup_otp: string | null },
     events: events.data,
   };
 }

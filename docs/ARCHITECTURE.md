@@ -156,23 +156,30 @@ next-intl with `localePrefix: "as-needed"`: English at `/`, Hindi at `/hi`. All 
 - Reports: `report_*` and `admin_customer*` functions in `20261010000300_reports.sql`, service role only.
 - Server: `lib/reviews`, `lib/loyalty`, `lib/referrals`, `lib/wishlist`, `lib/account`, `lib/reports`, `lib/customers`, `lib/engagement` (settings), `lib/seo` (metadata, JSON-LD, sitemap), `lib/pwa`; `public/sw.js` is the service worker.
 
+## Security, privacy and observability (Phase 11)
+
+- Data: `rate_limit_hits` (fixed windows, cleared hourly by pg_cron), `privacy_requests` (data exports and account-deletion requests). Settings in `security.defaults` (staff two-step sign-in, Turnstile, rate limits) and `notifications.providers` (MSG91 / WhatsApp template ids), both private.
+- Functions: `hit_rate_limit`, `purge_rate_limits`, `request_account_deletion`, `cancel_account_deletion`, `log_data_export`, `account_deletion_blockers`, `resolve_privacy_request` (service role); `trip_otp`, `ride_otp` (pickup OTPs for the customer or staff); `refund_totals_changed` (re-derives refund totals, used by `record_refund`).
+- Server: `lib/security` (rate limiter with database and Upstash adapters, Turnstile, CSP builder, maintenance mode, file-scan hook), `lib/mfa` (TOTP policy and enforcement in `requireUser` / `requirePermission` / `assertPermission`), `lib/privacy` (data export and deletion), `lib/observability` (error reporter, Sentry envelope adapter, PII scrubber, JSON logger), `lib/notifications` (MSG91 and WhatsApp Cloud adapters), `lib/bookings/otp-attempts.ts` (5 OTP tries per 15 minutes).
+- Wiring: `next.config.ts` sends the CSP; `instrumentation.ts` reports server errors; `instrumentation-client.ts` installs browser error handlers; client forms import `zodResolver` from `lib/forms/zod-resolver.ts` (Zod without eval under the CSP).
+
 ## Design system
 
 Brand and accent tokens from the poster are CSS variables in `app/globals.css`, mapped onto the shadcn semantic tokens and exposed to Tailwind (`bg-brand-navy`, `text-accent-teal`, …). Dark mode via `next-themes` (`.dark` class). Buttons and inputs default to 44px height for tap targets.
 
 ## Where later phases plug in
 
-| Phase | Adds                                                                                                                      |
-| ----- | ------------------------------------------------------------------------------------------------------------------------- |
-| 2     | catalog schema + seed, media/storage, CMS (home sections, banners, services table), DataTable                             |
-| 3     | `app/[locale]/admin/hotels`, `/hotels` listing + detail, availability engine in `lib/availability`                        |
-| 4     | `lib/pricing`, `lib/coupons`, Razorpay (`lib/payments`, `/api/webhooks/razorpay`), inventory locks, notifications         |
-| 5     | cabs: catalog, fares, fleet, dispatch board, `/cabs`, driver trip links (`lib/cabs`)                                      |
-| 6     | local rides: zones, landmarks, fares, live requests board, `/rides`, driver ride links (`lib/rides`)                      |
-| 7     | food, essentials, medicine: stores, menus, cart, orders board, vendor dashboard, prescriptions (`lib/delivery`)           |
-| 8     | packages, flight / train / bus enquiries, leads CRM, quotes with payment links (`lib/packages`, `lib/leads`)              |
-| 9     | B2B service plans and portfolio, Partner With Us, vendor portal earnings, settlements (`lib/partners`, `lib/settlements`) |
-| 10    | reviews, P&S Rewards, referrals, wishlist, account pages, dashboard, reports, customers, SEO, PWA                         |
-| 11    | hardening (CSP, rate limits, Turnstile)                                                                                   |
+| Phase | Adds                                                                                                                                                                        |
+| ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2     | catalog schema + seed, media/storage, CMS (home sections, banners, services table), DataTable                                                                               |
+| 3     | `app/[locale]/admin/hotels`, `/hotels` listing + detail, availability engine in `lib/availability`                                                                          |
+| 4     | `lib/pricing`, `lib/coupons`, Razorpay (`lib/payments`, `/api/webhooks/razorpay`), inventory locks, notifications                                                           |
+| 5     | cabs: catalog, fares, fleet, dispatch board, `/cabs`, driver trip links (`lib/cabs`)                                                                                        |
+| 6     | local rides: zones, landmarks, fares, live requests board, `/rides`, driver ride links (`lib/rides`)                                                                        |
+| 7     | food, essentials, medicine: stores, menus, cart, orders board, vendor dashboard, prescriptions (`lib/delivery`)                                                             |
+| 8     | packages, flight / train / bus enquiries, leads CRM, quotes with payment links (`lib/packages`, `lib/leads`)                                                                |
+| 9     | B2B service plans and portfolio, Partner With Us, vendor portal earnings, settlements (`lib/partners`, `lib/settlements`)                                                   |
+| 10    | reviews, P&S Rewards, referrals, wishlist, account pages, dashboard, reports, customers, SEO, PWA                                                                           |
+| 11    | hardening: CSP, rate limits, Turnstile, two-step sign-in, privacy requests, SMS / WhatsApp, error reporting (`lib/security`, `lib/mfa`, `lib/privacy`, `lib/observability`) |
 
 Every admin module now has its own folder under `app/[locale]/admin`.

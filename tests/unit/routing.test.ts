@@ -51,6 +51,10 @@ describe("safeNextPath", () => {
     ["https://evil.example", "/fallback"],
     ["//evil.example", "/fallback"],
     ["/\\evil.example", "/fallback"],
+    ["/\t/evil.example", "/fallback"],
+    ["/\n/evil.example", "/fallback"],
+    ["/%09/evil.example", "/%09/evil.example"],
+    ["/hotels#rooms", "/hotels#rooms"],
     [null, "/fallback"],
   ])("%s → %s", (input, expected) => {
     expect(safeNextPath(input, "/fallback")).toBe(expected);

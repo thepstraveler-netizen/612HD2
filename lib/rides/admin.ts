@@ -206,9 +206,12 @@ async function bookingInfo(ids: string[]): Promise<Map<string, RideBookingInfo>>
 
 /** Every column except the driver link token (not granted to staff). */
 const RIDE_COLUMNS =
-  "id, booking_id, vehicle_type_id, zone_id, mode, pickup_point_id, pickup_lat, pickup_lng, pickup_address, drop_point_id, drop_lat, drop_lng, drop_address, hours, pickup_at, passengers, distance_km, status, driver_id, vehicle_id, driver_name, driver_phone, vehicle_label, vehicle_registration, assigned_at, started_at, picked_up_at, completed_at, pickup_otp, rating, rating_comment, rated_at, created_at, updated_at";
+  "id, booking_id, vehicle_type_id, zone_id, mode, pickup_point_id, pickup_lat, pickup_lng, pickup_address, drop_point_id, drop_lat, drop_lng, drop_address, hours, pickup_at, passengers, distance_km, status, driver_id, vehicle_id, driver_name, driver_phone, vehicle_label, vehicle_registration, assigned_at, started_at, picked_up_at, completed_at, rating, rating_comment, rated_at, created_at, updated_at";
 
-export type AdminRide = Omit<Tables<"ride_requests">, "driver_token" | "driver_token_expires_at"> & {
+export type AdminRide = Omit<
+  Tables<"ride_requests">,
+  "driver_token" | "driver_token_expires_at" | "pickup_otp"
+> & {
   booking: RideBookingInfo | null;
 };
 
@@ -244,16 +247,22 @@ export async function listBoardRides(filters: RideBoardFilters): Promise<AdminRi
 
 export async function getRide(id: string) {
   const supabase = await createClient();
-  const [ride, events] = await Promise.all([
+  // The pickup OTP is not in the column grant (D-098); ride_otp returns it to ride staff.
+  const [ride, events, otp] = await Promise.all([
     supabase.from("ride_requests").select(RIDE_COLUMNS).eq("id", id).maybeSingle(),
     supabase.from("ride_events").select("*").eq("ride_id", id).order("created_at"),
+    supabase.rpc("ride_otp", { p_ride_id: id }),
   ]);
   if (ride.error) fail("ride", ride.error);
   if (events.error) fail("ride events", events.error);
   if (!ride.data) return null;
   const info = await bookingInfo([ride.data.booking_id]);
   return {
-    ride: { ...ride.data, booking: info.get(ride.data.booking_id) ?? null } as AdminRide,
+    ride: {
+      ...ride.data,
+      pickup_otp: otp.data ?? null,
+      booking: info.get(ride.data.booking_id) ?? null,
+    } as AdminRide & { pickup_otp: string | null },
     events: events.data,
   };
 }

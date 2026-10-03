@@ -3,6 +3,8 @@ import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { applyRazorpayPayment } from "@/lib/bookings/service";
 import { razorpayConfig } from "@/lib/env.server";
+import { logger } from "@/lib/observability/log";
+import { reportServerError } from "@/lib/observability/server";
 import { paymentSchema, refundSchema } from "@/lib/payments/razorpay";
 import { verifyWebhookSignature } from "@/lib/payments/signature";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -65,7 +67,7 @@ export async function POST(request: NextRequest) {
     )
     .select("id");
   if (insertError) {
-    console.error("[webhook] could not store event", insertError);
+    logger.error("razorpay webhook: could not store event", { eventType, error: insertError });
     return NextResponse.json({ error: "storage" }, { status: 500 });
   }
   let rowId = inserted?.[0]?.id;
@@ -140,7 +142,8 @@ export async function POST(request: NextRequest) {
       .eq("id", rowId);
     return NextResponse.json({ status: "ok", result });
   } catch (error) {
-    console.error("[webhook] processing failed", eventType, error);
+    logger.error("razorpay webhook: processing failed", { eventType, eventId, error });
+    await reportServerError(error, { tags: { area: "razorpay-webhook", event: eventType } });
     await admin
       .from("payment_events")
       .update({ error: error instanceof Error ? error.message.slice(0, 500) : "failed" })

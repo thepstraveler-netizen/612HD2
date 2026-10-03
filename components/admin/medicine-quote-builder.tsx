@@ -1,6 +1,6 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from "@/lib/forms/zod-resolver";
 import { Plus, Send, Trash2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { FormProvider, useFieldArray, useForm, useWatch } from "react-hook-form";

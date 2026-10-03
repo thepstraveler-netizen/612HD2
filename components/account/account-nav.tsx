@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   Luggage,
   MapPin,
+  ShieldCheck,
   Sparkles,
   UserRound,
   Users,
@@ -29,6 +30,7 @@ const LINKS: { href: string; key: string; icon: LucideIcon }[] = [
   { href: "/account/profile", key: "profile", icon: UserRound },
   { href: "/account/prescriptions", key: "prescriptions", icon: FileText },
   { href: "/account/update-password", key: "password", icon: KeyRound },
+  { href: "/account/security", key: "security", icon: ShieldCheck },
 ];
 
 /**

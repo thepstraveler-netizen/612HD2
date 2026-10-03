@@ -6,6 +6,8 @@ import { redirect } from "next/navigation";
 import { getLocale } from "next-intl/server";
 import { isSupabaseConfigured } from "@/lib/env";
 import { localizedPath } from "@/lib/routing/protected";
+import { enforceRateLimit } from "@/lib/security/rate-limit";
+import { verifyCaptcha } from "@/lib/security/turnstile";
 import { createClient } from "@/lib/supabase/server";
 import { safeNextPath } from "@/lib/utils";
 import {
@@ -52,14 +54,21 @@ function toErrorKey(error: AuthError): string {
 }
 
 const notConfigured: ActionResult = { ok: false, error: "notConfigured" };
+const rateLimited: ActionResult = { ok: false, error: "rateLimited" };
+const captchaFailed: ActionResult = { ok: false, error: "captcha" };
 
 export async function signInWithPassword(input: unknown, next?: string | null): Promise<ActionResult> {
   if (!isSupabaseConfigured()) return notConfigured;
   const parsed = signInSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "invalidCredentials" };
+  if (!(await enforceRateLimit("auth")).ok) return rateLimited;
+  if (!(await verifyCaptcha(parsed.data.turnstileToken)).ok) return captchaFailed;
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword(parsed.data);
+  const { error } = await supabase.auth.signInWithPassword({
+    email: parsed.data.email,
+    password: parsed.data.password,
+  });
   if (error) return { ok: false, error: toErrorKey(error) };
   redirect(await defaultNext(next));
 }
@@ -68,6 +77,8 @@ export async function signUpWithPassword(input: unknown, next?: string | null): 
   if (!isSupabaseConfigured()) return notConfigured;
   const parsed = signUpSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "generic" };
+  if (!(await enforceRateLimit("auth")).ok) return rateLimited;
+  if (!(await verifyCaptcha(parsed.data.turnstileToken)).ok) return captchaFailed;
 
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
@@ -88,6 +99,9 @@ export async function sendMagicLink(input: unknown, next?: string | null): Promi
   if (!isSupabaseConfigured()) return notConfigured;
   const parsed = magicLinkSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "invalidEmail" };
+  // Also keyed by address, so one inbox can't be flooded from many IPs.
+  if (!(await enforceRateLimit("auth", { key: parsed.data.email })).ok) return rateLimited;
+  if (!(await verifyCaptcha(parsed.data.turnstileToken)).ok) return captchaFailed;
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithOtp({
@@ -113,6 +127,8 @@ export async function requestPasswordReset(input: unknown): Promise<ActionResult
   if (!isSupabaseConfigured()) return notConfigured;
   const parsed = forgotPasswordSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "invalidEmail" };
+  if (!(await enforceRateLimit("auth", { key: parsed.data.email })).ok) return rateLimited;
+  if (!(await verifyCaptcha(parsed.data.turnstileToken)).ok) return captchaFailed;
 
   const supabase = await createClient();
   const target = localizedPath(await getLocale(), "/account/update-password");

@@ -1,5 +1,6 @@
 "use server";
 
+import { otpAttemptAllowed } from "@/lib/bookings/otp-attempts";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { getSession } from "@/lib/auth/session";
@@ -141,6 +142,9 @@ export async function rideDriverStep(input: unknown): Promise<RideDriverStepResu
   if (!ride) return { ok: false, error: "not_found" };
   if (!RIDE_DRIVER_NEXT[ride.status]?.includes(parsed.data.status))
     return { ok: false, error: "invalid_transition" };
+  // Locked after too many tries; reported like a wrong code (D-098).
+  if (parsed.data.otp && !(await otpAttemptAllowed("ride", ride.id)))
+    return { ok: false, error: "otp_mismatch" };
   const { data, error } = await createAdminClient().rpc("set_ride_status", {
     p_ride_id: ride.id,
     p_status: parsed.data.status,

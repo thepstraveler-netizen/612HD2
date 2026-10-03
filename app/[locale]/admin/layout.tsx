@@ -11,6 +11,7 @@ import { LogoMark } from "@/components/shared/logo";
 import { Button } from "@/components/ui/button";
 import { Link, redirect } from "@/i18n/navigation";
 import { requireUser } from "@/lib/auth/guards";
+import { enforceMfa } from "@/lib/mfa/server";
 import { hasPermission, visibleModules } from "@/lib/permissions/check";
 
 /** Per-user content: never prerender. */
@@ -23,9 +24,11 @@ export const metadata: Metadata = { robots: { index: false, follow: false } };
  * page then calls requirePermission() for its own module.
  */
 export default async function AdminLayout({ children }: { children: ReactNode }) {
-  const session = await requireUser("/admin");
+  const session = await requireUser("/admin", { mfa: false });
   const allowed = visibleModules(session.permissions);
   if (allowed.length === 0) redirect({ href: "/forbidden", locale: await getLocale() });
+  // Staff two-step sign-in (each page's requirePermission repeats it with its own `next`).
+  await enforceMfa(session, "/admin");
   const canAudit = hasPermission(session.permissions, "audit.read");
   const t = await getTranslations("admin");
 

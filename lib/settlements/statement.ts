@@ -4,6 +4,8 @@
  * every amount, these only add them up and label them.
  */
 
+import { csvCell } from "@/lib/hotels/csv";
+
 export type LedgerAmounts = {
   gross_paise: number;
   platform_collected_paise: number;
@@ -99,10 +101,10 @@ export type StatementRow = LedgerAmounts & {
   note: string | null;
 };
 
-function cell(value: string | number | null): string {
-  const s = value === null ? "" : String(value);
-  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-}
+// Shared escaping: quotes, and neutralises cells a spreadsheet would run as
+// formulas. Formatted amounts such as "-0.05" are numbers and pass through.
+const cell = (value: string | number | null): string =>
+  typeof value === "string" && /^-?\d+(\.\d+)?$/.test(value) ? value : csvCell(value);
 
 const rupees = (paise: number) => (paise / 100).toFixed(2);
 

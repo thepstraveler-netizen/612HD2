@@ -1,12 +1,13 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from "@/lib/forms/zod-resolver";
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
+import { TurnstileWidget } from "@/components/security/turnstile-widget";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "@/i18n/navigation";
 import { sendMagicLink, signInWithPassword } from "@/lib/auth/actions";
@@ -17,6 +18,8 @@ export function LoginForm({ next }: { next?: string }) {
   const t = useTranslations("auth");
   const [pending, startTransition] = useTransition();
   const [sent, setSent] = useState(false);
+  const [captcha, setCaptcha] = useState<string | null>(null);
+  const [captchaKey, setCaptchaKey] = useState(0);
 
   const passwordForm = useForm<SignInInput>({
     resolver: zodResolver(signInSchema),
@@ -29,15 +32,21 @@ export function LoginForm({ next }: { next?: string }) {
 
   const onPassword = (values: SignInInput) =>
     startTransition(async () => {
-      const result = await signInWithPassword(values, next);
-      if (result && !result.ok) toast.error(t(`errors.${result.error}`));
+      const result = await signInWithPassword({ ...values, turnstileToken: captcha ?? undefined }, next);
+      if (result && !result.ok) {
+        toast.error(t(`errors.${result.error}`));
+        setCaptchaKey((k) => k + 1);
+      }
     });
 
   const onMagic = (values: MagicLinkInput) =>
     startTransition(async () => {
-      const result = await sendMagicLink(values, next);
+      const result = await sendMagicLink({ ...values, turnstileToken: captcha ?? undefined }, next);
       if (result.ok) setSent(true);
-      else toast.error(t(`errors.${result.error}`));
+      else {
+        toast.error(t(`errors.${result.error}`));
+        setCaptchaKey((k) => k + 1);
+      }
     });
 
   return (
@@ -69,6 +78,7 @@ export function LoginForm({ next }: { next?: string }) {
                 {t("forgotLink")}
               </Link>
             </div>
+            <TurnstileWidget action="login" onToken={setCaptcha} resetKey={captchaKey} />
             <Button type="submit" className="w-full" disabled={pending}>
               {t("submitLogin")}
             </Button>
@@ -91,6 +101,7 @@ export function LoginForm({ next }: { next?: string }) {
                 type="email"
                 autoComplete="email"
               />
+              <TurnstileWidget action="magic-link" onToken={setCaptcha} resetKey={captchaKey} />
               <Button type="submit" className="w-full" disabled={pending}>
                 {t("submitMagic")}
               </Button>

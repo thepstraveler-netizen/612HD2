@@ -1,8 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
-import { getSession } from "@/lib/auth/session";
+import { AuthorizationError, assertPermission } from "@/lib/auth/guards";
 import { todayInIndia } from "@/lib/dates";
-import { hasPermission } from "@/lib/permissions/check";
 import { getVendorLedger, toStatementRows } from "@/lib/settlements/admin-queries";
 import { fileSafe } from "@/lib/settlements/admin-rows";
 import { statementCsv } from "@/lib/settlements/statement";
@@ -12,9 +11,13 @@ export const dynamic = "force-dynamic";
 
 /** One vendor's ledger statement as CSV (same filters as the page) for staff with payments.read. */
 export async function GET(request: NextRequest) {
-  const session = await getSession();
-  if (!session || session.profile?.is_blocked || !hasPermission(session.permissions, "payments.read")) {
-    return NextResponse.json({ error: "forbidden" }, { status: 403 });
+  // assertPermission also enforces two-step sign-in (mfaSatisfied).
+  try {
+    await assertPermission("payments.read");
+  } catch (error) {
+    if (error instanceof AuthorizationError)
+      return NextResponse.json({ error: "forbidden" }, { status: 403 });
+    throw error;
   }
   const params = Object.fromEntries(request.nextUrl.searchParams);
   const vendor = z.uuid().safeParse(params.vendor);

@@ -1,5 +1,6 @@
 "use server";
 
+import { otpAttemptAllowed } from "@/lib/bookings/otp-attempts";
 import { revalidatePath, revalidateTag } from "next/cache";
 import type { z } from "zod";
 import { getSession } from "@/lib/auth/session";
@@ -85,6 +86,9 @@ export async function vendorMoveOrder(input: unknown): Promise<VendorActionResul
     if (!hasServiceRole()) return { ok: false, error: "unavailable" };
     const order = await ownOrder(data.orderId, scope);
     if (!order) return { ok: false, error: "not_found" };
+    // Locked after too many tries; reported like a wrong code (D-098).
+    if (data.otp && !(await otpAttemptAllowed("order", order.id)))
+      return { ok: false, error: "otp_mismatch" };
     try {
       await moveOrder({
         orderId: order.id,
