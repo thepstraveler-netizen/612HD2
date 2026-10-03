@@ -48,3 +48,15 @@ describe("stale build guard", () => {
     expect(shouldHardNavigate(click, anchor({ origin: "https://wa.me" }), origin)).toBe(false);
   });
 });
+
+describe("navigation progress", () => {
+  it("starts only for clicks that change the page", async () => {
+    const { changesPage } = await import("@/lib/navigation/progress");
+    const here = "https://ps.example/hotels?city=vrindavan";
+    expect(changesPage("/cabs", here)).toBe(true);
+    expect(changesPage("/hotels?city=mathura", here)).toBe(true);
+    expect(changesPage("/hotels?city=vrindavan#map", here)).toBe(false);
+    expect(changesPage("https://wa.me/919800000000", here)).toBe(false);
+    expect(changesPage("http://[bad", here)).toBe(false);
+  });
+});

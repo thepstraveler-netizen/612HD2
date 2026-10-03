@@ -23,6 +23,7 @@ Conventions used below:
 | POST   | `/api/webhooks/razorpay`                       | Razorpay HMAC signature                                  | JSON                         | `app/api/webhooks/razorpay/route.ts`            |
 | GET    | `/api/invoices/[code]`                         | Session; RLS on `bookings` / `invoices` decides          | `application/pdf` (inline)   | `app/api/invoices/[code]/route.ts`              |
 | GET    | `/api/admin/hotels/export`                     | `hotels.read` (via `assertPermission`)                   | CSV attachment               | `app/api/admin/hotels/export/route.ts`          |
+| GET    | `/api/version`                                 | Public                                                   | JSON `{ build }`, no-store   | `app/api/version/route.ts`                      |
 | GET    | `/api/admin/reports/[report]`                  | `reports.read` (via `assertPermission`)                  | CSV attachment               | `app/api/admin/reports/[report]/route.ts`       |
 | GET    | `/api/admin/settlements/ledger`                | `payments.read`                                          | CSV attachment               | `app/api/admin/settlements/ledger/route.ts`     |
 | GET    | `/api/admin/settlements/report`                | `payments.read`                                          | CSV attachment               | `app/api/admin/settlements/report/route.ts`     |
@@ -174,6 +175,8 @@ All actions take a single `unknown` input that is parsed with zod on the server 
 |                                      | `saveNotificationTemplate`                                                                                                                    | `notifications.write` | Template text per key × channel × locale.                                                       |
 |                                      | `savePaymentSettings`, `saveInvoiceSettings`                                                                                                  | `settings.write`      | `payments.defaults`, `business.invoice`.                                                        |
 | `lib/engagement/settings-actions.ts` | `saveReviewsSettings`, `saveLoyaltySettings`                                                                                                  | `settings.write`      | `reviews.defaults`, `loyalty.defaults`.                                                         |
+| `lib/hotels/import-actions.ts`       | `previewHotelImport`, `applyHotelImport` (`hotels.write`, D-106)                                                                              |
+| `lib/roles/actions.ts`               | `grantRole`, `revokeRole` (`users.manage_roles`, D-107)                                                                                       |
 | `lib/partners/settings-actions.ts`   | `savePartnersSettings`, `saveSettlementsSettings`                                                                                             | `settings.write`      | `partners.defaults`, `settlements.defaults`.                                                    |
 
 ### 2.3 Bookings and payments
@@ -363,6 +366,15 @@ All service_role, called from `lib/reports/queries.ts` and `lib/customers/querie
 | `cancel_account_deletion(p_user)`                          | service_role | Cancels the pending request.                                                             |
 | `log_data_export(p_user)`                                  | service_role | Records a completed `export` request.                                                    |
 | `resolve_privacy_request(p_actor, p_id, p_status, p_note)` | service_role | `completed` or `rejected` (note required); app deletes the auth user before `completed`. |
+
+### 3.10 Follow-ups after Phase 11
+
+| Function                                                           | Access                                        | Purpose                                                                                                                                                                              |
+| ------------------------------------------------------------------ | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `import_hotels(p_rows jsonb)`                                      | authenticated (invoker; needs `hotels.write`) | Creates or updates hotels, rooms and rate plans from parsed CSV rows in one transaction; raises `unknown_city:<line>:<slug>`, `deleted_hotel:<line>:<slug>`; returns counts (D-106). |
+| `job_window(pickup, return, distance_km, hours, is_ride)`          | service_role                                  | Estimated time range of a cab trip or ride from the `dispatch.overlap` setting (D-108).                                                                                              |
+| `dispatch_conflict(driver, vehicle, window, skip_trip, skip_ride)` | service_role                                  | Booking code of an overlapping active trip or ride, and whether the driver or vehicle clashed; `assign_trip` / `assign_ride` raise `driver_busy:<code>` / `vehicle_busy:<code>`.     |
+| `user_roles_keep_super_admin`                                      | trigger only                                  | Refuses to remove the last super admin (`last_super_admin`, D-107).                                                                                                                  |
 
 ---
 

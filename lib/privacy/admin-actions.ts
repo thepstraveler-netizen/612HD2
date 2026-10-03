@@ -6,6 +6,7 @@ import type { MutationResult } from "@/lib/admin/mutate";
 import { AuthorizationError, assertPermission } from "@/lib/auth/guards";
 import type { SessionContext } from "@/lib/auth/session";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { collectUserFiles, removeUserFiles } from "./files";
 import { completeDeletionSchema, rejectPrivacyRequestSchema } from "@/schemas/privacy";
 import { privacyRpcError } from "./rows";
 
@@ -13,8 +14,10 @@ import { privacyRpcError } from "./rows";
  * Admin → Customers → Privacy requests (customers.write). Completing a
  * deletion deletes the auth user with the service role — which cascades the
  * profile, addresses, travellers, wishlist, points and reviews and keeps
- * bookings and invoices with no account link for tax records — and then
- * closes the request with resolve_privacy_request(actor, …), so the audit
+ * bookings and invoices with no account link for tax records. The customer's
+ * uploaded files (prescriptions, partner documents, review photos) are
+ * removed first (D-109); if that fails nothing is deleted and staff retry.
+ * Finally it closes the request with resolve_privacy_request(actor, …), so the audit
  * log names the staff member.
  */
 
@@ -79,6 +82,12 @@ export async function completeAccountDeletion(input: unknown): Promise<MutationR
       return { ok: false, error: "saveFailed" };
     }
     if ((blockers.data ?? 0) > 0) return { ok: false, error: "openBookings" };
+    try {
+      await removeUserFiles(db, await collectUserFiles(db, request.user_id));
+    } catch (filesError) {
+      console.error("[privacy admin] remove files", filesError);
+      return { ok: false, error: "filesFailed" };
+    }
     const deleted = await db.auth.admin.deleteUser(request.user_id);
     if (deleted.error) {
       console.error("[privacy admin] delete user", deleted.error);

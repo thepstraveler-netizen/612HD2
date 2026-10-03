@@ -683,6 +683,8 @@ export function tripErrorKey(message: string): string {
   const codes = {
     driver_unavailable: "driverUnavailable",
     vehicle_unavailable: "vehicleUnavailable",
+    driver_busy: "driverBusy",
+    vehicle_busy: "vehicleBusy",
     invalid_transition: "invalidTransition",
     otp_mismatch: "otpMismatch",
     not_found: "notFound",

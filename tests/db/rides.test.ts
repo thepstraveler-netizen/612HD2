@@ -37,7 +37,9 @@ type Opts = {
 function payload(o: Opts) {
   const amount = o.amount ?? 6_000;
   codeSeq += 1;
-  const pickupAt = "2026-12-10T04:30:00Z";
+  // A day apart per booking, so one driver can take every test ride without
+  // overlapping (assign_ride refuses double-booked drivers, D-108).
+  const pickupAt = new Date(Date.UTC(2026, 11, 10, 4, 30) + codeSeq * 86_400_000).toISOString();
   return {
     booking: {
       code: `PSTRID${String(codeSeq).padStart(3, "0")}`,

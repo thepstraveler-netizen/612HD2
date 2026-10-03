@@ -429,3 +429,30 @@ All 79 foreign keys the Supabase performance advisor listed as unindexed now hav
 ### D-104 · A refund that fails stops counting
 
 When Razorpay reports a refund as failed after it was recorded, its amount is taken off the booking's refunded total, the payment and booking status are worked out again from the refunds that didn't fail (a fully failed refund puts the booking back to cancelled), and staff can issue the refund again. A failed refund stays failed even if an older webhook for it arrives later.
+
+## Follow-ups after Phase 11
+
+### D-105 · Page clicks respond at once
+
+Clicks felt slow or dead for four reasons, each fixed:
+
+- **Servers far from the database.** Vercel ran the server code in its default US region while Supabase is in Mumbai, so every query crossed the world (about a quarter of a second each, several per page). `vercel.json` now pins functions to `bom1` (Mumbai), which the free plan allows (one region).
+- **Middleware asked Supabase Auth on every click.** It now uses `getClaims()`, which checks the session token's signature locally against the project's published keys and only calls Auth to refresh an expired session; visitors with no auth cookie skip it entirely. Pages that read data still confirm the user server-side.
+- **Nothing happened until the next page was ready.** A thin progress bar at the top starts the moment a link or a navigating button (`router.push` / `replace`, wrapped in `i18n/navigation.ts`) is clicked. The account, admin, partner and driver areas also have loading skeletons (`loading.tsx`), which let Next prefetch those pages. Public pages do not, because a loading screen there sends the 200 status before a page can say "not found", turning real 404s into soft ones.
+- **Tabs left open across a deploy.** An old tab could ask the new deployment for code it no longer has, so a link or button did nothing until a reload. `components/pwa/build-watcher.tsx` compares the tab's build with `/api/version` when the tab comes back into view; once the site has moved on, the next link click loads the page in full, and a missing script chunk or server action reloads the page once. Vercel's Skew Protection would do this too but is not on the free plan.
+
+### D-106 · Hotel CSV import
+
+Admin → Hotels → Import CSV reads the export's own columns, so prices and rooms can be edited in a spreadsheet and imported back. Each row is one rate plan; a row without a room only adds or updates the hotel. Hotels match on slug, rooms and plans on their English name (ignoring case). The file is checked in full first (line and column for every problem, nothing written while any remain), then `import_hotels()` applies it in one transaction as the signed-in staff member, so the existing RLS policies and audit log apply and one bad row (an unknown city, a deleted hotel) rolls back the whole file. Imports never delete anything and leave photos, amenities, policies and Hindi names alone. Up to 2,000 rows and 800 KB per file.
+
+### D-107 · Staff and roles screen
+
+Admin → Settings → Staff and roles (`users.manage_roles`) grants a role to an existing account by email and removes roles with one click. Writes run as the staff member, so the existing RLS rules apply: only a super admin can give or remove super admin. Role changes are now audited (`user_roles` had no audit trigger), staff can't remove their own roles, and the database refuses to remove the last super admin. The person must sign up first; inviting by email can come later.
+
+### D-108 · No double-booked drivers or vehicles
+
+`assign_trip` and `assign_ride` refuse a driver or vehicle that already has an active cab trip or local ride (assigned, on the way, arrived or picked up) whose time overlaps. A job runs from pickup to its estimated end: a cab trip's return time if set, an hourly ride's booked hours, otherwise distance ÷ average speed, otherwise a default length; a buffer is kept free between jobs. The speed, default lengths and buffer are in the `dispatch.overlap` setting (40 km/h, 4 h for trips, 1 h for rides, 30 minutes). The driver and vehicle rows are locked while checking, so two staff can't assign the same driver at once. Staff see "That driver already has another trip or ride around that time".
+
+### D-109 · Account deletion removes uploaded files
+
+Completing a deletion now removes the customer's prescriptions (`prescriptions/<user id>/`), partner application documents (`documents/partners/<user id>/`) and review photos (`media/reviews/<user id>/`), found both by listing those folders and from the database rows, before the account itself is deleted. If any file can't be removed, nothing is deleted and staff are asked to try again. Vendor documents belong to the business, not to one member, and are kept.

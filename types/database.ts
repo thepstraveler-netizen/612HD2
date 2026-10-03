@@ -1909,6 +1909,7 @@ export type Database = {
       account_deletion_blockers: { Args: { p_user: string }; Returns: number };
       trip_otp: { Args: { p_trip_id: string }; Returns: string | null };
       ride_otp: { Args: { p_ride_id: string }; Returns: string | null };
+      import_hotels: { Args: { p_rows: Json }; Returns: Json };
       request_account_deletion: { Args: { p_user: string; p_reason: string | null }; Returns: string };
       cancel_account_deletion: { Args: { p_user: string }; Returns: boolean };
       log_data_export: { Args: { p_user: string }; Returns: string };

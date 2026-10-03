@@ -210,7 +210,7 @@ This creates the user with a confirmed email (or promotes an existing one) and g
 
 1. Apply the two Phase 8 migrations in order (`20261008000100_packages_leads.sql`, then `20261008000200_packages_leads_baseline.sql`). On the live project they are already applied except the two header link updates in the baseline file, which are run when this phase merges.
 2. Admin → Settings → Packages & leads: advance %, seat hold, how many days before departure online booking closes, cancellation policy; lead auto-assignment, enquiry limit, first follow-up, quote validity and default GST, sources and lost reasons; travel classes and the notice on `/travel`. **Ask your CA to confirm GST on packages and quote lines (D-075).**
-3. Give your calling team the **agent** role: after each agent signs up, run `select public.grant_role_by_email('agent@example.com', 'agent');` in the Supabase SQL editor (a roles screen comes with Admin → Customers in phase 10). New leads are shared among agents automatically.
+3. Give your calling team the **agent** role: after each agent signs up, grant it in Admin → Settings → Staff and roles (or run `select public.grant_role_by_email('agent@example.com', 'agent');` in the Supabase SQL editor). New leads are shared among agents automatically.
 4. Admin → Packages: add your real packages, itineraries, prices and departure dates. Archive the three "Demo ·" packages before launch if they were seeded.
 5. Admin → Notifications: review `lead.received`, `quote.sent` and the WhatsApp quick replies `crm.intro` and `crm.follow_up`.
 6. Razorpay (test keys first) is needed for online package booking and for quote payment links; the webhook must include `payment_link.paid`. Without keys, enquiries and quotes still work and staff record payments by hand.
@@ -306,6 +306,20 @@ This creates the user with a confirmed email (or promotes an existing one) and g
 - [ ] Vercel Analytics and Speed Insights enabled (§15); submit `/sitemap.xml` in Google Search Console.
 - [ ] Re-run the Supabase security and performance advisors; the accepted findings are listed in D-102. Leaked-password protection needs a paid Supabase plan.
 - [ ] Delete the unused Vercel project `612-hd-2`.
+
+## 17. Follow-ups after Phase 11
+
+### Setup
+
+1. Apply migrations `20261012000100_hotel_import.sql`, `20261012000200_role_admin.sql` and `20261012000300_dispatch_overlap.sql` (all additive).
+2. Nothing to set in Vercel: `vercel.json` pins server code to Mumbai (`bom1`), next to the Supabase project. If the Supabase project is ever moved to another region, change it to the nearest Vercel region. Vercel Settings → Functions shows the region after the next deploy.
+
+### Smoke test
+
+1. Click around the public site and admin: a thin blue bar appears at the top straight away, and admin pages show a skeleton while loading.
+2. Admin → Hotels → Export CSV, change one price, then Import CSV with the edited file: the summary lists the hotel under "to update" and the price changes on the hotel page.
+3. Admin → Settings → Staff and roles: grant `agent` to a test account, then remove it; both show in Admin → Audit.
+4. Assign the same driver to two cab trips at the same time: the second is refused.
 
 ## Optional extras
 
