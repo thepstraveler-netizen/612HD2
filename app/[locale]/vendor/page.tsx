@@ -1,16 +1,19 @@
-import { ClipboardList, Clock, Hourglass, IndianRupee, Store } from "lucide-react";
+import { ClipboardList, Clock, Hourglass, IndianRupee } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { VendorStoreToggle } from "@/components/delivery/vendor-store-toggle";
-import { EmptyState } from "@/components/shared/empty-state";
+import { VendorHomeSummary } from "@/components/partners/vendor-home-summary";
+import { VendorNoBusiness } from "@/components/partners/vendor-no-business";
+import { VendorSwitcher } from "@/components/partners/vendor-switcher";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { isOpenAt, nextOpening } from "@/lib/delivery/hours";
-import { getVendorContext, getVendorOrders } from "@/lib/delivery/vendor";
+import { getVendorOrders } from "@/lib/delivery/vendor";
 import { daySummary, hoursByDay } from "@/lib/delivery/vendor-ui";
 import { pickLocalized } from "@/lib/i18n/localized";
 import { formatPaise } from "@/lib/money";
+import { getPortalContext } from "@/lib/partners/vendor-queries";
 
-type Props = { params: Promise<{ locale: string }> };
+type Props = { params: Promise<{ locale: string }>; searchParams: Promise<{ v?: string }> };
 
 /** Mon = 1 … Sun = 7 as a short weekday name (1 Jan 2024 was a Monday). */
 function weekday(day: number, locale: string): string {
@@ -21,17 +24,28 @@ function weekday(day: number, locale: string): string {
 }
 
 /**
- * Vendor home: today's numbers, and each store's status with the switch
- * that pauses new orders, its opening hours and whether it is open now.
+ * Vendor home. A business with stores sees today's numbers and each
+ * store's status with the switch that pauses new orders, its opening hours
+ * and whether it is open now. Every other business (hotel, transport,
+ * agency…) sees its earnings at a glance and shortcuts.
  */
-export default async function VendorHomePage({ params }: Props) {
+export default async function VendorHomePage({ params, searchParams }: Props) {
   const { locale } = await params;
+  const { v } = await searchParams;
   setRequestLocale(locale);
   const t = await getTranslations("vendorOrders");
-  const ctx = await getVendorContext();
-  if (!ctx || ctx.stores.length === 0) {
-    return <EmptyState icon={Store} title={t("noStores.title")} description={t("noStores.body")} />;
+  const portal = await getPortalContext(v);
+  if (!portal) return <VendorNoBusiness />;
+  const switcher = <VendorSwitcher vendors={portal.vendors} currentId={portal.vendor.id} path="/vendor" />;
+  if (!portal.hasStores) {
+    return (
+      <div className="space-y-6">
+        {switcher}
+        <VendorHomeSummary portal={portal} locale={locale} />
+      </div>
+    );
   }
+  const { ctx } = portal;
   const now = new Date();
   const orders = await getVendorOrders(ctx, now);
   const summary = daySummary(orders, now);
@@ -49,6 +63,7 @@ export default async function VendorHomePage({ params }: Props) {
 
   return (
     <div className="space-y-6">
+      {switcher}
       <section aria-labelledby="today" className="space-y-3">
         <h1 id="today" className="text-xl font-bold">
           {t("home.title")}

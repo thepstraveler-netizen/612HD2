@@ -206,6 +206,8 @@ export type EnquiryFormValues = {
   email: string;
   message: string;
   website: string;
+  /** Service pages with plans: the chosen plan's id ("" = not sure yet). */
+  planId?: string;
 };
 
 /** The submitEnquiry input for a target (validated again by enquirySchema on the server). */
@@ -246,7 +248,7 @@ export function enquiryPayload(
       ...contact,
     };
   }
-  return { kind: "service", serviceSlug: target.serviceSlug, ...contact };
+  return { kind: "service", serviceSlug: target.serviceSlug, planId: v.planId ?? "", ...contact };
 }
 
 /** Message key for a price line from lib/packages/pricing (null = show the stored description). */

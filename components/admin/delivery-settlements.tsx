@@ -3,6 +3,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Link } from "@/i18n/navigation";
 import { getSettlement } from "@/lib/delivery/admin";
 import { bpsToPercentInput } from "@/lib/bookings/admin-forms";
 import type { IsoDate } from "@/lib/dates";
@@ -12,7 +13,8 @@ import type { StoreKind } from "@/schemas/delivery";
 /**
  * Read-only settlement statement: delivered orders in an India date range,
  * per vendor — gross, commission (on gross), net payable, and how it was
- * paid (cash on delivery vs online). No payouts are recorded here.
+ * paid (cash on delivery vs online). Payouts are recorded on the vendor
+ * ledger (Payments → Settlements), linked from here.
  */
 export async function DeliverySettlements({
   kinds,
@@ -43,7 +45,12 @@ export async function DeliverySettlements({
           <Search /> {t("apply")}
         </Button>
       </form>
-      <p className="text-sm text-muted-foreground">{t("basis")}</p>
+      <p className="text-sm text-muted-foreground">
+        {t("basis")}{" "}
+        <Link href="/admin/payments/settlements" className="font-medium text-primary">
+          {t("ledgerLink")}
+        </Link>
+      </p>
       {rows.length === 0 ? (
         <p className="rounded-2xl border bg-card p-6 text-center text-muted-foreground">{t("empty")}</p>
       ) : (

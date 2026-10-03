@@ -5,11 +5,15 @@ import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { FaqList } from "@/components/home/faq-list";
 import { EnquiryForm } from "@/components/leads/enquiry-form";
+import { PortfolioGallery } from "@/components/services/portfolio-gallery";
+import { ServicePlans } from "@/components/services/service-plans";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
-import { getFaqs, getService, getServices } from "@/lib/catalog/queries";
+import { getServicePlans, getServicePortfolio } from "@/lib/catalog/b2b";
+import { planOptionLabel, serviceJsonLd } from "@/lib/catalog/b2b-ui";
+import { getBusinessInfo, getFaqs, getService, getServices } from "@/lib/catalog/queries";
 import { todayInIndia } from "@/lib/dates";
 import { pickLocalized } from "@/lib/i18n/localized";
 import { getIcon } from "@/lib/icons";
@@ -42,7 +46,9 @@ const TRAVEL_CTAS: Record<string, ("packages" | "travel")[]> = {
 /**
  * Service landing page, fully CMS-driven. Each vertical's booking flow
  * (hotels in phase 3, cabs in phase 5, …) is linked below the overview;
- * enquiry-only services get the shared enquiry form (phase 8).
+ * enquiry-only services get the shared enquiry form (phase 8). B2B services
+ * add admin-edited plans (pricing cards that preselect a plan in the form)
+ * and a portfolio gallery (phase 9); both show only when they have rows.
  */
 export default async function ServicePage({ params }: { params: Params }) {
   const { locale, slug } = await params;
@@ -50,16 +56,39 @@ export default async function ServicePage({ params }: { params: Params }) {
   if (!service) notFound();
   setRequestLocale(locale);
   const t = await getTranslations();
-  const [faqs, rideCatalog] = await Promise.all([getFaqs(service.id), getRideCatalog()]);
+  const [faqs, rideCatalog, plans, portfolio] = await Promise.all([
+    getFaqs(service.id),
+    getRideCatalog(),
+    getServicePlans(service.id),
+    getServicePortfolio(service.id),
+  ]);
   // Bike, rickshaw and car pages link to the ride booking for their vehicle type.
   const rideType = rideCatalog.types.find((type) => type.serviceSlug === service.slug);
   const accent = ACCENT_CLASSES[service.accent];
   const Icon = getIcon(service.icon);
   const description = service.description ? pickLocalized(service.description, locale) : null;
   const travelCtas = TRAVEL_CTAS[service.slug];
+  const lang = locale === "hi" ? "hi" : "en";
+  // Enquiry services get the form; a travel hand-off page keeps it only when it sells plans.
+  const showEnquiry = service.kind === "enquiry" && !rideType && (!travelCtas || plans.length > 0);
+  const jsonLd = plans.length
+    ? serviceJsonLd({
+        name: pickLocalized(service.name, locale),
+        description: pickLocalized(service.summary, locale),
+        providerName: (await getBusinessInfo()).name,
+        plans,
+        locale,
+      })
+    : null;
 
   return (
     <div className="mx-auto max-w-3xl space-y-8 px-4 py-10">
+      {jsonLd ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
+        />
+      ) : null}
       <Link
         href="/services"
         className="inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-primary"
@@ -149,8 +178,31 @@ export default async function ServicePage({ params }: { params: Params }) {
             );
           })}
         </ul>
-      ) : service.kind === "enquiry" ? (
-        <section aria-labelledby="service-enquiry" className="space-y-3">
+      ) : null}
+
+      {plans.length ? (
+        <ServicePlans
+          plans={plans}
+          locale={locale}
+          enquiryId={showEnquiry ? "enquire" : null}
+          accentText={accent.text}
+        />
+      ) : null}
+
+      {portfolio.length ? (
+        <section aria-labelledby="service-portfolio" className="space-y-4">
+          <div>
+            <h2 id="service-portfolio" className="text-xl font-bold">
+              {t("servicePage.portfolio.title")}
+            </h2>
+            <p className="text-sm text-muted-foreground">{t("servicePage.portfolio.lead")}</p>
+          </div>
+          <PortfolioGallery items={portfolio} locale={locale} />
+        </section>
+      ) : null}
+
+      {showEnquiry ? (
+        <section id="enquire" aria-labelledby="service-enquiry" className="scroll-mt-20 space-y-3">
           <div>
             <h2 id="service-enquiry" className="text-xl font-bold">
               {t("enquiry.serviceTitle")}
@@ -159,11 +211,12 @@ export default async function ServicePage({ params }: { params: Params }) {
           </div>
           <EnquiryForm
             target={{ kind: "service", serviceSlug: service.slug }}
-            locale={locale === "hi" ? "hi" : "en"}
+            locale={lang}
             minDate={todayInIndia()}
+            plans={plans.map((p) => ({ id: p.id, label: planOptionLabel(p, locale) }))}
           />
         </section>
-      ) : (
+      ) : rideType || travelCtas ? null : (
         <p className="rounded-xl bg-secondary p-4 text-sm text-secondary-foreground">
           {t("servicePage.comingSoon")}
         </p>
