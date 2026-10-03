@@ -7,6 +7,7 @@ import type { ReactNode } from "react";
 import { ErrorReporting } from "@/components/observability/error-reporting";
 import { VercelInsights } from "@/components/observability/vercel-insights";
 import { Providers } from "@/components/providers";
+import { BuildWatcher } from "@/components/pwa/build-watcher";
 import { ServiceWorkerRegistration } from "@/components/pwa/service-worker";
 import { routing } from "@/i18n/routing";
 import { BRAND } from "@/lib/pwa/brand";
@@ -78,6 +79,7 @@ export default async function LocaleLayout({
           <Providers>{children}</Providers>
         </NextIntlClientProvider>
         <ServiceWorkerRegistration />
+        <BuildWatcher />
         <ErrorReporting />
         {process.env.VERCEL ? <VercelInsights /> : null}
       </body>
