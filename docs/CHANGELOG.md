@@ -1,5 +1,21 @@
 # Changelog
 
+## Follow-ups after Phase 11
+
+### Added
+
+- Admin → Hotels → Import CSV: add hotels, rooms and rate plans or change prices from a spreadsheet in the export's format, with a check of the whole file before anything is written (D-106).
+- Admin → Settings → Staff and roles: give a role to an existing account by email and remove roles; changes are audited and the last super admin can't be removed (D-107).
+- A progress bar at the top of every page as soon as a link or button navigates, and loading skeletons in the account, admin, partner and driver areas (D-105).
+- Tests: hotel import (parser and database), roles, driver overlap, account-deletion files, stale-tab guard and navigation.
+
+### Changed
+
+- Pages load faster: server code runs in Mumbai next to the database (`vercel.json`), and the session check on each click no longer waits on Supabase Auth (D-105).
+- Tabs left open across a deploy switch to a full page load instead of freezing on the next click (D-105).
+- Assigning a driver or vehicle that already has an overlapping cab trip or local ride is refused; the buffer and estimates are in the `dispatch.overlap` setting (D-108).
+- Completing an account deletion also removes the customer's prescriptions, partner documents and review photos (D-109).
+
 ## Phase 11 · Hardening
 
 ### Added

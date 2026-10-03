@@ -1,8 +1,9 @@
-import { Download } from "lucide-react";
+import { Download, Upload } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { DataTable } from "@/components/admin/data-table";
 import { AdminPageHeader } from "@/components/admin/page-header";
 import { Button } from "@/components/ui/button";
+import { Link } from "@/i18n/navigation";
 import { requirePermission } from "@/lib/auth/guards";
 import { listAdminHotels } from "@/lib/hotels/admin";
 import { hasPermission } from "@/lib/permissions/check";
@@ -27,6 +28,13 @@ export default async function AdminHotelsPage() {
             <Download /> {t("hotelsAdmin.exportCsv")}
           </a>
         </Button>
+        {canWrite ? (
+          <Button asChild variant="outline">
+            <Link href="/admin/hotels/import">
+              <Upload /> {t("hotelsAdmin.importCsv")}
+            </Link>
+          </Button>
+        ) : null}
       </AdminPageHeader>
       <DataTable
         rows={hotels.map((h) => ({

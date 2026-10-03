@@ -12,7 +12,8 @@ Contents:
 4. Partner, driver and rider screens
 5. Common tasks, step by step
 6. Phase 11 additions (privacy, two-step sign-in, security)
-7. Good habits and where to get help
+7. Follow-up additions (hotel import, driver scheduling, account files)
+8. Good habits and where to get help
 
 ---
 
@@ -51,15 +52,13 @@ Buttons you are not allowed to use are either hidden or refused with "You don't 
 
 ### How a role is given
 
-There is no "Users" screen in Settings yet. Roles are given in one of these ways:
-
 - **The first super admin** is created once by the developer with the "admin:create" script described in DEPLOYMENT.md.
-- **Staff roles (admin, manager, agent)**: the person signs up on the website first. Then someone with access to the Supabase dashboard opens the SQL editor and runs the "grant role by email" function with the person's email and the role (agent, manager, admin and so on). DEPLOYMENT.md, Phase 8 step 3, shows the exact line to paste. Ask the developer if you do not have Supabase access.
-- **Partners (vendor role)**: approving a partner application gives the vendor role automatically (see Vendors below). For a partner added by hand, the same SQL function gives the vendor role, and the developer adds their login to the vendor's partner accounts.
+- **Everyone else**: the person signs up on the website first. Then someone with the "grant and revoke staff roles" permission (super admins and admins) opens **Admin → Settings → Staff and roles**, types the person's email, picks the role and presses **Grant role**.
+- **Partners (vendor role)**: approving a partner application gives the vendor role automatically (see Vendors below). For a partner added by hand, grant the vendor role on the same screen; the developer then adds their login to the vendor's partner accounts.
 
-You can see which roles a person has on their customer page (Admin → Customers → the person → Profile → Roles).
+To take a role away, press the cross next to it on the same screen. Only a super admin can give or remove the super admin role, nobody can change their own roles, and the last super admin can't lose the role. Every change is recorded in the audit log.
 
-To take a role away, ask the developer; there is no button for it yet.
+You can also see which roles a person has on their customer page (Admin → Customers → the person → Profile → Roles).
 
 ---
 
@@ -477,7 +476,7 @@ If you only want to stop new orders but keep the pages up, switch off the bookin
 
 ## 6. Phase 11 additions
 
-These arrive with Phase 11 (being finished now). The screens named below are where they live.
+These arrived with Phase 11. The screens named below are where they live.
 
 ### Privacy requests
 
@@ -490,7 +489,7 @@ Staff handle deletion requests in **Admin → Customers → Privacy requests** (
 
 1. Open the request. It shows who asked, when, the reason, and whether they still have bookings awaiting payment or confirmed and not yet completed.
 2. If they have open bookings, finish or cancel those first (or reject the request and tell the customer why).
-3. **Complete** deletes the account. Their profile, addresses, travellers, wishlist, points and reviews are removed; their bookings and invoices are kept without their name attached, for tax records.
+3. **Complete** deletes the account. Their profile, addresses, travellers, wishlist, points, reviews and uploaded files are removed; their bookings and invoices are kept without their name attached, for tax records.
 4. **Reject** needs a note explaining why.
 
 A customer's page also lists their past privacy requests.
@@ -513,9 +512,30 @@ To stop spam and password guessing, the site limits how often one visitor can re
 
 **Turnstile** is Cloudflare's free "are you human" check on public forms (sign-up, email sign-in links, password reset, enquiries and partner applications). It only runs once the developer has added the Cloudflare keys, and can be switched off in **Settings → Security**.
 
+## 7. Follow-up additions
+
+### Import hotels from a spreadsheet
+
+**Admin → Hotels → Import CSV** (needs the Hotels change permission):
+
+1. Press **Export CSV** on the Hotels page to get the current list in the right format, or start from the column list shown on the import page.
+2. Edit it in Excel or Google Sheets: change prices or units, add rows for new rooms, rate plans or hotels. Each row is one rate plan of one room. For a hotel with no rooms yet, leave the room columns empty. Save as CSV.
+3. Choose the file. The site checks every row first and lists any problems by line and column; nothing is imported until the file is clean.
+4. Check the summary (new hotels, hotels to update) and press **Import now**.
+
+Rooms and rate plans are matched by their English name, so keep names the same to update them; a new name adds a new room or plan. Imports never delete anything, and photos, amenities, policies and Hindi names stay as they are. New hotels need their photos and details added on their own page before you publish them.
+
+### Drivers can't be double-booked
+
+When you assign a driver or vehicle to a cab trip or local ride, the site checks they aren't already out on another job at that time and says so if they are. It keeps 30 minutes free between jobs and estimates how long a job takes from its distance (or return time, or booked hours). An admin can change these in the `dispatch.overlap` setting; ask the developer if the estimates feel wrong for your routes.
+
+### Deleting an account removes their files
+
+Completing a deletion request now also removes the customer's uploaded prescriptions, partner documents and review photos. If the files can't be removed, nothing is deleted and you see a message to try again.
+
 ---
 
-## 7. Good habits and where to get help
+## 8. Good habits and where to get help
 
 - **Archive, don't delete.** Hotels, packages, coupons and templates that have been used cannot be deleted; switch them off or archive them.
 - **Check the audit log** when something changed unexpectedly: it shows who changed what and when.

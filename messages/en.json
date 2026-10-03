@@ -850,7 +850,9 @@
         "inUse": "It is still in use, so it cannot be deleted. Switch it off instead.",
         "actionFailed": "Something went wrong. Please try again.",
         "noDriverLink": "Assign a driver first; the link is created then.",
-        "driverLinkExpired": "This driver link has expired. Reassign the driver to issue a new one."
+        "driverLinkExpired": "This driver link has expired. Reassign the driver to issue a new one.",
+        "driverBusy": "That driver already has another trip or ride around that time. Pick another driver, or move the other booking first.",
+        "vehicleBusy": "That vehicle is already out on another trip or ride around that time. Pick another vehicle."
       },
       "settings": {
         "title": "Local rides",
@@ -1351,6 +1353,7 @@
     "newTitle": "New hotel",
     "editTitle": "Edit hotel",
     "exportCsv": "Export CSV",
+    "importCsv": "Import CSV",
     "backToList": "All hotels",
     "noCities": "Add a city first",
     "noCitiesLead": "Hotels belong to a city. Ask an administrator to add an active city, then come back.",
@@ -1613,6 +1616,47 @@
       "inUse": "This is still in use (for example by bookings), so it cannot be deleted.",
       "notFound": "This item no longer exists or belongs to another hotel.",
       "needPlan": "Add at least one rate plan."
+    },
+    "import": {
+      "title": "Import hotels from CSV",
+      "lead": "Upload a file in the same format as the export to add hotels, rooms and rate plans or change their prices. Nothing is deleted.",
+      "file": "CSV file",
+      "help": "Columns: hotel_slug, hotel_name, status, city, property_type, stars, room, units, rate_plan, meal_plan, base_price_inr, extra_adult_inr, extra_child_inr, refundable. Each row is one rate plan; leave room empty to only add or update the hotel. Rooms and plans are matched by their English name. Up to 2,000 rows.",
+      "issuesTitle": "{count, plural, one {# problem} other {# problems}} found. Fix the file and choose it again; nothing was imported.",
+      "moreIssues": "…and {count} more.",
+      "issueAt": "Line {line}, {column}: {message}",
+      "issueLine": "Line {line}: {message}",
+      "previewTitle": "The file looks good",
+      "previewRows": "{count, plural, one {# row} other {# rows}}, {plans, plural, one {# rate plan} other {# rate plans}}",
+      "previewNew": "New hotels ({count}): {list}",
+      "previewExisting": "Hotels to update ({count}): {list}",
+      "previewNote": "New hotels are created with the status in the file. Photos, amenities, policies and Hindi names are kept as they are; add them in each hotel's page.",
+      "apply": "Import now",
+      "done": "Import finished",
+      "resultHotels": "Hotels: {created} added, {updated} changed",
+      "resultRooms": "Rooms: {created} added, {updated} changed",
+      "resultPlans": "Rate plans: {created} added, {updated} changed",
+      "errors": {
+        "forbidden": "You don't have permission to edit hotels.",
+        "fileTooLarge": "The file is too large. Split it into files under 800 KB.",
+        "emptyFile": "The file has no rows below the header.",
+        "tooManyRows": "The file has more than 2,000 rows. Split it into smaller files.",
+        "invalidFile": "The file has problems. See the list below.",
+        "saveFailed": "The import failed. Nothing was changed; please try again.",
+        "unknownColumn": "unknown column",
+        "missingColumn": "required column missing",
+        "duplicateColumn": "a column appears twice in the header",
+        "required": "required",
+        "invalidSlug": "use lowercase letters, numbers and hyphens",
+        "invalidCity": "use the city's slug, e.g. vrindavan",
+        "invalidAmount": "not a valid rupee amount",
+        "invalidYesNo": "use yes or no",
+        "hotelDetailsDiffer": "differs from an earlier row for the same hotel",
+        "roomDetailsDiffer": "differs from an earlier row for the same room",
+        "duplicatePlan": "this rate plan appears twice for the room",
+        "unknownCity": "no city with slug \"{value}\"",
+        "deletedHotel": "hotel \"{value}\" was deleted; use a new slug"
+      }
     }
   },
   "checkout": {
@@ -2673,7 +2717,9 @@
       "noDriverLink": "Assign a driver first; the link is created then.",
       "driverLinkExpired": "This driver link has expired. Reassign the driver to issue a new one.",
       "badFile": "Upload a PDF, JPG, PNG or WebP file up to 10 MB.",
-      "uploadFailed": "The upload failed. Please try again."
+      "uploadFailed": "The upload failed. Please try again.",
+      "driverBusy": "That driver already has another trip or ride around that time. Pick another driver, or move the other booking first.",
+      "vehicleBusy": "That vehicle is already out on another trip or ride around that time. Pick another vehicle."
     }
   },
   "cabs": {
@@ -6983,7 +7029,8 @@
       "closeFailed": "The account was deleted but the request could not be closed. Try again to close it.",
       "selfDelete": "You can't delete your own account here.",
       "reasonRequired": "Please give a reason.",
-      "tooLong": "Please keep it under 1000 characters."
+      "tooLong": "Please keep it under 1000 characters.",
+      "filesFailed": "Could not remove the customer's uploaded files, so the account was not deleted. Please try again."
     }
   },
   "securitySettings": {
@@ -7005,6 +7052,44 @@
       "review": "Reviews",
       "upload": "Uploads",
       "export": "Data downloads"
+    }
+  },
+  "rolesAdmin": {
+    "title": "Staff and roles",
+    "lead": "Give team members access to the admin, or take it away. The person needs an account first: ask them to sign up on the site with their email.",
+    "back": "Back to settings",
+    "email": "Email of the person",
+    "emailHelp": "The email they signed up with.",
+    "role": "Role",
+    "grant": "Grant role",
+    "granted": "{role} given to {email}.",
+    "revoked": "{role} removed from {name}.",
+    "confirmRevoke": "Remove the {role} role from {name}?",
+    "revoke": "Remove {role} from {name}",
+    "rolesHelp": "What each role can do is set in the permission matrix. Only a super admin can give or remove the super admin role, and you can't change your own roles.",
+    "empty": "Nobody has a staff, vendor or driver role yet.",
+    "you": "(you)",
+    "blocked": "Account blocked",
+    "unknownUser": "Unknown account",
+    "roles": {
+      "super_admin": "Super admin",
+      "admin": "Admin",
+      "manager": "Manager",
+      "agent": "Agent (travel / calling centre)",
+      "vendor": "Vendor / partner",
+      "driver": "Driver",
+      "customer": "Customer"
+    },
+    "errors": {
+      "forbidden": "You don't have permission to change that role.",
+      "invalidEmail": "Enter a valid email address.",
+      "invalidRole": "Pick a role from the list.",
+      "noAccount": "No account uses this email. Ask the person to sign up first.",
+      "alreadyHasRole": "They already have this role.",
+      "ownRole": "You can't remove your own roles. Ask another admin.",
+      "lastSuperAdmin": "This is the only super admin. Make someone else super admin first.",
+      "saveFailed": "Could not save the change. Please try again.",
+      "invalid": "Something was wrong with the request. Reload and try again."
     }
   }
 }

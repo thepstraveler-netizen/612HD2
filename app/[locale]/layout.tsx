@@ -3,10 +3,12 @@ import { Dancing_Script, Noto_Sans_Devanagari, Plus_Jakarta_Sans } from "next/fo
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import { ErrorReporting } from "@/components/observability/error-reporting";
 import { VercelInsights } from "@/components/observability/vercel-insights";
+import { NavigationProgress } from "@/components/layout/navigation-progress";
 import { Providers } from "@/components/providers";
+import { BuildWatcher } from "@/components/pwa/build-watcher";
 import { ServiceWorkerRegistration } from "@/components/pwa/service-worker";
 import { routing } from "@/i18n/routing";
 import { BRAND } from "@/lib/pwa/brand";
@@ -74,10 +76,15 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body className={`${sans.variable} ${devanagari.variable} ${script.variable}`}>
+        {/* useSearchParams needs a Suspense boundary to keep pages static. */}
+        <Suspense fallback={null}>
+          <NavigationProgress />
+        </Suspense>
         <NextIntlClientProvider>
           <Providers>{children}</Providers>
         </NextIntlClientProvider>
         <ServiceWorkerRegistration />
+        <BuildWatcher />
         <ErrorReporting />
         {process.env.VERCEL ? <VercelInsights /> : null}
       </body>

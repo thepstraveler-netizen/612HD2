@@ -1,4 +1,7 @@
+import { Users } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+import { Button } from "@/components/ui/button";
+import { Link } from "@/i18n/navigation";
 import { AdminPageHeader } from "@/components/admin/page-header";
 import {
   BusinessProfileForm,
@@ -80,6 +83,7 @@ export default async function AdminSettingsPage() {
   const stored = businessProfileSchema.partial().safeParse(profileRow?.value ?? {});
   const profile: BusinessProfile = { ...EMPTY_PROFILE, ...(stored.success ? stored.data : {}) };
   const canWrite = hasPermission(session.permissions, "settings.write");
+  const canManageRoles = hasPermission(session.permissions, "users.manage_roles");
   // Stored checkout settings over the defaults; an invalid stored row opens with the defaults.
   const storedValue = (key: string) => checkoutRows?.find((r) => r.key === key)?.value ?? {};
   const payments = paymentSettingsSchema.safeParse(storedValue("payments.defaults"));
@@ -98,7 +102,15 @@ export default async function AdminSettingsPage() {
 
   return (
     <div className="space-y-6">
-      <AdminPageHeader title={t("admin.modules.settings")} lead={t("cms.settingsLead")} />
+      <AdminPageHeader title={t("admin.modules.settings")} lead={t("cms.settingsLead")}>
+        {canManageRoles ? (
+          <Button asChild variant="outline">
+            <Link href="/admin/settings/users">
+              <Users /> {t("rolesAdmin.title")}
+            </Link>
+          </Button>
+        ) : null}
+      </AdminPageHeader>
       {canWrite ? <BusinessProfileForm defaultValues={profile} /> : null}
       {canWrite ? (
         <PaymentSettingsForm
