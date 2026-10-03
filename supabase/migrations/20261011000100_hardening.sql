@@ -5,7 +5,7 @@
 --   * privacy_requests: DPDP data export log and account-deletion requests
 --     that staff complete from Admin → Customers (D-095).
 --   * security.defaults: limits, Turnstile and admin 2FA switches (admin-editable).
--- No DROP statements (the hosted connector cannot run them).
+-- Additive only (the hosted connector cannot run destructive statements).
 
 -- ---------------------------------------------------------------- rate limits
 
