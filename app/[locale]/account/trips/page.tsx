@@ -1,4 +1,4 @@
-import { Luggage } from "lucide-react";
+import { Luggage, Star } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { TripCard } from "@/components/booking/trip-card";
@@ -9,6 +9,7 @@ import { Link } from "@/i18n/navigation";
 import { requireUser } from "@/lib/auth/guards";
 import { listMyTrips, type TripSummary } from "@/lib/bookings/trips";
 import { cabSnapshot, type TripStatus } from "@/lib/cabs/ui";
+import { reviewableCodes } from "@/lib/reviews/trips";
 import { rideSnapshot, type RideStatus } from "@/lib/rides/ui";
 import { createClient } from "@/lib/supabase/server";
 
@@ -63,7 +64,15 @@ export default async function TripsPage({ params }: { params: Promise<{ locale: 
   const session = await requireUser("/account/trips");
   const t = await getTranslations("trips");
   const trips = await listMyTrips(session.user.id);
-  const [tripStatuses, rides] = await Promise.all([cabTripStatuses(trips), rideStatuses(trips)]);
+  const [tripStatuses, rides, reviewable, tr] = await Promise.all([
+    cabTripStatuses(trips),
+    rideStatuses(trips),
+    reviewableCodes(
+      session.user.id,
+      trips.map((x) => x.code),
+    ),
+    getTranslations("reviews"),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -86,6 +95,16 @@ export default async function TripsPage({ params }: { params: Promise<{ locale: 
                 ) : (
                   <TripCard trip={trip} locale={locale} tripStatus={tripStatuses.get(trip.code)} />
                 )}
+                {reviewable.has(trip.code) ? (
+                  <Link
+                    href={`/account/trips/${trip.code}#review`}
+                    className="mt-2 inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-accent-amber/40 bg-accent-amber/10 px-4 text-sm font-semibold hover:bg-accent-amber/20"
+                  >
+                    <Star className="size-4 fill-accent-amber text-accent-amber" aria-hidden="true" />
+                    {tr("writePrompt")}
+                    <span className="sr-only"> · {t("bookingId", { code: trip.code })}</span>
+                  </Link>
+                ) : null}
               </li>
             );
           })}

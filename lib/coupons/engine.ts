@@ -25,6 +25,8 @@ export type Coupon = {
   perUserLimit: number;
   firstBookingOnly: boolean;
   isActive: boolean;
+  /** Personal coupon (P&S Rewards code): only this customer may use it. Null/absent = anyone. */
+  ownerId?: string | null;
 };
 
 export type CouponContext = {
@@ -37,6 +39,8 @@ export type CouponContext = {
   usedCount: number;
   userUsedCount: number;
   userHasPriorBooking: boolean;
+  /** The signed-in customer, or null for a guest. */
+  userId?: string | null;
 };
 
 export type CouponRejection =
@@ -65,8 +69,17 @@ export function couponDiscount(coupon: Coupon, basePaise: number): number {
   return Math.max(0, Math.min(capped, basePaise));
 }
 
+/**
+ * A personal coupon works only for its owner; guests and everyone else are
+ * told it does not exist, so a leaked code reveals nothing.
+ */
+export function canUseCoupon(ownerId: string | null | undefined, userId: string | null | undefined): boolean {
+  return !ownerId || ownerId === userId;
+}
+
 export function evaluateCoupon(coupon: Coupon | null | undefined, ctx: CouponContext): CouponResult {
   if (!coupon) return { ok: false, reason: "not_found" };
+  if (!canUseCoupon(coupon.ownerId, ctx.userId)) return { ok: false, reason: "not_found" };
   if (!coupon.isActive) return { ok: false, reason: "inactive" };
   const now = ctx.now.getTime();
   if (coupon.startsAt && Date.parse(coupon.startsAt) > now) return { ok: false, reason: "not_started" };

@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { SectionTitle } from "@/components/shared/section-title";
 import { ServiceCard } from "@/components/shared/service-card";
 import { getServices } from "@/lib/catalog/queries";
+import { pageMetadata } from "@/lib/seo/metadata";
 
 export const revalidate = 3600;
 
@@ -13,7 +14,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "servicesIndex" });
-  return { title: t("title"), description: t("lead") };
+  return pageMetadata({ locale, path: "/services", title: t("title"), description: t("lead") });
 }
 
 export default async function ServicesIndexPage({ params }: { params: Promise<{ locale: string }> }) {

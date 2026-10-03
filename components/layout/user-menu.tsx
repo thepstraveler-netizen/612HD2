@@ -17,6 +17,7 @@ import {
 import { Link } from "@/i18n/navigation";
 import { signOut } from "@/lib/auth/actions";
 import { STAFF_ROLES, type RoleKey } from "@/lib/permissions/constants";
+import { clearOfflineTrips } from "@/lib/pwa/client";
 import { createClient } from "@/lib/supabase/client";
 
 const configured = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
@@ -104,7 +105,7 @@ export function UserMenu() {
           </DropdownMenuItem>
         ) : null}
         <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={() => void signOut()}>
+        <DropdownMenuItem onSelect={() => void clearOfflineTrips().finally(() => signOut())}>
           <LogOut /> {t("logout")}
         </DropdownMenuItem>
       </DropdownMenuContent>

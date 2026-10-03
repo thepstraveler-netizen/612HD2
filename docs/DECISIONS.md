@@ -341,3 +341,41 @@ When a booking that belongs to a vendor completes (the hotel's or store's vendor
 ### D-083 · Payouts are made by hand through an adapter
 
 A payout gathers a vendor's unsettled rows up to a cut-off date (cycles end every `cycle_days` days for everyone) into one pending payout; finance pays it by bank transfer or UPI outside the app (or collects it, when the vendor owes money) and records the method and UTR, and the vendor is emailed. A pending payout can be cancelled, which releases its rows. One pending payout per vendor at a time. Money movement goes through a `PayoutProvider` interface (`lib/settlements/provider.ts`); only `manual` exists, and a Razorpay Route or RazorpayX adapter can be added later without changing the ledger. Creating, paying and cancelling payouts and adjustments need `payments.refund`, like refunds.
+
+## Phase 10 · Reviews, rewards, referrals, wishlist, PWA, SEO and reports
+
+### D-084 · Only customers who booked can review, and staff moderate first
+
+A review belongs to one booking (one review per booking) and only the customer who made it can write it. It opens once the booking is completed, or for a hotel stay or package once its end date has passed while it is still confirmed (staff do not always mark stays completed), and stays open for `window_days` (180) after that. The subject is the booking's hotel, package or store; cab, ride and travel bookings are reviewed as the service. Reviews wait in Admin → Reviews until staff publish them (`reviews.defaults.auto_publish` turns that off); rejecting needs a note. Staff can post one public reply. Only published reviews count towards the cached ratings on hotels, packages and stores. The public sees the first name and initial ("Priya S."), never who wrote it or for which booking. Review photos go to the public `media` bucket under `reviews/<user id>/` with unguessable names and are listed only once the review is published.
+
+### D-085 · P&S Rewards points are spent as a personal coupon
+
+Points live in a ledger. A completed booking earns `earn_bps` (1%) of its total minus refunds, in points worth `point_value_paise` (₹1) each; the rate is frozen when the booking first earns, and a later refund takes the matching points back. Staff can credit or debit points with a reason; a published review can earn a bonus. To spend points, the customer turns them into a one-time coupon only they can use (`PSR…`, valid `code_valid_days`), so checkout, server-side pricing and the coupon engine stay unchanged and the discount is recomputed on the server like any coupon. A code that lapses unused gives its points back. Earned points expire after `expiry_days` (365; oldest first). All of it, including turning the programme off, is in `loyalty.defaults`.
+
+### D-086 · Referral bonuses are paid on the friend's first completed booking
+
+Every customer gets a referral code. A new customer can claim a friend's code until their first booking completes; when it does, both get points (`referrer_points`, `referee_points`). Paying on completion rather than signup stops self-referral farming with throwaway accounts.
+
+### D-087 · Wishlist hearts load in the browser; referrals are claimed on the first account visit
+
+Catalog pages stay static or cached: each page loads the signed-in customer's wishlist once in the browser and every heart shares it; saving writes straight to `wishlists` under RLS. A `?ref=CODE` link stores the code in a first-party cookie for 30 days, and the claim runs once the customer opens their account (where sign-up lands), then the cookie is deleted whatever the result. A reward code used by anyone but its owner is reported as "not found", and reward codes never show in public coupon lists.
+
+### D-088 · Review summaries are cached for ten minutes
+
+The rating summary and first page of reviews on hotel, package and store pages are cached under a `reviews` tag and refreshed when staff publish, reject or reply. Photos are uploaded before the review is sent, so an abandoned form can leave an unused photo in `media/reviews/<user id>/`.
+
+### D-089 · How report numbers are counted
+
+Dashboard and report figures are summed in SQL functions only the server can call, after it checks the viewer's permission, using India dates. Most reports count a booking on the day it was created; occupancy uses stay dates, cancellations the day of cancellation and vendor commission the ledger date. A booking counts as sold while it is confirmed, completed or partially refunded; revenue is paid minus refunded and booked value is total minus refunded. Conversion is bookings that ever confirmed divided by all bookings created (including expired and failed). Agent figures follow the lead's current assignee. Reward codes are grouped into one "PSR" row in coupon usage. The figures need `reports.read` or `payments.read`; the "needs attention" list needs `dashboard.read` and shows each item only to staff who can open it. Low stock means 5 units or fewer.
+
+### D-090 · Staff actions on customers
+
+Staff notes and block / unblock are written as the signed-in staff member, so RLS and the audit log apply, and staff cannot block themselves. Points adjustments need a reason and record the staff member. A blocked customer cannot use their account, book, redeem points or write reviews.
+
+### D-091 · SEO: canonical and hreflang per page, sitemap from the catalog
+
+Every public page sets its own canonical URL and `hreflang` links (en, hi, x-default = English) through one helper; the layout only sets the site defaults. `sitemap.xml` lists every public page and every published hotel, package and store in both languages, read from the public catalog and falling back to the static pages if the database is unreachable. `robots.txt` keeps admin, account, partner, driver, rider, checkout, quote, auth and API pages out of search. Structured data: Organization / TravelAgency on the home page, Hotel, TaxiService, Product + TouristTrip for packages, Restaurant / GroceryStore for stores, Service for business services and breadcrumbs on detail pages; ratings appear only once there is at least one published review. Share images and app icons are drawn by the app, so no image files are committed; they are English-only because the image font has no Devanagari.
+
+### D-092 · The PWA is a hand-written service worker; analytics only on Vercel
+
+The site installs as an app (manifest and icons). A small service worker loads pages from the network first and falls back to an offline page; static files and images are cached with size limits; a booking page the customer opened while online (My Trips → a booking) is kept, up to 20, so it opens without signal, and the saved copies are deleted on sign-out. Admin, account forms, checkout, API and auth requests are never cached. Vercel Web Analytics and Speed Insights (free, cookieless) load only on Vercel, with booking codes and tokens stripped from the URLs they report; they must be switched on in the Vercel project.

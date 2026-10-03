@@ -14,6 +14,7 @@ import { pickLocalized } from "@/lib/i18n/localized";
 import { getMyApplications } from "@/lib/partners/queries";
 import { getPartnersSettings } from "@/lib/partners/settings";
 import { isOpenApplication } from "@/lib/partners/status";
+import { pageMetadata } from "@/lib/seo/metadata";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -27,7 +28,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "partner" });
-  return { title: t("title"), description: t("lead") };
+  return pageMetadata({ locale, path: "/partner", title: t("title"), description: t("lead") });
 }
 
 async function whyCollaborate(): Promise<HomeSection | undefined> {

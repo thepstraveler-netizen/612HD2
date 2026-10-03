@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { FaqList } from "@/components/home/faq-list";
 import { EnquiryForm } from "@/components/leads/enquiry-form";
+import { JsonLd } from "@/components/seo/json-ld";
 import { PortfolioGallery } from "@/components/services/portfolio-gallery";
 import { ServicePlans } from "@/components/services/service-plans";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +19,9 @@ import { todayInIndia } from "@/lib/dates";
 import { pickLocalized } from "@/lib/i18n/localized";
 import { getIcon } from "@/lib/icons";
 import { getRideCatalog } from "@/lib/rides/queries";
+import { breadcrumbJsonLd } from "@/lib/seo/jsonld";
+import { pageMetadata } from "@/lib/seo/metadata";
+import { absoluteUrl } from "@/lib/seo/site";
 import { ACCENT_CLASSES } from "@/lib/services";
 import { cn } from "@/lib/utils";
 
@@ -34,7 +38,13 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const { locale, slug } = await params;
   const service = await getService(slug);
   if (!service) return {};
-  return { title: pickLocalized(service.name, locale), description: pickLocalized(service.summary, locale) };
+  return pageMetadata({
+    locale,
+    path: `/services/${service.slug}`,
+    title: pickLocalized(service.name, locale),
+    description: pickLocalized(service.summary, locale),
+    images: service.heroImage ? [service.heroImage] : undefined,
+  });
 }
 
 /** Travel services hand over to their own pages: tour packages and flight / train / bus enquiries. */
@@ -71,24 +81,28 @@ export default async function ServicePage({ params }: { params: Params }) {
   const lang = locale === "hi" ? "hi" : "en";
   // Enquiry services get the form; a travel hand-off page keeps it only when it sells plans.
   const showEnquiry = service.kind === "enquiry" && !rideType && (!travelCtas || plans.length > 0);
-  const jsonLd = plans.length
-    ? serviceJsonLd({
+  const pageUrl = absoluteUrl(`/services/${service.slug}`, locale);
+  const jsonLd = [
+    {
+      ...serviceJsonLd({
         name: pickLocalized(service.name, locale),
         description: pickLocalized(service.summary, locale),
         providerName: (await getBusinessInfo()).name,
         plans,
         locale,
-      })
-    : null;
+      }),
+      url: pageUrl,
+    },
+    breadcrumbJsonLd([
+      { name: t("seo.home"), url: absoluteUrl("/", locale) },
+      { name: t("seo.breadcrumbServices"), url: absoluteUrl("/services", locale) },
+      { name: pickLocalized(service.name, locale), url: pageUrl },
+    ]),
+  ];
 
   return (
     <div className="mx-auto max-w-3xl space-y-8 px-4 py-10">
-      {jsonLd ? (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
-        />
-      ) : null}
+      <JsonLd data={jsonLd} />
       <Link
         href="/services"
         className="inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-primary"

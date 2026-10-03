@@ -1,6 +1,8 @@
 import { ArrowLeft, BadgeCheck, Clock, ImageOff, Leaf, MapPin, Moon, Star } from "lucide-react";
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
+import { ReviewsSection } from "@/components/reviews/reviews-section";
+import { WishlistButton } from "@/components/wishlist/wishlist-button";
 import { Link } from "@/i18n/navigation";
 import { getFeatureFlag } from "@/lib/bookings/settings";
 import type { StoreMenu } from "@/lib/delivery/types";
@@ -78,7 +80,10 @@ export async function ShopMenuPage({
               </ShopTag>
             ) : null}
           </div>
-          <h1 className="text-[length:var(--text-title)] leading-tight font-extrabold">{name}</h1>
+          <div className="flex items-start justify-between gap-3">
+            <h1 className="text-[length:var(--text-title)] leading-tight font-extrabold">{name}</h1>
+            <WishlistButton type="store" id={store.id} name={name} variant="inline" />
+          </div>
           {store.cuisines.length ? (
             <p className="text-sm text-muted-foreground">{store.cuisines.join(" · ")}</p>
           ) : null}
@@ -120,6 +125,8 @@ export async function ShopMenuPage({
         canOrder={flagOn && open.state === "open"}
         orderBlock={!flagOn ? "paused" : open.state === "open" ? null : "closed"}
       />
+
+      <ReviewsSection target={{ type: "store", id: store.id }} service={shop} />
     </div>
   );
 }

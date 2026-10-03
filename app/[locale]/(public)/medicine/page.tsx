@@ -11,13 +11,19 @@ import { getFeatureFlag } from "@/lib/bookings/settings";
 import { getDeliverySettings, getDeliveryZones, getStores } from "@/lib/delivery/queries";
 import { pickLocalized } from "@/lib/i18n/localized";
 import { createClient } from "@/lib/supabase/server";
+import { pageMetadata } from "@/lib/seo/metadata";
 
 type Props = { params: Promise<{ locale: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "medicine" });
-  return { title: t("metaTitle"), description: t("metaDescription") };
+  return pageMetadata({
+    locale,
+    path: "/medicine",
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  });
 }
 
 /**

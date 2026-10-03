@@ -1,7 +1,13 @@
 import "server-only";
 import { hasServiceRole } from "@/lib/env.server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { evaluateCoupon, type BookingService, type Coupon, type CouponRejection } from "./engine";
+import {
+  canUseCoupon,
+  evaluateCoupon,
+  type BookingService,
+  type Coupon,
+  type CouponRejection,
+} from "./engine";
 
 /**
  * Loads a coupon and the caller's usage and asks the engine whether it
@@ -24,6 +30,7 @@ type CouponRow = {
   per_user_limit: number;
   first_booking_only: boolean;
   is_active: boolean;
+  user_id: string | null;
 };
 
 function toCoupon(row: CouponRow): Coupon {
@@ -42,6 +49,7 @@ function toCoupon(row: CouponRow): Coupon {
     perUserLimit: row.per_user_limit,
     firstBookingOnly: row.first_booking_only,
     isActive: row.is_active,
+    ownerId: row.user_id,
   };
 }
 
@@ -56,6 +64,8 @@ export async function checkCoupon(
   const admin = createAdminClient();
   const { data } = await admin.from("coupons").select("*").eq("code", code).maybeSingle();
   if (!data) return { coupon: null, error: "not_found" };
+  // A personal reward code is only for its owner (guests included in "not its owner").
+  if (!canUseCoupon(data.user_id, ctx.userId)) return { coupon: null, error: "not_found" };
   const live = ["reserved", "redeemed"] as const;
   const [used, userUsed, prior] = await Promise.all([
     admin
@@ -87,6 +97,7 @@ export async function checkCoupon(
     usedCount: used.count ?? 0,
     userUsedCount: userUsed.count ?? 0,
     userHasPriorBooking: (prior.count ?? 0) > 0,
+    userId: ctx.userId,
   });
   return result.ok
     ? { coupon: { id: data.id, code: data.code, discountPaise: result.discountPaise }, error: null }

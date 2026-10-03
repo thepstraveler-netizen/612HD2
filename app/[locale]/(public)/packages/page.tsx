@@ -12,6 +12,7 @@ import { getBusinessInfo } from "@/lib/catalog/queries";
 import { PACKAGE_FLAG } from "@/lib/packages/checkout";
 import { getPackages } from "@/lib/packages/queries";
 import { humanizeSlug, packageCategories } from "@/lib/packages/ui";
+import { pageMetadata } from "@/lib/seo/metadata";
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -20,7 +21,12 @@ export const revalidate = 300;
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "packages.listing" });
-  return { title: t("metaTitle"), description: t("metaDescription") };
+  return pageMetadata({
+    locale,
+    path: "/packages",
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  });
 }
 
 /**

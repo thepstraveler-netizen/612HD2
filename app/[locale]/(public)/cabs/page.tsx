@@ -13,13 +13,18 @@ import {
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { CabSearchForm } from "@/components/cabs/cab-search-form";
+import { JsonLd } from "@/components/seo/json-ld";
 import { TempleSkyline } from "@/components/shared/motifs";
 import { Link } from "@/i18n/navigation";
 import { cabSearchOptions, popularRoutes } from "@/lib/cabs/page-data";
 import { getCabCatalog, getCabSettings } from "@/lib/cabs/queries";
+import { getBusinessInfo } from "@/lib/catalog/queries";
 import { freeCancellationHours, splitMinutes } from "@/lib/cabs/ui";
 import { formatPaise } from "@/lib/money";
 import { parseCabSearch } from "@/schemas/cabs";
+import { breadcrumbJsonLd, taxiServiceJsonLd } from "@/lib/seo/jsonld";
+import { pageMetadata } from "@/lib/seo/metadata";
+import { absoluteUrl, siteUrl } from "@/lib/seo/site";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -29,7 +34,7 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "cabs.landing" });
-  return { title: t("metaTitle"), description: t("metaDescription") };
+  return pageMetadata({ locale, path: "/cabs", title: t("metaTitle"), description: t("metaDescription") });
 }
 
 /**
@@ -41,12 +46,33 @@ export default async function CabsPage({ params, searchParams }: Props) {
   setRequestLocale(locale);
   const raw = await searchParams;
   const t = await getTranslations("cabs");
-  const [catalog, settings] = await Promise.all([getCabCatalog(), getCabSettings()]);
+  const tSeo = await getTranslations("seo");
+  const [catalog, settings, business] = await Promise.all([
+    getCabCatalog(),
+    getCabSettings(),
+    getBusinessInfo(),
+  ]);
   const now = new Date();
   const options = cabSearchOptions(catalog, settings, locale, now);
   const routes = popularRoutes(catalog, settings, locale, now);
   const freeHours = freeCancellationHours(settings.cancellation_rules);
   const initial = Object.keys(raw).length ? parseCabSearch(raw) : undefined;
+  const fares = routes.map((r) => r.fromPaise).filter((p): p is number => p !== null);
+  const jsonLd = [
+    taxiServiceJsonLd({
+      name: t("landing.metaTitle"),
+      description: t("landing.metaDescription"),
+      url: absoluteUrl("/cabs", locale),
+      providerName: business.name,
+      siteUrl: siteUrl(),
+      telephone: business.phone,
+      fromPaise: fares.length ? Math.min(...fares) : null,
+    }),
+    breadcrumbJsonLd([
+      { name: tSeo("home"), url: absoluteUrl("/", locale) },
+      { name: t("landing.metaTitle"), url: absoluteUrl("/cabs", locale) },
+    ]),
+  ];
 
   const trust = [
     { icon: BadgeCheck, key: "verified" },
@@ -62,6 +88,7 @@ export default async function CabsPage({ params, searchParams }: Props) {
 
   return (
     <>
+      <JsonLd data={jsonLd} />
       <section className="relative overflow-hidden bg-gradient-to-b from-brand-sky to-background pb-16">
         <div className="mx-auto max-w-5xl space-y-6 px-4 pt-8 sm:pt-12">
           <div className="space-y-3">

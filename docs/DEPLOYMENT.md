@@ -250,6 +250,26 @@ This creates the user with a confirmed email (or promotes an existing one) and g
 - [ ] Create a payout up to today, mark it paid with a UTR; the vendor gets the email and the payout shows as paid on both sides. Cancel another pending payout and check its rows are unsettled again.
 - [ ] Download the commission report CSV and the vendor statement CSV.
 
+## 15. Phase 10 setup and smoke test
+
+### Setup
+
+1. Apply the three Phase 10 migrations in order (`20261010000100_engagement.sql`, `20261010000200_engagement_baseline.sql`, `20261010000300_reports.sql`). On Supabase the first one schedules the daily `expire-loyalty-points` job.
+2. Vercel → the project → Settings → Environment Variables: make sure `NEXT_PUBLIC_SITE_URL=https://thepstraveler.vercel.app` (or your domain) is set for Production, or canonical links, the sitemap and structured data point at localhost. Redeploy after changing it.
+3. Vercel → the project → Analytics and Speed Insights: click Enable on both (free on Hobby). Until then their scripts return 404, which is harmless.
+4. Admin → Settings → Reviews & rewards: decide whether reviews need approval, and set the earn rate (1% by default), point value (₹1), redemption limits, code validity, expiry, review bonus and referral bonuses, or switch P&S Rewards off.
+5. Google Search Console (optional, free): add the site and submit `/sitemap.xml`.
+
+### Smoke test
+
+- [ ] As a customer with a completed booking (or a hotel stay whose checkout has passed), open My Trips → the booking, rate it with a photo; it shows "Waiting for approval".
+- [ ] Admin → Reviews: publish it and reply; the hotel page shows the review, the reply and the new rating, and the customer gets the email and the review bonus.
+- [ ] Mark a booking completed in admin; the customer's Rewards page shows the points. Turn 100 points into a code and use it on a booking; another account cannot use the same code.
+- [ ] Open `/?ref=<your code>` in a private window, sign up, open the account; complete that account's first booking and check both accounts got the referral points.
+- [ ] Tap the heart on a hotel and find it under Account → Wishlist; add a traveller and pick it on the hotel booking form.
+- [ ] Admin dashboard shows figures for the last 30 days; Reports → Sales downloads a CSV; Customers → a customer → adjust points and add a note.
+- [ ] `/robots.txt`, `/sitemap.xml` and `/manifest.webmanifest` load; on a phone, "Add to home screen" installs the app; with the phone offline, a booking you opened before still opens and other pages show the offline page.
+
 ## Later phases (prepare when you reach them)
 
 - **Optional:** a Google Maps key (`NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`), restricted to your domains, for road distances; cabs and rides work without it (D-046, D-053).

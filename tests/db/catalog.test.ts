@@ -90,8 +90,10 @@ describe("public catalog RLS", () => {
       "business.social",
       "delivery.defaults",
       "hotels.search_defaults",
+      "loyalty.defaults",
       "packages.defaults",
       "partners.defaults",
+      "reviews.defaults",
       "tax.hotel_gst_slabs",
       "travel.defaults",
     ]);

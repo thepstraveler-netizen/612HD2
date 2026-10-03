@@ -1,6 +1,7 @@
 import { BadgeCheck, Coffee, Heart, MapPin } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Badge } from "@/components/ui/badge";
+import { WishlistButton } from "@/components/wishlist/wishlist-button";
 import { Link } from "@/i18n/navigation";
 import { offersFreeCancellation } from "@/lib/availability/engine";
 import type { HotelResult } from "@/lib/hotels/search";
@@ -45,7 +46,7 @@ export async function HotelCard({
   const nights = offer?.nights.length ?? 0;
 
   return (
-    <article className="grid overflow-hidden rounded-2xl border bg-card shadow-sm transition hover:shadow-md sm:grid-cols-[minmax(0,18rem)_1fr]">
+    <article className="relative grid overflow-hidden rounded-2xl border bg-card shadow-sm transition hover:shadow-md sm:grid-cols-[minmax(0,18rem)_1fr]">
       <PhotoCarousel
         images={hotel.images
           .filter((i) => !i.roomId)
@@ -55,6 +56,7 @@ export async function HotelCard({
         className="aspect-[4/3] sm:aspect-auto sm:min-h-56"
         priority={priority}
       />
+      <WishlistButton type="hotel" id={hotel.id} name={name} className="absolute start-2 top-2" />
       <div className="grid gap-3 p-4 sm:grid-cols-[1fr_auto]">
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2">
