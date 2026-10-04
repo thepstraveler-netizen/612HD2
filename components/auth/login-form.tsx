@@ -74,7 +74,10 @@ export function LoginForm({ next }: { next?: string }) {
               autoComplete="current-password"
             />
             <div className="flex justify-end">
-              <Link href="/forgot-password" className="text-sm font-medium text-primary hover:underline">
+              <Link
+                href="/forgot-password"
+                className="inline-flex min-h-11 items-center text-sm font-medium text-primary hover:underline"
+              >
                 {t("forgotLink")}
               </Link>
             </div>

@@ -33,7 +33,11 @@
     "admin": "एडमिन पैनल",
     "vendor": "वेंडर डैशबोर्ड",
     "driver": "ड्राइवर ट्रिप",
-    "logout": "लॉग आउट"
+    "logout": "लॉग आउट",
+    "home": "होम",
+    "rides": "राइड",
+    "trips": "मेरी यात्राएँ",
+    "tabBar": "क्विक लिंक"
   },
   "language": {
     "label": "भाषा",
@@ -1179,7 +1183,11 @@
       "adults": "वयस्क",
       "children": "बच्चे",
       "submit": "खोजें",
-      "update": "बदलें"
+      "update": "बदलें",
+      "addDates": "तारीख़ें जोड़ें",
+      "edit": "बदलें",
+      "summaryRooms": "{count, plural, one {# कमरा} other {# कमरे}}",
+      "summaryGuests": "{count, plural, one {# मेहमान} other {# मेहमान}}"
     },
     "filters": {
       "title": "फ़िल्टर",
@@ -1205,7 +1213,8 @@
       "withinM": "{m} मीटर के अंदर",
       "withinKm": "{km} किमी के अंदर",
       "propertyType": "प्रॉपर्टी का प्रकार",
-      "amenities": "सुविधाएँ"
+      "amenities": "सुविधाएँ",
+      "showResults": "{count, plural, =0 {दिखाने को कोई ठहरने की जगह नहीं} one {# जगह दिखाएँ} other {# जगहें दिखाएँ}}"
     },
     "propertyTypes": {
       "hotel": "होटल",
@@ -1343,7 +1352,10 @@
         "partial": "चेक-इन से {hours} घंटे पहले तक {percent}% रिफ़ंड"
       },
       "reserve": "अभी बुक करें",
-      "bookingNoteOnline": "ऑनलाइन, होटल पर या कुछ अभी भुगतान करें। बात करना चाहें? WhatsApp पर बुक करें।"
+      "bookingNoteOnline": "ऑनलाइन, होटल पर या कुछ अभी भुगतान करें। बात करना चाहें? WhatsApp पर बुक करें।",
+      "selectRoom": "कमरा चुनें",
+      "totalShort": "कुल",
+      "perNightShort": "/ रात"
     }
   },
   "hotelsAdmin": {
@@ -5235,7 +5247,9 @@
       "policy": "रद्द करने की नीति",
       "terms": "शर्तें",
       "enquireTitle": "इस टूर के बारे में पूछें",
-      "enquireBody": "साइन-इन की ज़रूरत नहीं। हम आमतौर पर कुछ घंटों में जवाब देते हैं।"
+      "enquireBody": "साइन-इन की ज़रूरत नहीं। हम आमतौर पर कुछ घंटों में जवाब देते हैं।",
+      "bookCta": "अभी बुक करें",
+      "perPersonShort": "/ व्यक्ति"
     },
     "book": {
       "title": "यह टूर बुक करें",

@@ -97,17 +97,19 @@ export default async function HotelsPage({ params, searchParams }: Props) {
   const mapCenter = searchedCity ?? defaultCity;
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:py-8">
+    <div className="mx-auto max-w-7xl space-y-4 px-4 py-4 sm:space-y-6 sm:py-8">
       <HotelSearchBar
         pathname="/hotels"
         query={query}
         today={today}
         maxRooms={defaults.max_rooms}
         placeholder={defaultCity ? pickLocalized(defaultCity.name, locale) : undefined}
+        // With nothing listed the form is the next step, so it stays open.
+        collapsible={result.total > 0}
       />
 
       {banner ? (
-        <aside className="flex flex-wrap items-center gap-3 rounded-2xl border border-dashed border-primary/40 bg-secondary/60 p-4 text-sm">
+        <aside className="flex flex-wrap items-center gap-3 rounded-2xl border border-dashed border-primary/40 bg-secondary/60 p-3 text-sm sm:p-4">
           <TicketPercent className="size-5 text-primary" aria-hidden="true" />
           <p className="flex-1">
             <span className="font-semibold">{pickLocalized(banner.title, locale)}</span>
@@ -123,8 +125,13 @@ export default async function HotelsPage({ params, searchParams }: Props) {
         </aside>
       ) : null}
 
-      <div className="grid gap-6 lg:grid-cols-[17rem_1fr]">
-        <HotelFilters query={query} options={filterOptions} activeCount={countActiveFilters(query)} />
+      <div className="grid gap-4 sm:gap-6 lg:grid-cols-[17rem_1fr]">
+        <HotelFilters
+          variant="aside"
+          query={query}
+          options={filterOptions}
+          activeCount={countActiveFilters(query)}
+        />
 
         <section aria-labelledby="results-heading" className="min-w-0 space-y-4">
           <div className="flex flex-wrap items-end justify-between gap-3">
@@ -175,28 +182,38 @@ export default async function HotelsPage({ params, searchParams }: Props) {
             </div>
           </div>
 
-          <nav aria-label={t("sort.label")} className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
-            {HOTEL_SORTS.map((sort) => {
-              const on = search.sort === sort;
-              return (
-                <Link
-                  key={sort}
-                  href={{
-                    pathname: "/hotels",
-                    query: withParams(query, { sort: sort === "popular" ? null : sort }),
-                  }}
-                  aria-current={on ? "true" : undefined}
-                  scroll={false}
-                  className={cn(
-                    "inline-flex min-h-10 shrink-0 items-center rounded-full border px-4 text-sm font-medium",
-                    on ? "border-primary bg-primary text-primary-foreground" : "bg-card hover:bg-accent",
-                  )}
-                >
-                  {t(`sort.${sort}`)}
-                </Link>
-              );
-            })}
-          </nav>
+          {/* Filters (below lg) and sorts share one swipeable chip row on phones. */}
+          <div className="-mx-4 flex snap-x scroll-px-4 [scrollbar-width:none] gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden">
+            <HotelFilters
+              variant="sheet"
+              query={query}
+              options={filterOptions}
+              activeCount={countActiveFilters(query)}
+              resultCount={result.total}
+            />
+            <nav aria-label={t("sort.label")} className="flex gap-2">
+              {HOTEL_SORTS.map((sort) => {
+                const on = search.sort === sort;
+                return (
+                  <Link
+                    key={sort}
+                    href={{
+                      pathname: "/hotels",
+                      query: withParams(query, { sort: sort === "popular" ? null : sort }),
+                    }}
+                    aria-current={on ? "true" : undefined}
+                    scroll={false}
+                    className={cn(
+                      "inline-flex min-h-11 shrink-0 snap-start items-center rounded-full border px-4 text-sm font-medium whitespace-nowrap sm:min-h-10",
+                      on ? "border-primary bg-primary text-primary-foreground" : "bg-card hover:bg-accent",
+                    )}
+                  >
+                    {t(`sort.${sort}`)}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
 
           {result.total === 0 ? (
             <EmptyState

@@ -101,13 +101,13 @@ export async function ShopListing({ shop, locale, raw }: { shop: CartShop; local
           <p className="flex items-center gap-2 text-sm font-semibold">
             <SlidersHorizontal className="size-4" aria-hidden="true" /> {t("filters.title")}
           </p>
-          <ul className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:flex-wrap">
+          <ul className="-mx-4 flex snap-x scroll-px-4 [scrollbar-width:none] gap-2 overflow-x-auto px-4 pb-1 sm:flex-wrap [&::-webkit-scrollbar]:hidden">
             {SHOP_FLAG_KEYS.filter(
               (k) => shop === "food" || (k !== "veg" && k !== "jain" && k !== "sattvik"),
             ).map((key) => {
               const on = filters[key];
               return (
-                <li key={key} className="shrink-0">
+                <li key={key} className="shrink-0 snap-start">
                   <Link
                     href={{ pathname: config.path, query: toggleShopFilter(filters, key) }}
                     aria-pressed={on}
@@ -127,10 +127,10 @@ export async function ShopListing({ shop, locale, raw }: { shop: CartShop; local
           </ul>
           {usedZones.length > 1 ? (
             <ul
-              className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:flex-wrap"
+              className="-mx-4 flex snap-x scroll-px-4 [scrollbar-width:none] gap-2 overflow-x-auto px-4 pb-1 sm:flex-wrap [&::-webkit-scrollbar]:hidden"
               aria-label={t("filters.zone")}
             >
-              <li className="shrink-0">
+              <li className="shrink-0 snap-start">
                 <Link
                   href={{ pathname: config.path, query: withZone(filters, null) }}
                   aria-current={!filters.zone ? "true" : undefined}
@@ -144,7 +144,7 @@ export async function ShopListing({ shop, locale, raw }: { shop: CartShop; local
                 </Link>
               </li>
               {usedZones.map((z) => (
-                <li key={z.id} className="shrink-0">
+                <li key={z.id} className="shrink-0 snap-start">
                   <Link
                     href={{ pathname: config.path, query: withZone(filters, z.slug) }}
                     aria-current={filters.zone === z.slug ? "true" : undefined}

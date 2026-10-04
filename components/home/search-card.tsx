@@ -31,7 +31,7 @@ const today = () => new Date().toISOString().slice(0, 10);
 /** The <label> wraps its control, so every input gets an accessible name without ids. */
 function Field({ label, children, className }: { label: string; children: ReactNode; className?: string }) {
   return (
-    <label className={cn("grid gap-1.5", className)}>
+    <label className={cn("grid min-w-0 gap-1.5", className)}>
       <span className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">{label}</span>
       {children}
     </label>
@@ -74,14 +74,14 @@ export function SearchCard({ tabs }: { tabs: TabKey[] }) {
   return (
     <div className="rounded-2xl border bg-card p-3 shadow-lg sm:p-5">
       <Tabs value={active} onValueChange={(v) => setActive(v as TabKey)}>
-        <TabsList className="flex h-auto w-full justify-start gap-1 overflow-x-auto bg-transparent p-0">
+        <TabsList className="flex h-auto w-full snap-x [scrollbar-width:none] justify-start gap-1 overflow-x-auto bg-transparent p-0 [&::-webkit-scrollbar]:hidden">
           {tabs.map((tab) => {
             const Icon = ICON[tab];
             return (
               <TabsTrigger
                 key={tab}
                 value={tab}
-                className="min-h-11 flex-col gap-1 px-3 text-xs data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground sm:flex-row sm:text-sm"
+                className="min-h-11 shrink-0 snap-start flex-col gap-1 px-3 text-xs data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground sm:flex-row sm:text-sm"
               >
                 <Icon className="size-5" aria-hidden="true" />
                 {t(`tabs.${tab}`)}
@@ -98,12 +98,15 @@ export function SearchCard({ tabs }: { tabs: TabKey[] }) {
             <Field label={t("destination")}>
               <Input name="q" placeholder="Vrindavan" autoComplete="off" />
             </Field>
-            <Field label={t("checkIn")}>
-              <Input name="checkin" type="date" min={today()} />
-            </Field>
-            <Field label={t("checkOut")}>
-              <Input name="checkout" type="date" min={today()} />
-            </Field>
+            {/* Two-up on phones; the wrapper dissolves into the form grid from sm up. */}
+            <div className="grid grid-cols-2 gap-3 sm:contents">
+              <Field label={t("checkIn")}>
+                <Input name="checkin" type="date" min={today()} />
+              </Field>
+              <Field label={t("checkOut")}>
+                <Input name="checkout" type="date" min={today()} />
+              </Field>
+            </div>
             <div className="grid grid-cols-2 gap-3">
               <Field label={t("rooms")}>
                 <Input name="rooms" type="number" min={1} max={8} defaultValue={1} inputMode="numeric" />
@@ -133,18 +136,22 @@ export function SearchCard({ tabs }: { tabs: TabKey[] }) {
                 ]}
               />
             </Field>
-            <Field label={t("from")}>
-              <Input name="from" placeholder="Mathura Junction" autoComplete="off" />
-            </Field>
-            <Field label={t("to")}>
-              <Input name="to" placeholder="Vrindavan" autoComplete="off" />
-            </Field>
-            <Field label={t("date")}>
-              <Input name="date" type="date" min={today()} />
-            </Field>
-            <Field label={t("time")}>
-              <Input name="time" type="time" />
-            </Field>
+            <div className="grid grid-cols-2 gap-3 sm:contents">
+              <Field label={t("from")}>
+                <Input name="from" placeholder="Mathura Junction" autoComplete="off" />
+              </Field>
+              <Field label={t("to")}>
+                <Input name="to" placeholder="Vrindavan" autoComplete="off" />
+              </Field>
+            </div>
+            <div className="grid grid-cols-2 gap-3 sm:contents">
+              <Field label={t("date")}>
+                <Input name="date" type="date" min={today()} />
+              </Field>
+              <Field label={t("time")}>
+                <Input name="time" type="time" />
+              </Field>
+            </div>
             <SubmitButton label={t("submit")} />
           </form>
         </TabsContent>
@@ -188,12 +195,14 @@ export function SearchCard({ tabs }: { tabs: TabKey[] }) {
             <Field label={t("destination")}>
               <Input name="q" placeholder="Braj 84 Kos" autoComplete="off" />
             </Field>
-            <Field label={t("month")}>
-              <Input name="month" type="month" />
-            </Field>
-            <Field label={t("guests")}>
-              <Input name="guests" type="number" min={1} max={60} defaultValue={2} inputMode="numeric" />
-            </Field>
+            <div className="grid grid-cols-2 gap-3 sm:contents">
+              <Field label={t("month")}>
+                <Input name="month" type="month" />
+              </Field>
+              <Field label={t("guests")}>
+                <Input name="guests" type="number" min={1} max={60} defaultValue={2} inputMode="numeric" />
+              </Field>
+            </div>
             <SubmitButton label={t("submit")} />
           </form>
         </TabsContent>
@@ -214,12 +223,14 @@ export function SearchCard({ tabs }: { tabs: TabKey[] }) {
                 ]}
               />
             </Field>
-            <Field label={t("from")}>
-              <Input name="from" placeholder="Delhi" autoComplete="off" />
-            </Field>
-            <Field label={t("to")}>
-              <Input name="to" placeholder="Mathura" autoComplete="off" />
-            </Field>
+            <div className="grid grid-cols-2 gap-3 sm:contents">
+              <Field label={t("from")}>
+                <Input name="from" placeholder="Delhi" autoComplete="off" />
+              </Field>
+              <Field label={t("to")}>
+                <Input name="to" placeholder="Mathura" autoComplete="off" />
+              </Field>
+            </div>
             <Field label={t("date")}>
               <Input name="date" type="date" min={today()} />
             </Field>

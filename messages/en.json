@@ -33,7 +33,11 @@
     "admin": "Admin panel",
     "vendor": "Vendor dashboard",
     "driver": "Driver trips",
-    "logout": "Log out"
+    "logout": "Log out",
+    "home": "Home",
+    "rides": "Rides",
+    "trips": "My trips",
+    "tabBar": "Quick links"
   },
   "language": {
     "label": "Language",
@@ -1179,7 +1183,11 @@
       "adults": "Adults",
       "children": "Children",
       "submit": "Search",
-      "update": "Update"
+      "update": "Update",
+      "addDates": "Add dates",
+      "edit": "Edit",
+      "summaryRooms": "{count, plural, one {# room} other {# rooms}}",
+      "summaryGuests": "{count, plural, one {# guest} other {# guests}}"
     },
     "filters": {
       "title": "Filters",
@@ -1205,7 +1213,8 @@
       "withinM": "Within {m} m",
       "withinKm": "Within {km} km",
       "propertyType": "Property type",
-      "amenities": "Amenities"
+      "amenities": "Amenities",
+      "showResults": "{count, plural, =0 {No stays to show} one {Show # stay} other {Show # stays}}"
     },
     "propertyTypes": {
       "hotel": "Hotel",
@@ -1343,7 +1352,10 @@
         "partial": "{percent}% refund up to {hours} hours before check-in"
       },
       "reserve": "Reserve now",
-      "bookingNoteOnline": "Pay online, at the hotel or part now. Prefer to talk? Book on WhatsApp."
+      "bookingNoteOnline": "Pay online, at the hotel or part now. Prefer to talk? Book on WhatsApp.",
+      "selectRoom": "Select room",
+      "totalShort": "total",
+      "perNightShort": "/ night"
     }
   },
   "hotelsAdmin": {
@@ -5235,7 +5247,9 @@
       "policy": "Cancellation policy",
       "terms": "Terms",
       "enquireTitle": "Ask about this tour",
-      "enquireBody": "No sign-in needed. We usually reply within a few hours."
+      "enquireBody": "No sign-in needed. We usually reply within a few hours.",
+      "bookCta": "Book now",
+      "perPersonShort": "/ person"
     },
     "book": {
       "title": "Book this tour",

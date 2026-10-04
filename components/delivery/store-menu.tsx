@@ -159,9 +159,9 @@ export function StoreMenuView({
           aria-label={t("menu.categories")}
           className="sticky top-16 z-30 -mx-4 border-b bg-background/95 px-4 py-2 backdrop-blur"
         >
-          <ul className="flex gap-2 overflow-x-auto">
+          <ul className="-mx-4 flex snap-x scroll-px-4 [scrollbar-width:none] gap-2 overflow-x-auto px-4 [&::-webkit-scrollbar]:hidden">
             {sections.map((s) => (
-              <li key={s.id} className="shrink-0">
+              <li key={s.id} className="shrink-0 snap-start">
                 <a
                   href={`#cat-${s.id}`}
                   className="inline-flex min-h-11 items-center rounded-full border bg-card px-4 text-sm font-medium hover:border-primary"
