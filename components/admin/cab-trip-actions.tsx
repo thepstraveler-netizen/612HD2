@@ -91,6 +91,7 @@ export function TripActions({
         <Button
           type="button"
           size="sm"
+          className="h-11 sm:h-9"
           variant={assigned ? "outline" : "default"}
           disabled={pending}
           onClick={() => setAssignOpen(true)}
@@ -104,7 +105,7 @@ export function TripActions({
           type="button"
           size="sm"
           variant={step === "no_show" ? "outline" : "secondary"}
-          className={step === "no_show" ? "text-destructive" : undefined}
+          className={step === "no_show" ? "h-11 text-destructive sm:h-9" : "h-11 sm:h-9"}
           disabled={pending}
           onClick={() => {
             if (!window.confirm(t("actions.confirmStep", { status: t(`status.${step}`) }))) return;
@@ -121,6 +122,7 @@ export function TripActions({
         <Button
           type="button"
           size="sm"
+          className="h-11 sm:h-9"
           variant="ghost"
           disabled={pending}
           onClick={() =>
@@ -206,10 +208,16 @@ export function TripActions({
             readOnly
             value={link}
             aria-label={t("actions.driverLink")}
-            className="h-9 font-mono text-xs"
+            className="h-11 font-mono text-base sm:h-9 sm:text-xs"
             onFocus={(e) => e.target.select()}
           />
-          <Button type="button" size="sm" variant="outline" onClick={() => void copy(link)}>
+          <Button
+            type="button"
+            size="sm"
+            className="h-11 sm:h-9"
+            variant="outline"
+            onClick={() => void copy(link)}
+          >
             <Copy /> {t("actions.copy")}
           </Button>
         </div>

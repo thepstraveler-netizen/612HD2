@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Link } from "@/i18n/navigation";
+import { MoreFilters } from "@/components/admin/more-filters";
 import { BOOKING_STATUSES } from "@/lib/bookings/state";
 import { BOOKING_SERVICES, type BookingFilters } from "@/schemas/booking-admin";
 
@@ -30,38 +31,42 @@ export async function BookingFiltersForm({ filters }: { filters: BookingFilters 
           placeholder={t("filters.searchPlaceholder")}
         />
       </div>
-      <div className="grid gap-1.5">
-        <Label htmlFor="bf-status">{t("filters.status")}</Label>
-        <NativeSelect id="bf-status" name="status" defaultValue={filters.status ?? ""}>
-          <option value="">{t("filters.any")}</option>
-          {BOOKING_STATUSES.map((s) => (
-            <option key={s} value={s}>
-              {t(`status.${s}`)}
-            </option>
-          ))}
-        </NativeSelect>
-      </div>
-      <div className="grid gap-1.5">
-        <Label htmlFor="bf-service">{t("filters.service")}</Label>
-        <NativeSelect id="bf-service" name="service" defaultValue={filters.service ?? ""}>
-          <option value="">{t("filters.any")}</option>
-          {BOOKING_SERVICES.map((s) => (
-            <option key={s} value={s}>
-              {t(`services.${s}`)}
-            </option>
-          ))}
-        </NativeSelect>
-      </div>
-      <div className="grid gap-1.5">
-        <Label htmlFor="bf-from">{t("filters.from")}</Label>
-        <Input id="bf-from" name="from" type="date" defaultValue={filters.from ?? ""} />
-      </div>
-      <div className="grid gap-1.5">
-        <Label htmlFor="bf-to">{t("filters.to")}</Label>
-        <Input id="bf-to" name="to" type="date" defaultValue={filters.to ?? ""} />
-      </div>
+      <MoreFilters
+        active={[filters.status, filters.service, filters.from, filters.to].filter(Boolean).length}
+      >
+        <div className="grid gap-1.5">
+          <Label htmlFor="bf-status">{t("filters.status")}</Label>
+          <NativeSelect id="bf-status" name="status" defaultValue={filters.status ?? ""}>
+            <option value="">{t("filters.any")}</option>
+            {BOOKING_STATUSES.map((s) => (
+              <option key={s} value={s}>
+                {t(`status.${s}`)}
+              </option>
+            ))}
+          </NativeSelect>
+        </div>
+        <div className="grid gap-1.5">
+          <Label htmlFor="bf-service">{t("filters.service")}</Label>
+          <NativeSelect id="bf-service" name="service" defaultValue={filters.service ?? ""}>
+            <option value="">{t("filters.any")}</option>
+            {BOOKING_SERVICES.map((s) => (
+              <option key={s} value={s}>
+                {t(`services.${s}`)}
+              </option>
+            ))}
+          </NativeSelect>
+        </div>
+        <div className="grid gap-1.5">
+          <Label htmlFor="bf-from">{t("filters.from")}</Label>
+          <Input id="bf-from" name="from" type="date" defaultValue={filters.from ?? ""} />
+        </div>
+        <div className="grid gap-1.5">
+          <Label htmlFor="bf-to">{t("filters.to")}</Label>
+          <Input id="bf-to" name="to" type="date" defaultValue={filters.to ?? ""} />
+        </div>
+      </MoreFilters>
       <div className="flex flex-wrap items-center gap-2 sm:col-span-2 lg:col-span-6">
-        <Button type="submit">
+        <Button type="submit" className="flex-1 sm:flex-none">
           <Search /> {t("filters.apply")}
         </Button>
         {active ? (

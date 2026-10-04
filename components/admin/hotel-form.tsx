@@ -30,6 +30,21 @@ import {
   useHotelSave,
   useLocalizedOptions,
 } from "./hotel-shared";
+import { SectionJumpNav } from "./section-jump-nav";
+
+/** Form sections in page order, for the phone jump menu. */
+const HOTEL_SECTIONS = [
+  "basics",
+  "location",
+  "stay",
+  "tags",
+  "policies",
+  "amenities",
+  "payment",
+  "partner",
+  "rating",
+  "seo",
+] as const;
 
 /** Repeating `{ en, hi }` rows (highlights, house rules). */
 function LocalizedList({
@@ -95,6 +110,7 @@ export function HotelForm({
   deleteButton?: React.ReactNode;
 }) {
   const t = useTranslations("hotelsAdmin");
+  const tUi = useTranslations("admin.ui");
   const locale = useLocale();
   const form = useForm<HotelFormInput>({
     resolver: zodResolver(hotelFormSchema, undefined, { raw: true }),
@@ -128,7 +144,12 @@ export function HotelForm({
   return (
     <FormProvider {...form}>
       <form onSubmit={onSubmit} className="grid max-w-4xl gap-5" noValidate>
-        <FormSection title={t("sections.basics")}>
+        <SectionJumpNav
+          className="lg:hidden"
+          label={tUi("jumpTo")}
+          items={HOTEL_SECTIONS.map((key) => ({ id: `hotel-${key}`, label: t(`sections.${key}`) }))}
+        />
+        <FormSection id="hotel-basics" title={t("sections.basics")}>
           <LocalizedField<HotelFormInput> name="name" label={t("fields.name")} />
           <LocalizedField<HotelFormInput> name="summary" label={t("fields.summary")} />
           <LocalizedField<HotelFormInput> name="description" label={t("fields.description")} multiline />
@@ -160,7 +181,7 @@ export function HotelForm({
           </div>
         </FormSection>
 
-        <FormSection title={t("sections.location")}>
+        <FormSection id="hotel-location" title={t("sections.location")}>
           <div className="grid gap-4 sm:grid-cols-2">
             <SelectField<HotelFormInput> name="city_id" label={t("fields.city")} options={cities} />
             <SelectField<HotelFormInput>
@@ -179,7 +200,7 @@ export function HotelForm({
           </div>
         </FormSection>
 
-        <FormSection title={t("sections.stay")}>
+        <FormSection id="hotel-stay" title={t("sections.stay")}>
           <div className="grid gap-4 sm:grid-cols-2">
             <TextInputField<HotelFormInput> name="check_in_time" label={t("fields.checkIn")} type="time" />
             <TextInputField<HotelFormInput> name="check_out_time" label={t("fields.checkOut")} type="time" />
@@ -194,7 +215,7 @@ export function HotelForm({
           <LocalizedField<HotelFormInput> name="food_dining" label={t("fields.foodDining")} multiline />
         </FormSection>
 
-        <FormSection title={t("sections.tags")}>
+        <FormSection id="hotel-tags" title={t("sections.tags")}>
           <div className="flex flex-wrap gap-x-6">
             <SwitchField<HotelFormInput> name="is_couple_friendly" label={t("fields.coupleFriendly")} />
             <SwitchField<HotelFormInput> name="is_featured" label={t("fields.featured")} />
@@ -202,7 +223,7 @@ export function HotelForm({
           </div>
         </FormSection>
 
-        <FormSection title={t("sections.policies")}>
+        <FormSection id="hotel-policies" title={t("sections.policies")}>
           <div className="grid gap-x-6 sm:grid-cols-2">
             <SwitchField<HotelFormInput>
               name="policies.unmarried_couples_allowed"
@@ -226,7 +247,7 @@ export function HotelForm({
           />
         </FormSection>
 
-        <FormSection title={t("sections.amenities")}>
+        <FormSection id="hotel-amenities" title={t("sections.amenities")}>
           {[...amenityGroups].map(([group, list]) => (
             <CheckboxGroupField<HotelFormInput, string>
               key={group}
@@ -237,7 +258,7 @@ export function HotelForm({
           ))}
         </FormSection>
 
-        <FormSection title={t("sections.payment")}>
+        <FormSection id="hotel-payment" title={t("sections.payment")}>
           <SwitchField<HotelFormInput> name="pay_at_hotel_enabled" label={t("fields.payAtHotel")} />
           <div className="grid gap-4 sm:grid-cols-2">
             <TextInputField<HotelFormInput>
@@ -265,7 +286,7 @@ export function HotelForm({
           </div>
         </FormSection>
 
-        <FormSection title={t("sections.partner")}>
+        <FormSection id="hotel-partner" title={t("sections.partner")}>
           <div className="grid gap-4 sm:grid-cols-2">
             <SelectField<HotelFormInput>
               name="vendor_id"
@@ -280,7 +301,7 @@ export function HotelForm({
           </div>
         </FormSection>
 
-        <FormSection title={t("sections.rating")}>
+        <FormSection id="hotel-rating" title={t("sections.rating")}>
           <div className="grid gap-4 sm:grid-cols-2">
             <TextInputField<HotelFormInput>
               name="rating_avg"
@@ -296,7 +317,7 @@ export function HotelForm({
           <p className="text-xs text-muted-foreground">{t("fields.ratingHelp")}</p>
         </FormSection>
 
-        <FormSection title={t("sections.seo")}>
+        <FormSection id="hotel-seo" title={t("sections.seo")}>
           <TextInputField<HotelFormInput> name="seo_title" label={t("fields.seoTitle")} />
           <TextInputField<HotelFormInput> name="seo_description" label={t("fields.seoDescription")} />
         </FormSection>

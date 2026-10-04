@@ -71,8 +71,8 @@ export function RoleManager({
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardContent className="pt-6">
+      <Card className="py-4 sm:py-6">
+        <CardContent className="px-4 sm:px-6 sm:pt-6">
           <form
             onSubmit={onGrant}
             className="grid gap-4 md:grid-cols-[minmax(0,1fr)_14rem_auto] md:items-end"
@@ -157,7 +157,7 @@ export function RoleManager({
                             role: roleName(r.key),
                             name: holder.fullName ?? holder.email ?? "",
                           })}
-                          className="inline-flex size-7 items-center justify-center rounded-full hover:bg-destructive/10 hover:text-destructive focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
+                          className="-my-1 inline-flex size-9 items-center justify-center rounded-full hover:bg-destructive/10 hover:text-destructive focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none sm:my-0 sm:size-7"
                         >
                           <X className="size-4" aria-hidden="true" />
                         </button>

@@ -884,6 +884,14 @@
         "addRule": "नियम जोड़ें",
         "removeRule": "नियम हटाएँ"
       }
+    },
+    "ui": {
+      "sortBy": "क्रम",
+      "sortDefault": "सामान्य क्रम",
+      "moreActions": "और विकल्प",
+      "moreFilters": "और फ़िल्टर",
+      "jumpTo": "सेक्शन पर जाएँ",
+      "swipeHint": "सभी कॉलम देखने के लिए बगल में स्वाइप करें"
     }
   },
   "vendor": {

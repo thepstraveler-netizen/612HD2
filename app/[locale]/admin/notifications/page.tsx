@@ -33,13 +33,13 @@ export default async function AdminNotificationsPage() {
         <NotificationSubnav active="templates" />
       </AdminPageHeader>
       {groups.size === 0 ? <p className="text-muted-foreground">{t("empty")}</p> : null}
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {[...groups].map(([key, rows]) => (
-          <section key={key} className="space-y-3 rounded-2xl border bg-card p-4">
+          <section key={key} className="min-w-0 space-y-3 rounded-2xl border bg-card p-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <h2 className="font-mono text-sm font-semibold">{key}</h2>
+              <h2 className="min-w-0 font-mono text-sm font-semibold break-all">{key}</h2>
               {canWrite ? (
-                <Button asChild variant="ghost" size="sm" className="h-9">
+                <Button asChild variant="ghost" size="sm" className="h-11 sm:h-9">
                   <Link href={`/admin/notifications/new?key=${encodeURIComponent(key)}`}>
                     <Plus /> {t("addVariant")}
                   </Link>
@@ -58,7 +58,7 @@ export default async function AdminNotificationsPage() {
                     <p className="truncate text-sm text-muted-foreground">{row.subject ?? row.body}</p>
                   </div>
                   {canWrite ? (
-                    <Button asChild variant="ghost" size="sm" className="h-9 shrink-0">
+                    <Button asChild variant="ghost" size="sm" className="h-11 shrink-0 sm:h-9">
                       <Link href={`/admin/notifications/${row.id}`}>
                         <Pencil /> {t("edit")}
                       </Link>

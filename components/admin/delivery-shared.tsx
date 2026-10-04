@@ -149,6 +149,7 @@ export function StoreAcceptingToggle({
     <Button
       type="button"
       size="sm"
+      className="h-11 sm:h-9"
       variant={accepting ? "outline" : "default"}
       disabled={pending}
       onClick={() =>

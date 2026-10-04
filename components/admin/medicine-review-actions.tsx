@@ -52,6 +52,7 @@ export function MedicineReviewActions({
           <Button
             type="button"
             size="sm"
+            className="h-11 sm:h-9"
             disabled={pending}
             onClick={() => run(() => markPrescriptionReviewing({ id }), t("pickedUp"))}
           >
@@ -62,6 +63,7 @@ export function MedicineReviewActions({
           <Button
             type="button"
             size="sm"
+            className="h-11 sm:h-9"
             variant="outline"
             disabled={pending}
             onClick={() => {
@@ -77,7 +79,7 @@ export function MedicineReviewActions({
             type="button"
             size="sm"
             variant="outline"
-            className="text-destructive"
+            className="h-11 text-destructive sm:h-9"
             disabled={pending}
             onClick={() => setRejectOpen(true)}
           >
@@ -107,6 +109,7 @@ export function MedicineReviewActions({
           <Button
             type="submit"
             size="sm"
+            className="h-11 sm:h-9"
             variant="secondary"
             disabled={pending || pharmacy === (storeId ?? "")}
           >

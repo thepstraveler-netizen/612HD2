@@ -127,7 +127,7 @@ function MiniField<T extends FieldValues>({
       <Label htmlFor={id} className="text-xs text-muted-foreground">
         {label}
       </Label>
-      <Input id={id} aria-invalid={!!message} className="h-9" {...input} {...form.register(name)} />
+      <Input id={id} aria-invalid={!!message} className="h-11 sm:h-9" {...input} {...form.register(name)} />
       {message ? <p className="text-xs text-destructive">{message}</p> : null}
     </div>
   );
@@ -545,7 +545,7 @@ function ItemListRow({ item, onEdit }: { item: MenuItemRow; onEdit: () => void }
               value={stock}
               inputMode="numeric"
               onChange={(e) => setStock(e.target.value)}
-              className="h-9 w-20"
+              className="h-11 w-20 sm:h-9"
             />
             <Button
               type="submit"

@@ -119,7 +119,7 @@ export function PackageDeleteButton({
       type="button"
       variant="outline"
       size="sm"
-      className="text-destructive"
+      className="h-11 text-destructive sm:h-9"
       disabled={pending}
       onClick={() => {
         if (!window.confirm(confirmText ?? t("confirmDelete"))) return;
@@ -290,6 +290,7 @@ export function LocalizedListField<T extends FieldValues>({
           type="button"
           variant="outline"
           size="sm"
+          className="h-11 sm:h-9"
           disabled={rows.fields.length >= max}
           onClick={() => rows.append({ en: "", hi: "" } satisfies LocalizedListRowInput as never)}
         >

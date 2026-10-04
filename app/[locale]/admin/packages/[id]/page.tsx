@@ -6,6 +6,7 @@ import { DeparturesEditor, ItineraryEditor, TiersEditor } from "@/components/adm
 import { PackageForm } from "@/components/admin/package-form";
 import { PackageArchiveButton } from "@/components/admin/package-shared";
 import { AdminPageHeader } from "@/components/admin/page-header";
+import { SectionJumpNav } from "@/components/admin/section-jump-nav";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { parseEditId } from "@/lib/admin/params";
@@ -21,24 +22,6 @@ import { ToneBadge } from "@/components/admin/booking-status";
 
 const LIST = "/admin/packages";
 const SECTIONS = ["details", "photos", "itinerary", "pricing", "departures"] as const;
-
-/** Jump links to the editor's sections (one long page, so it works without JS). */
-async function SectionNav() {
-  const t = await getTranslations("packagesAdmin.sections");
-  return (
-    <nav aria-label={t("nav")} className="-mx-1 flex gap-1 overflow-x-auto px-1 pb-1">
-      {SECTIONS.map((key) => (
-        <a
-          key={key}
-          href={`#${key}`}
-          className="inline-flex min-h-10 shrink-0 items-center rounded-full border bg-card px-4 text-sm font-medium hover:bg-accent"
-        >
-          {t(key)}
-        </a>
-      ))}
-    </nav>
-  );
-}
 
 /** What agents (packages.read only) see: tiers and departures with seats, no forms. */
 async function PackageOverview({ found }: { found: AdminPackage }) {
@@ -129,8 +112,13 @@ export default async function EditPackagePage({ params }: { params: Promise<{ id
             ) : null}
           </div>
         ) : null}
-        {found && canWrite ? <SectionNav /> : null}
       </AdminPageHeader>
+      {found && canWrite ? (
+        <SectionJumpNav
+          label={t("sections.nav")}
+          items={SECTIONS.map((key) => ({ id: key, label: t(`sections.${key}`) }))}
+        />
+      ) : null}
       {found && !canWrite ? (
         <PackageOverview found={found} />
       ) : (

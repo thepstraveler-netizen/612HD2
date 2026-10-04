@@ -125,8 +125,12 @@ export async function RideBoardFiltersForm({ filters }: { filters: RideBoardFilt
   const t = await getTranslations("admin.rides");
   const active = Boolean(filters.status || filters.date);
   return (
-    <form method="get" role="search" className="grid gap-3 rounded-2xl border bg-card p-4 sm:grid-cols-3">
-      <div className="grid gap-1.5">
+    <form
+      method="get"
+      role="search"
+      className="grid grid-cols-2 gap-3 rounded-2xl border bg-card p-4 sm:grid-cols-3"
+    >
+      <div className="col-span-2 grid gap-1.5 sm:col-span-1">
         <Label htmlFor="rb-status">{t("board.filters.status")}</Label>
         <NativeSelect id="rb-status" name="status" defaultValue={filters.status ?? ""}>
           <option value="">{t("board.filters.default")}</option>
@@ -146,12 +150,12 @@ export async function RideBoardFiltersForm({ filters }: { filters: RideBoardFilt
           </optgroup>
         </NativeSelect>
       </div>
-      <div className="grid gap-1.5">
+      <div className="grid min-w-0 gap-1.5">
         <Label htmlFor="rb-date">{t("board.filters.date")}</Label>
-        <Input id="rb-date" name="date" type="date" defaultValue={filters.date ?? ""} />
+        <Input id="rb-date" name="date" type="date" defaultValue={filters.date ?? ""} className="px-2.5" />
       </div>
       <div className="flex flex-wrap items-end gap-2">
-        <Button type="submit">
+        <Button type="submit" className="flex-1 sm:flex-none">
           <Search /> {t("board.filters.apply")}
         </Button>
         {active ? (

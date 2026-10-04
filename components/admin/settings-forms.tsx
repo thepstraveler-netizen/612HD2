@@ -21,7 +21,7 @@ import {
 import { cabSettingsFormSchema, type CabSettingsFormInput } from "@/schemas/cab-admin";
 import { rideSettingsFormSchema, type RideSettingsFormInput } from "@/schemas/ride-admin";
 import { businessProfileSchema, type BusinessProfile } from "@/schemas/cms";
-import { SwitchField, TextInputField, useUnsavedChangesWarning } from "./form-fields";
+import { CardSaveRow, SwitchField, TextInputField, useUnsavedChangesWarning } from "./form-fields";
 import { useSave } from "./use-save";
 
 export function BusinessProfileForm({ defaultValues }: { defaultValues: BusinessProfile }) {
@@ -61,11 +61,11 @@ export function BusinessProfileForm({ defaultValues }: { defaultValues: Business
           <TextInputField<BusinessProfile> name="gstin" label={t("fields.gstin")} />
         </div>
         <TextInputField<BusinessProfile> name="address" label={t("fields.address")} />
-        <div className="flex justify-end">
+        <CardSaveRow>
           <Button type="submit" disabled={pending}>
             {t("actions.save")}
           </Button>
-        </div>
+        </CardSaveRow>
       </form>
     </FormProvider>
   );
@@ -167,11 +167,11 @@ export function PaymentSettingsForm({ defaultValues }: { defaultValues: PaymentS
           name="customer_cancellation_enabled"
           label={t("bookingsAdmin.settings.payments.customerCancellation")}
         />
-        <div className="flex justify-end">
+        <CardSaveRow>
           <Button type="submit" disabled={pending}>
             {t("cms.actions.save")}
           </Button>
-        </div>
+        </CardSaveRow>
       </form>
     </FormProvider>
   );
@@ -235,11 +235,11 @@ export function InvoiceSettingsForm({ defaultValues }: { defaultValues: InvoiceS
           name="terms"
           label={t("bookingsAdmin.settings.invoice.terms")}
         />
-        <div className="flex justify-end">
+        <CardSaveRow>
           <Button type="submit" disabled={pending}>
             {t("cms.actions.save")}
           </Button>
-        </div>
+        </CardSaveRow>
       </form>
     </FormProvider>
   );
@@ -343,11 +343,11 @@ export function CabSettingsForm({ defaultValues }: { defaultValues: CabSettingsF
             </Button>
           ) : null}
         </fieldset>
-        <div className="flex justify-end">
+        <CardSaveRow>
           <Button type="submit" disabled={pending}>
             {t("cms.actions.save")}
           </Button>
-        </div>
+        </CardSaveRow>
       </form>
     </FormProvider>
   );
@@ -452,11 +452,11 @@ export function RideSettingsForm({ defaultValues }: { defaultValues: RideSetting
             </Button>
           ) : null}
         </fieldset>
-        <div className="flex justify-end">
+        <CardSaveRow>
           <Button type="submit" disabled={pending}>
             {t("cms.actions.save")}
           </Button>
-        </div>
+        </CardSaveRow>
       </form>
     </FormProvider>
   );

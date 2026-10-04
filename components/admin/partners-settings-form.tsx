@@ -15,7 +15,7 @@ import {
   type PartnersSettingsFormInput,
   type SettlementsSettingsFormInput,
 } from "@/schemas/vendor-admin";
-import { LocalizedField, TextInputField, useUnsavedChangesWarning } from "./form-fields";
+import { CardSaveRow, LocalizedField, TextInputField, useUnsavedChangesWarning } from "./form-fields";
 import { useSave } from "./use-save";
 
 /**
@@ -50,11 +50,11 @@ function SettingsCard({
         <p className="text-sm text-muted-foreground">{lead}</p>
       </div>
       {children}
-      <div className="flex justify-end">
+      <CardSaveRow>
         <Button type="submit" disabled={pending}>
           {t("save")}
         </Button>
-      </div>
+      </CardSaveRow>
     </form>
   );
 }

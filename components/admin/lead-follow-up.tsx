@@ -56,7 +56,7 @@ export function LeadFollowUp({ leadId, hasFollowUp }: { leadId: string; hasFollo
           set(at);
         }}
       >
-        <div className="grid min-w-0 flex-1 gap-1.5">
+        <div className="grid min-w-full flex-1 gap-1.5 sm:min-w-0">
           <Label htmlFor="lead-follow-up">{t("custom")}</Label>
           <Input
             id="lead-follow-up"
@@ -65,7 +65,12 @@ export function LeadFollowUp({ leadId, hasFollowUp }: { leadId: string; hasFollo
             onChange={(e) => setCustom(e.target.value)}
           />
         </div>
-        <Button type="submit" variant="secondary" disabled={pending || !custom}>
+        <Button
+          type="submit"
+          variant="secondary"
+          disabled={pending || !custom}
+          className="flex-1 sm:flex-none"
+        >
           <CalendarPlus /> {t("set")}
         </Button>
       </form>
