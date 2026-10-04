@@ -31,7 +31,7 @@ export function CodeInput({
       aria-invalid={invalid}
       aria-describedby={describedBy}
       autoFocus={autoFocus}
-      className="h-12 max-w-48 text-center font-mono text-xl tracking-[0.3em]"
+      className="h-14 w-full max-w-56 text-center font-mono text-2xl tracking-[0.3em] sm:h-12 sm:text-xl"
     />
   );
 }

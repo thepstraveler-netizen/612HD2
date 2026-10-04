@@ -3,6 +3,7 @@ import {
   Bike,
   CheckCircle2,
   MapPin,
+  MessageCircle,
   Navigation,
   Phone,
   Route,
@@ -24,6 +25,7 @@ import { rideDriverActions } from "@/lib/rides/ui";
 type Props = { params: Promise<{ locale: string; token: string }> };
 
 const tel = (phone: string) => `tel:${phone.replace(/[^0-9+]/g, "")}`;
+const whatsapp = (phone: string) => `https://wa.me/${phone.replace(/[^0-9]/g, "")}`;
 
 /**
  * The driver's ride page, opened from the secret link sent at assignment.
@@ -63,9 +65,7 @@ export default async function DriverRidePage({ params }: Props) {
           <CheckCircle2 className="size-5 text-accent-green" aria-hidden="true" />{" "}
           {t(`finished.${ride.status}`)}
         </p>
-      ) : actions.length ? (
-        <RideDriverPanel token={token} actions={actions} />
-      ) : (
+      ) : actions.length ? null : (
         <p className="rounded-2xl border bg-card p-4 text-sm">{t("waiting")}</p>
       )}
 
@@ -73,14 +73,24 @@ export default async function DriverRidePage({ params }: Props) {
         <h2 id="customer" className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
           {t("customer")}
         </h2>
-        <div className="flex items-center justify-between gap-3">
-          <p className="flex min-w-0 items-center gap-2 text-lg font-bold">
-            <UserRound className="size-5 shrink-0 text-primary" aria-hidden="true" />
-            <span className="truncate">{ride.customerName}</span>
-          </p>
+        <p className="flex min-w-0 items-center gap-2 text-lg font-bold">
+          <UserRound className="size-5 shrink-0 text-primary" aria-hidden="true" />
+          <span className="min-w-0 break-words">{ride.customerName}</span>
+        </p>
+        <div className="grid grid-cols-2 gap-2">
           <Button asChild size="lg" className="h-12">
             <a href={tel(ride.customerPhone)} aria-label={t("callCustomer", { name: ride.customerName })}>
               <Phone /> {t("call")}
+            </a>
+          </Button>
+          <Button asChild size="lg" variant="outline" className="h-12">
+            <a
+              href={whatsapp(ride.customerPhone)}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={t("whatsappCustomer", { name: ride.customerName })}
+            >
+              <MessageCircle /> {t("whatsapp")}
             </a>
           </Button>
         </div>
@@ -162,6 +172,9 @@ export default async function DriverRidePage({ params }: Props) {
           <p className="font-semibold">{t("nothingToCollect")}</p>
         )}
       </section>
+
+      {/* The next step sits in a bar pinned to the bottom; only the no-show button stays down here. */}
+      {!finished && actions.length ? <RideDriverPanel token={token} actions={actions} /> : null}
 
       {business.phone ? (
         <Button asChild variant="ghost" className="w-full">

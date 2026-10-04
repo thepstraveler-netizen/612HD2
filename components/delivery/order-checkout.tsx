@@ -22,6 +22,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { EmptyState } from "@/components/shared/empty-state";
+import { MobilePayBar, MobilePriceDetails } from "@/components/booking/mobile-pay-bar";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -910,25 +911,26 @@ export function OrderCheckout({
           </div>
         </aside>
 
-        <section aria-label={tc("summaryTitle")} className="rounded-2xl border bg-card p-4 lg:hidden">
-          <h2 className="mb-3 text-base font-bold">{t("billTitle")}</h2>
-          {preview?.etaMinutes ? (
-            <p className="mb-2 text-sm text-muted-foreground">{t("eta", { minutes: preview.etaMinutes })}</p>
-          ) : null}
-          <div className={cn("transition-opacity", pricing && "opacity-60")}>{summary}</div>
-        </section>
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t bg-background/95 p-3 backdrop-blur lg:hidden">
-          <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
-            <div>
-              <p className="text-xs text-muted-foreground">{tc("total")}</p>
-              <p className="text-lg font-extrabold">{preview ? money(preview.totalPaise) : "…"}</p>
-            </div>
-            <Button type="submit" size="lg" disabled={!canPlace}>
-              {submitting ? <Loader2 className="animate-spin" /> : <SubmitIcon />}{" "}
-              {pay === "online" ? tc("pay") : t("placeShort")}
-            </Button>
-          </div>
-        </div>
+        {/* Mobile: a foldable bill and a sticky place-order bar. */}
+        <MobilePriceDetails
+          id="order-bill"
+          title={t("billTitle")}
+          totalLabel={preview?.etaMinutes ? t("eta", { minutes: preview.etaMinutes }) : tc("total")}
+          total={preview ? money(preview.totalPaise) : "…"}
+          dimmed={pricing}
+        >
+          {summary}
+        </MobilePriceDetails>
+        <MobilePayBar
+          detailsId="order-bill"
+          label={tc("total")}
+          amount={preview ? money(preview.totalPaise) : "…"}
+        >
+          <Button type="submit" size="lg" disabled={!canPlace}>
+            {submitting ? <Loader2 className="animate-spin" /> : <SubmitIcon />}{" "}
+            {pay === "online" ? tc("pay") : t("placeShort")}
+          </Button>
+        </MobilePayBar>
       </form>
     </Form>
   );

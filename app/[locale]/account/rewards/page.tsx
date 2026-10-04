@@ -83,18 +83,18 @@ export default async function RewardsPage({ params }: { params: Promise<{ locale
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
-          <CardHeader>
+          <CardHeader className="max-sm:px-4">
             <CardTitle>{t("redeemTitle")}</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="max-sm:px-4">
             <RedeemForm balance={balance} settings={settings} locale={locale} />
           </CardContent>
         </Card>
         <Card>
-          <CardHeader>
+          <CardHeader className="max-sm:px-4">
             <CardTitle>{t("howTitle")}</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="max-sm:px-4">
             <ul className="space-y-2 text-sm">
               {how.map((line) => (
                 <li key={line} className="flex gap-2">
@@ -116,10 +116,10 @@ export default async function RewardsPage({ params }: { params: Promise<{ locale
       </div>
 
       <Card>
-        <CardHeader>
+        <CardHeader className="max-sm:px-4">
           <CardTitle>{t("codesTitle")}</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="max-sm:px-4">
           {codes.length ? (
             <ul className="grid gap-3 sm:grid-cols-2">
               {codes.map((c) => (
@@ -145,10 +145,10 @@ export default async function RewardsPage({ params }: { params: Promise<{ locale
       </Card>
 
       <Card>
-        <CardHeader>
+        <CardHeader className="max-sm:px-4">
           <CardTitle>{t("historyTitle")}</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="max-sm:px-4">
           {ledger.length ? (
             <ul className="divide-y">
               {ledger.map((row) => (

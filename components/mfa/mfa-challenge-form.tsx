@@ -58,7 +58,7 @@ export function MfaChallengeForm({ factorId, next }: { factorId: string; next: s
           </p>
         ) : null}
       </div>
-      <Button type="submit" className="h-11" disabled={busy}>
+      <Button type="submit" className="h-12 w-full sm:h-11" disabled={busy}>
         {busy ? <Loader2 className="animate-spin" /> : <ShieldCheck />} {t("continue")}
       </Button>
     </form>
