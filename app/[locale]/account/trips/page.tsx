@@ -78,7 +78,7 @@ export default async function TripsPage({ params }: { params: Promise<{ locale: 
     <div className="space-y-6">
       <h1 className="text-[length:var(--text-title)] font-bold">{t("title")}</h1>
       {trips.length ? (
-        <ul className="grid gap-4">
+        <ul className="grid grid-cols-1 gap-4">
           {trips.map((trip) => {
             const ride = rideSnapshot(trip.snapshot);
             return (

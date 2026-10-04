@@ -11,7 +11,7 @@ import {
   vendorAdminSchema,
   type VendorAdminInput,
 } from "@/schemas/vendor-admin";
-import { SelectField, TextInputField, useUnsavedChangesWarning } from "./form-fields";
+import { CardSaveRow, SelectField, TextInputField, useUnsavedChangesWarning } from "./form-fields";
 import { NoteField } from "./vendor-actions";
 import { useSave } from "./use-save";
 
@@ -60,11 +60,11 @@ export function VendorForm({ defaultValues }: { defaultValues: VendorAdminInput 
           <TextInputField<VendorAdminInput> name="pan" label={t("pan")} />
         </div>
         <NoteField<VendorAdminInput> name="notes" label={t("notes")} help={t("notesHelp")} />
-        <div className="flex justify-end">
+        <CardSaveRow>
           <Button type="submit" disabled={pending}>
             {isNew ? tc("create") : tc("save")}
           </Button>
-        </div>
+        </CardSaveRow>
       </form>
     </FormProvider>
   );

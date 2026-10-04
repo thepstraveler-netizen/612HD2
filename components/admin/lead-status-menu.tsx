@@ -87,7 +87,8 @@ export function LeadStatusMenu({
           </DropdownMenuContent>
         </DropdownMenu>
       ) : (
-        <div className="flex flex-wrap gap-2">
+        // Phones: a two-column grid (an odd last button spans the row); from sm a wrapping row.
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap [&>*:last-child:nth-child(odd)]:col-span-2">
           {moves.map((move) => {
             const Icon = icon(move);
             return (

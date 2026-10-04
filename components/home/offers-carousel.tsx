@@ -41,7 +41,11 @@ export function OffersCarousel({ banners }: { banners: OfferBanner[] }) {
 
   return (
     <div className="space-y-4">
-      <div role="tablist" aria-label={t("tabs.all")} className="flex gap-2 overflow-x-auto pb-1">
+      <div
+        role="tablist"
+        aria-label={t("tabs.all")}
+        className="-mx-4 flex snap-x scroll-px-4 [scrollbar-width:none] gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden"
+      >
         {tabsWithOffers.map((key) => (
           <button
             key={key}
@@ -49,7 +53,7 @@ export function OffersCarousel({ banners }: { banners: OfferBanner[] }) {
             aria-selected={tab === key}
             onClick={() => setTab(key)}
             className={cn(
-              "min-h-10 shrink-0 rounded-full border px-4 text-sm font-medium transition",
+              "min-h-11 shrink-0 snap-start rounded-full border px-4 text-sm font-medium transition sm:min-h-10",
               tab === key ? "border-primary bg-primary text-primary-foreground" : "bg-card hover:bg-accent",
             )}
           >
@@ -60,7 +64,10 @@ export function OffersCarousel({ banners }: { banners: OfferBanner[] }) {
       {visible.length === 0 ? (
         <p className="text-sm text-muted-foreground">{t("empty")}</p>
       ) : (
-        <ul className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2" role="tabpanel">
+        <ul
+          className="-mx-4 flex snap-x snap-mandatory scroll-px-4 [scrollbar-width:none] gap-4 overflow-x-auto px-4 pb-2 [&::-webkit-scrollbar]:hidden"
+          role="tabpanel"
+        >
           {visible.map((banner) => {
             const accent = ACCENT_CLASSES[banner.accent];
             return (

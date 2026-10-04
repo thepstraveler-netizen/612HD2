@@ -20,7 +20,10 @@ export default async function RiderOrderLayout({ children }: { children: ReactNo
         <LogoMark className="size-8" />
         <span className="font-semibold">{t("header")}</span>
       </header>
-      <main id="main" className="mx-auto max-w-md space-y-4 px-4 py-5 pb-10">
+      <main
+        id="main"
+        className="mx-auto max-w-md space-y-4 px-4 py-5 pb-[calc(var(--sticky-bar-h,0px)+2.5rem)]"
+      >
         {children}
       </main>
     </div>

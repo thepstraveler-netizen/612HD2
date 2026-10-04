@@ -55,7 +55,7 @@ export function PackageFilter({
   const chip = (key: string | null, label: string) => {
     const on = category === key;
     return (
-      <li key={key ?? "all"} className="shrink-0">
+      <li key={key ?? "all"} className="shrink-0 snap-start">
         <button
           type="button"
           aria-pressed={on}
@@ -78,7 +78,7 @@ export function PackageFilter({
           <p className="flex items-center gap-2 text-sm font-semibold">
             <SlidersHorizontal className="size-4" aria-hidden="true" /> {t("filtersTitle")}
           </p>
-          <ul className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:flex-wrap">
+          <ul className="-mx-4 flex snap-x scroll-px-4 [scrollbar-width:none] gap-2 overflow-x-auto px-4 pb-1 sm:flex-wrap [&::-webkit-scrollbar]:hidden">
             {chip(null, t("all"))}
             {categories.map((c) => chip(c.key, c.label))}
           </ul>

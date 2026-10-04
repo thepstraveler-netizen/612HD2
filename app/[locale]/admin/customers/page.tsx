@@ -33,15 +33,16 @@ export default async function AdminCustomersPage({
 
   return (
     <div className="space-y-6">
-      <AdminPageHeader title={t("title")} lead={t("lead")}>
-        <Button asChild variant="outline">
-          <Link href="/admin/customers/privacy">
-            <ShieldCheck /> {tPrivacy("title")}
-          </Link>
-        </Button>
-      </AdminPageHeader>
-      <form method="get" className="flex flex-wrap items-end gap-3 rounded-2xl border bg-card p-4">
-        <div className="grid min-w-56 flex-1 gap-1.5">
+      <AdminPageHeader
+        title={t("title")}
+        lead={t("lead")}
+        actions={[{ href: "/admin/customers/privacy", label: tPrivacy("title"), icon: <ShieldCheck /> }]}
+      />
+      <form
+        method="get"
+        className="grid grid-cols-2 items-end gap-3 rounded-2xl border bg-card p-4 sm:flex sm:flex-wrap"
+      >
+        <div className="col-span-2 grid gap-1.5 sm:min-w-56 sm:flex-1">
           <Label htmlFor="cf-q">{t("filters.search")}</Label>
           <Input
             id="cf-q"
@@ -51,23 +52,28 @@ export default async function AdminCustomersPage({
             placeholder={t("filters.searchPlaceholder")}
           />
         </div>
-        <div className="grid gap-1.5">
+        <div className="grid min-w-0 gap-1.5">
           <Label htmlFor="cf-blocked">{t("filters.blocked")}</Label>
-          <NativeSelect id="cf-blocked" name="blocked" defaultValue={filters.blocked ?? ""} className="w-40">
+          <NativeSelect
+            id="cf-blocked"
+            name="blocked"
+            defaultValue={filters.blocked ?? ""}
+            className="sm:w-40"
+          >
             <option value="">{t("filters.any")}</option>
             <option value="no">{t("filters.active")}</option>
             <option value="yes">{t("filters.blockedOnly")}</option>
           </NativeSelect>
         </div>
-        <div className="grid gap-1.5">
+        <div className="grid min-w-0 gap-1.5">
           <Label htmlFor="cf-booked">{t("filters.booked")}</Label>
-          <NativeSelect id="cf-booked" name="booked" defaultValue={filters.booked ?? ""} className="w-40">
+          <NativeSelect id="cf-booked" name="booked" defaultValue={filters.booked ?? ""} className="sm:w-40">
             <option value="">{t("filters.any")}</option>
             <option value="yes">{t("filters.withBookings")}</option>
             <option value="no">{t("filters.noBookings")}</option>
           </NativeSelect>
         </div>
-        <Button type="submit">
+        <Button type="submit" className="col-span-2">
           <Search /> {t("filters.apply")}
         </Button>
       </form>
@@ -75,6 +81,7 @@ export default async function AdminCustomersPage({
         {t("filters.results", { count: list.total })}
       </p>
       <AdminTable
+        statusColumn={6}
         empty={t("empty")}
         headers={[
           t("columns.customer"),

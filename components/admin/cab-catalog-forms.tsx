@@ -7,6 +7,7 @@ import { FormProvider, useForm, useFormContext } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { saveAddon, savePackage, savePlace, saveSurcharge } from "@/lib/cabs/admin-actions";
 import { pickLocalized, type LocalizedJson } from "@/lib/i18n/localized";
+import { cn } from "@/lib/utils";
 import { CAB_TRIP_TYPES } from "@/schemas/cabs";
 import {
   CAB_PLACE_KINDS,
@@ -34,6 +35,7 @@ import {
   WeekdayToggles,
   useLocalizedOptions,
 } from "./hotel-shared";
+import { ScrollTable } from "./scroll-row";
 
 /** Places, local packages, add-ons and peak pricing: the smaller cab catalog forms. */
 
@@ -187,12 +189,21 @@ export function FareTable({
   rows: { key: string; label: string; cells: ReactNode[] }[];
 }) {
   return (
-    <div className="overflow-x-auto rounded-xl border">
+    <ScrollTable className="rounded-xl border">
       <table className="w-full text-left text-sm">
         <thead className="border-b bg-muted/50 text-xs text-muted-foreground uppercase">
           <tr>
-            {headers.map((h) => (
-              <th key={h} scope="col" className="px-3 py-2 whitespace-nowrap">
+            {headers.map((h, i) => (
+              <th
+                key={h}
+                scope="col"
+                className={cn(
+                  "px-3 py-2 whitespace-nowrap",
+                  // The category column stays put while the fares scroll under it.
+                  i === 0 &&
+                    "sticky left-0 z-10 bg-[color-mix(in_oklab,var(--muted)_50%,var(--card))] shadow-[1px_0_0_var(--border)]",
+                )}
+              >
                 {h}
               </th>
             ))}
@@ -201,7 +212,10 @@ export function FareTable({
         <tbody>
           {rows.map((row) => (
             <tr key={row.key} className="border-b last:border-0">
-              <th scope="row" className="px-3 py-2 font-medium whitespace-nowrap">
+              <th
+                scope="row"
+                className="sticky left-0 z-10 max-w-36 bg-card px-3 py-2 font-medium shadow-[1px_0_0_var(--border)] sm:max-w-none sm:whitespace-nowrap"
+              >
                 {row.label}
               </th>
               {row.cells.map((cell, i) => (
@@ -213,7 +227,7 @@ export function FareTable({
           ))}
         </tbody>
       </table>
-    </div>
+    </ScrollTable>
   );
 }
 
@@ -251,7 +265,7 @@ export function GridInput({
         aria-invalid={!!error}
         inputMode={inputMode}
         placeholder={placeholder}
-        className="h-10 min-w-24"
+        className="h-11 min-w-24 sm:h-10"
         {...register(name)}
       />
       {error ? <span className="text-xs text-destructive">{t.has(error) ? t(error) : error}</span> : null}

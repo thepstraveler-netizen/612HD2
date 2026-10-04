@@ -7,6 +7,7 @@ import { useRef, useState, useTransition, type ReactNode } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { MobilePayBar, MobilePriceDetails } from "@/components/booking/mobile-pay-bar";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -476,27 +477,26 @@ export function RideCheckoutForm({
           </div>
         </aside>
 
-        {/* Mobile: summary inline and a sticky confirm bar. */}
-        <section aria-label={tc("summaryTitle")} className="rounded-2xl border bg-card p-4 lg:hidden">
-          <h2 className="mb-3 text-base font-bold">{t("fareTitle")}</h2>
-          <div className={cn("transition-opacity", pricing && "opacity-60")}>{summary}</div>
-        </section>
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t bg-background/95 p-3 backdrop-blur lg:hidden">
-          <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
-            <div>
-              <p className="text-xs text-muted-foreground">
-                {pay === "online" ? tc("payNowLabel") : t("payDriver")}
-              </p>
-              <p className="text-lg font-extrabold">
-                {money(pay === "online" ? preview.payableNowPaise : preview.balancePaise)}
-              </p>
-            </div>
-            <Button type="submit" size="lg" disabled={blocked}>
-              {submitting ? <Loader2 className="animate-spin" /> : <SubmitIcon />}{" "}
-              {pay === "online" ? tc("pay") : t("confirmShort")}
-            </Button>
-          </div>
-        </div>
+        {/* Mobile: a foldable fare breakdown and a sticky confirm bar. */}
+        <MobilePriceDetails
+          id="ride-fare"
+          title={t("fareTitle")}
+          totalLabel={tc("total")}
+          total={money(preview.totalPaise)}
+          dimmed={pricing}
+        >
+          {summary}
+        </MobilePriceDetails>
+        <MobilePayBar
+          detailsId="ride-fare"
+          label={pay === "online" ? tc("payNowLabel") : t("payDriver")}
+          amount={money(pay === "online" ? preview.payableNowPaise : preview.balancePaise)}
+        >
+          <Button type="submit" size="lg" disabled={blocked}>
+            {submitting ? <Loader2 className="animate-spin" /> : <SubmitIcon />}{" "}
+            {pay === "online" ? tc("pay") : t("confirmShort")}
+          </Button>
+        </MobilePayBar>
       </form>
     </Form>
   );

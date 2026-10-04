@@ -131,6 +131,7 @@ export default async function AdminCustomerPage({ params }: { params: Promise<{ 
 
       <InsightCard title={t("bookings.title")}>
         <AdminTable
+          statusColumn={2}
           empty={t("bookings.empty")}
           headers={[
             t("bookings.code"),

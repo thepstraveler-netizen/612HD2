@@ -51,7 +51,7 @@ export default async function ReferPage({ params }: { params: Promise<{ locale: 
       </div>
 
       <Card>
-        <CardContent>
+        <CardContent className="max-sm:px-4">
           {code ? (
             <ReferralShare
               code={code}
@@ -64,10 +64,10 @@ export default async function ReferPage({ params }: { params: Promise<{ locale: 
       </Card>
 
       <Card>
-        <CardHeader>
+        <CardHeader className="max-sm:px-4">
           <CardTitle>{t("friendsTitle")}</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="max-sm:px-4">
           {friends.length ? (
             <ul className="divide-y">
               {friends.map((f) => (

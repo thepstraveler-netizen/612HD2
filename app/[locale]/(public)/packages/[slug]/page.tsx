@@ -18,6 +18,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { HotelGallery } from "@/components/hotels/hotel-gallery";
 import { EnquiryForm } from "@/components/leads/enquiry-form";
 import { PackageBookingWidget } from "@/components/packages/booking-widget";
+import { ActionBarPrice, MobileActionBar } from "@/components/shared/mobile-action-bar";
 import { DurationText, PackageImage } from "@/components/packages/package-card";
 import { ReviewsSection } from "@/components/reviews/reviews-section";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -177,7 +178,7 @@ export default async function PackagePage({ params }: Props) {
   );
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6 px-4 py-6 sm:py-8">
+    <div className="mx-auto max-w-6xl space-y-5 px-4 py-4 sm:space-y-6 sm:py-8">
       <JsonLd data={jsonLd} />
       <Link
         href="/packages"
@@ -223,7 +224,7 @@ export default async function PackagePage({ params }: Props) {
       )}
 
       <div className="grid gap-8 lg:grid-cols-[1fr_22rem]">
-        <aside aria-label={td("bookingPanel")} className="lg:order-2">
+        <aside id="book-panel" aria-label={td("bookingPanel")} className="scroll-mt-20 lg:order-2">
           {side}
         </aside>
 
@@ -485,6 +486,24 @@ export default async function PackagePage({ params }: Props) {
           </section>
         </div>
       </div>
+
+      {/* Phones: once the booking panel scrolls away, keep the price and the next step in reach. */}
+      <MobileActionBar label={td("bookingPanel")} hideWhileVisible="book-panel">
+        {pkg.fromPaise !== null ? (
+          <ActionBarPrice
+            caption={t("card.from")}
+            amount={money(pkg.fromPaise)}
+            note={td("perPersonShort")}
+          />
+        ) : (
+          <ActionBarPrice amount={t("card.priceOnRequest")} />
+        )}
+        <Button asChild className="shrink-0">
+          <a href={action === "book" ? "#book-panel" : "#enquire"}>
+            {action === "book" ? td("bookCta") : td("enquireCta")}
+          </a>
+        </Button>
+      </MobileActionBar>
     </div>
   );
 }

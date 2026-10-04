@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Link } from "@/i18n/navigation";
+import { MoreFilters } from "@/components/admin/more-filters";
 import { TRIP_STATUSES, type TripFilters } from "@/schemas/cab-admin";
 
 /** Trips list filters as a plain GET form, so a filtered list is a shareable URL. */
@@ -24,16 +25,18 @@ export async function TripFiltersForm({ filters }: { filters: TripFilters }) {
           ))}
         </NativeSelect>
       </div>
-      <div className="grid gap-1.5">
-        <Label htmlFor="tf-from">{t("trips.filters.from")}</Label>
-        <Input id="tf-from" name="from" type="date" defaultValue={filters.from ?? ""} />
-      </div>
-      <div className="grid gap-1.5">
-        <Label htmlFor="tf-to">{t("trips.filters.to")}</Label>
-        <Input id="tf-to" name="to" type="date" defaultValue={filters.to ?? ""} />
-      </div>
+      <MoreFilters active={[filters.from, filters.to].filter(Boolean).length}>
+        <div className="grid gap-1.5">
+          <Label htmlFor="tf-from">{t("trips.filters.from")}</Label>
+          <Input id="tf-from" name="from" type="date" defaultValue={filters.from ?? ""} />
+        </div>
+        <div className="grid gap-1.5">
+          <Label htmlFor="tf-to">{t("trips.filters.to")}</Label>
+          <Input id="tf-to" name="to" type="date" defaultValue={filters.to ?? ""} />
+        </div>
+      </MoreFilters>
       <div className="flex flex-wrap items-center gap-2 sm:col-span-3">
-        <Button type="submit">
+        <Button type="submit" className="flex-1 sm:flex-none">
           <Search /> {t("trips.filters.apply")}
         </Button>
         {active ? (

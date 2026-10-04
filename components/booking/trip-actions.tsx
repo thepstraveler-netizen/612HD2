@@ -96,7 +96,7 @@ export function TripActions({
                 {t("cancelCharge", { amount: formatPaise(cancel.chargePaise, locale) })}
               </p>
             ) : null}
-            <div className="flex flex-wrap gap-2">
+            <div className="grid gap-2 sm:flex sm:flex-wrap">
               <Button variant="destructive" onClick={doCancel} disabled={pending}>
                 {pending ? <Loader2 className="animate-spin" /> : null} {t("cancelConfirm")}
               </Button>
@@ -106,7 +106,7 @@ export function TripActions({
             </div>
           </div>
         ) : (
-          <Button variant="outline" onClick={() => setConfirming(true)}>
+          <Button variant="outline" className="w-full sm:w-auto" onClick={() => setConfirming(true)}>
             <XCircle /> {t("cancelBooking")}
           </Button>
         )

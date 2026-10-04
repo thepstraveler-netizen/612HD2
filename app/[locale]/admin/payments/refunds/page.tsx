@@ -25,6 +25,9 @@ export default async function AdminRefundsPage() {
         <PaymentSubnav active="refunds" />
       </AdminPageHeader>
       <AdminTable
+        titleColumn={1}
+        statusColumn={3}
+        wide={[4]}
         empty={t("payments.refundsEmpty")}
         headers={[
           t("refundColumns.created"),

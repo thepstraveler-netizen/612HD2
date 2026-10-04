@@ -33,7 +33,11 @@
     "admin": "Admin panel",
     "vendor": "Vendor dashboard",
     "driver": "Driver trips",
-    "logout": "Log out"
+    "logout": "Log out",
+    "home": "Home",
+    "rides": "Rides",
+    "trips": "My trips",
+    "tabBar": "Quick links"
   },
   "language": {
     "label": "Language",
@@ -880,6 +884,14 @@
         "addRule": "Add rule",
         "removeRule": "Remove rule"
       }
+    },
+    "ui": {
+      "sortBy": "Sort",
+      "sortDefault": "Default order",
+      "moreActions": "More actions",
+      "moreFilters": "More filters",
+      "jumpTo": "Jump to section",
+      "swipeHint": "Swipe sideways to see every column"
     }
   },
   "vendor": {
@@ -1179,7 +1191,11 @@
       "adults": "Adults",
       "children": "Children",
       "submit": "Search",
-      "update": "Update"
+      "update": "Update",
+      "addDates": "Add dates",
+      "edit": "Edit",
+      "summaryRooms": "{count, plural, one {# room} other {# rooms}}",
+      "summaryGuests": "{count, plural, one {# guest} other {# guests}}"
     },
     "filters": {
       "title": "Filters",
@@ -1205,7 +1221,8 @@
       "withinM": "Within {m} m",
       "withinKm": "Within {km} km",
       "propertyType": "Property type",
-      "amenities": "Amenities"
+      "amenities": "Amenities",
+      "showResults": "{count, plural, =0 {No stays to show} one {Show # stay} other {Show # stays}}"
     },
     "propertyTypes": {
       "hotel": "Hotel",
@@ -1343,7 +1360,10 @@
         "partial": "{percent}% refund up to {hours} hours before check-in"
       },
       "reserve": "Reserve now",
-      "bookingNoteOnline": "Pay online, at the hotel or part now. Prefer to talk? Book on WhatsApp."
+      "bookingNoteOnline": "Pay online, at the hotel or part now. Prefer to talk? Book on WhatsApp.",
+      "selectRoom": "Select room",
+      "totalShort": "total",
+      "perNightShort": "/ night"
     }
   },
   "hotelsAdmin": {
@@ -1785,7 +1805,10 @@
     "paymentPendingHint": "Your rooms are held for {minutes} minutes. Complete the payment to confirm.",
     "retryPayment": "Complete payment",
     "summaryTitle": "Price summary",
-    "secureNote": "Payments are processed securely by Razorpay. Your total is calculated by our server, including GST."
+    "secureNote": "Payments are processed securely by Razorpay. Your total is calculated by our server, including GST.",
+    "mobileBar": {
+      "details": "Show the price breakdown"
+    }
   },
   "trips": {
     "title": "My trips",
@@ -3080,6 +3103,8 @@
     "customer": "Customer",
     "callCustomer": "Call {name}",
     "call": "Call",
+    "whatsapp": "WhatsApp",
+    "whatsappCustomer": "WhatsApp {name}",
     "passengers": "{count, plural, one {# passenger} other {# passengers}}",
     "where": "Where",
     "pickupAddress": "Pickup",
@@ -3353,6 +3378,8 @@
       "customer": "Customer",
       "callCustomer": "Call {name}",
       "call": "Call",
+      "whatsapp": "WhatsApp",
+      "whatsappCustomer": "WhatsApp {name}",
       "passengers": "{count, plural, one {# person} other {# people}}",
       "where": "Where",
       "pickup": "Pickup",
@@ -3649,6 +3676,8 @@
     "pickup": "Pick up from",
     "callStore": "Call {name}",
     "call": "Call",
+    "whatsapp": "WhatsApp",
+    "whatsappCustomer": "WhatsApp {name}",
     "openStoreMap": "Store in Google Maps",
     "drop": "Deliver to",
     "callCustomer": "Call {name}",
@@ -5235,7 +5264,9 @@
       "policy": "Cancellation policy",
       "terms": "Terms",
       "enquireTitle": "Ask about this tour",
-      "enquireBody": "No sign-in needed. We usually reply within a few hours."
+      "enquireBody": "No sign-in needed. We usually reply within a few hours.",
+      "bookCta": "Book now",
+      "perPersonShort": "/ person"
     },
     "book": {
       "title": "Book this tour",

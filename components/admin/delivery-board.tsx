@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Link } from "@/i18n/navigation";
+import { AdminTable } from "./payment-table";
+import { SectionJumpNav } from "./section-jump-nav";
 import {
   listBoardOrders,
   riderOptions,
@@ -156,8 +158,9 @@ export async function DeliveryBoard({
   canWrite: boolean;
 }) {
   const locale = await getLocale();
-  const [t, format, orders, riders, stores] = await Promise.all([
+  const [t, tUi, format, orders, riders, stores] = await Promise.all([
     getTranslations("deliveryAdmin"),
+    getTranslations("admin.ui"),
     getFormatter(),
     listBoardOrders(kinds, locale, filters.store),
     canWrite ? riderOptions() : Promise.resolve([]),
@@ -175,7 +178,7 @@ export async function DeliveryBoard({
         role="search"
         className="flex flex-wrap items-end gap-3 rounded-2xl border bg-card p-4"
       >
-        <div className="grid min-w-56 flex-1 gap-1.5 sm:flex-none">
+        <div className="grid min-w-0 flex-1 gap-1.5 sm:min-w-56 sm:flex-none">
           <Label htmlFor="ob-store">{t("board.filterStore")}</Label>
           <NativeSelect id="ob-store" name="store" defaultValue={filters.store ?? ""}>
             <option value="">{t("board.allStores")}</option>
@@ -198,11 +201,28 @@ export async function DeliveryBoard({
         ) : null}
       </form>
 
+      <SectionJumpNav
+        className="xl:hidden"
+        label={tUi("jumpTo")}
+        items={[
+          ...BOARD_COLUMNS.map((status) => ({
+            id: `ob-${status}`,
+            label: t(`status.${status}`),
+            count: orders.filter((o) => o.status === status).length,
+          })),
+          { id: "ob-recent", label: t("board.recent"), count: finished.length },
+        ]}
+      />
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
         {BOARD_COLUMNS.map((status) => {
           const rows = orders.filter((o) => o.status === status);
           return (
-            <section key={status} aria-labelledby={`col-${status}`} className="space-y-3">
+            <section
+              key={status}
+              id={`ob-${status}`}
+              aria-labelledby={`col-${status}`}
+              className="scroll-mt-32 space-y-3"
+            >
               <h2 id={`col-${status}`} className="flex items-center gap-2 text-base font-semibold">
                 {t(`status.${status}`)}
                 <span className="rounded-full bg-muted px-2 text-sm font-medium text-muted-foreground">
@@ -223,61 +243,56 @@ export async function DeliveryBoard({
         })}
       </div>
 
-      <section aria-labelledby="recent" className="space-y-3">
+      <section id="ob-recent" aria-labelledby="recent" className="scroll-mt-32 space-y-3">
         <h2 id="recent" className="text-base font-semibold">
           {t("board.recent")}
         </h2>
         {finished.length === 0 ? (
           <p className="text-sm text-muted-foreground">{t("board.recentEmpty")}</p>
         ) : (
-          <div className="overflow-x-auto rounded-2xl border bg-card">
-            <table className="w-full text-left text-sm">
-              <thead className="border-b bg-muted/50 text-xs text-muted-foreground uppercase">
-                <tr>
-                  <th className="px-4 py-3">{t("board.order")}</th>
-                  <th className="px-4 py-3">{t("board.store")}</th>
-                  <th className="px-4 py-3">{t("board.statusCol")}</th>
-                  <th className="px-4 py-3">{t("board.total")}</th>
-                  <th className="px-4 py-3">{t("board.rider")}</th>
-                  <th className="px-4 py-3">{t("board.updated")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {finished.map((o) => (
-                  <tr key={o.id} className="border-b last:border-0">
-                    <td className="px-4 py-2.5 font-mono">
-                      {o.booking ? (
-                        <Link href={`/admin/bookings/${o.booking.id}`} className="text-primary">
-                          {o.booking.code}
-                        </Link>
-                      ) : (
-                        "–"
-                      )}
-                    </td>
-                    <td className="px-4 py-2.5">{o.storeName}</td>
-                    <td className="px-4 py-2.5">
-                      <ToneBadge tone={orderTone(o.status)} label={t(`status.${o.status}`)} />
-                    </td>
-                    <td className="px-4 py-2.5 whitespace-nowrap">
-                      {o.booking ? formatPaise(o.booking.total_paise, locale) : "–"}
-                    </td>
-                    <td className="px-4 py-2.5">
-                      {o.partner_name ?? "–"}
-                      {o.rating ? (
-                        <span className="ml-2 inline-flex items-center gap-0.5 text-muted-foreground">
-                          <Star className="size-3.5 fill-current" aria-hidden="true" />
-                          {o.rating}/5
-                        </span>
-                      ) : null}
-                    </td>
-                    <td className="px-4 py-2.5 whitespace-nowrap">
-                      {indiaTime(format, o.delivered_at ?? o.updated_at)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <AdminTable
+            empty={t("board.recentEmpty")}
+            statusColumn={2}
+            headers={[
+              t("board.order"),
+              t("board.store"),
+              t("board.statusCol"),
+              t("board.total"),
+              t("board.rider"),
+              t("board.updated"),
+            ]}
+            rows={finished.map((o) => ({
+              key: o.id,
+              cells: [
+                <span key="o" className="font-mono">
+                  {o.booking ? (
+                    <Link href={`/admin/bookings/${o.booking.id}`} className="text-primary">
+                      {o.booking.code}
+                    </Link>
+                  ) : (
+                    "–"
+                  )}
+                </span>,
+                o.storeName,
+                <ToneBadge key="s" tone={orderTone(o.status)} label={t(`status.${o.status}`)} />,
+                <span key="t" className="whitespace-nowrap">
+                  {o.booking ? formatPaise(o.booking.total_paise, locale) : "–"}
+                </span>,
+                <span key="r">
+                  {o.partner_name ?? "–"}
+                  {o.rating ? (
+                    <span className="ml-2 inline-flex items-center gap-0.5 text-muted-foreground">
+                      <Star className="size-3.5 fill-current" aria-hidden="true" />
+                      {o.rating}/5
+                    </span>
+                  ) : null}
+                </span>,
+                <span key="u" className="whitespace-nowrap">
+                  {indiaTime(format, o.delivered_at ?? o.updated_at)}
+                </span>,
+              ],
+            }))}
+          />
         )}
       </section>
     </div>

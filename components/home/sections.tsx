@@ -51,9 +51,9 @@ export async function HomeSectionView({ section, data }: { section: HomeSection;
         content.success && content.data.tagline ? pickLocalized(content.data.tagline, locale) : null;
       return (
         <section className="relative overflow-hidden bg-gradient-to-b from-brand-sky to-background pb-20">
-          <div className="mx-auto max-w-7xl space-y-8 px-4 pt-10 sm:pt-14">
+          <div className="mx-auto max-w-7xl space-y-6 px-4 pt-6 sm:space-y-8 sm:pt-14">
             <div className="grid gap-6 lg:grid-cols-[1.3fr_1fr] lg:items-end">
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 <p className="inline-flex items-center gap-1.5 rounded-full bg-card px-3 py-1 text-sm font-medium text-primary shadow-sm">
                   <MapPin className="size-4" aria-hidden="true" />
                   {t("brand.location")} ·{" "}
@@ -62,10 +62,12 @@ export async function HomeSectionView({ section, data }: { section: HomeSection;
                 <h1 className="text-[length:var(--text-display)] leading-tight font-extrabold tracking-tight">
                   {title}
                 </h1>
-                {subtitle ? <p className="max-w-xl text-lg text-muted-foreground">{subtitle}</p> : null}
+                {subtitle ? (
+                  <p className="max-w-xl text-base text-muted-foreground sm:text-lg">{subtitle}</p>
+                ) : null}
               </div>
               {tagline ? (
-                <p className="font-script text-2xl leading-snug text-primary lg:text-right lg:text-3xl">
+                <p className="font-script text-xl leading-snug text-primary sm:text-2xl lg:text-right lg:text-3xl">
                   {tagline}
                 </p>
               ) : null}
@@ -116,7 +118,7 @@ export async function HomeSectionView({ section, data }: { section: HomeSection;
       return (
         <section id="services" className="mx-auto max-w-7xl scroll-mt-20 px-4 pt-16">
           <SectionTitle lead={subtitle}>{title}</SectionTitle>
-          <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="mt-6 grid grid-cols-2 gap-3 sm:mt-8 sm:gap-4 lg:grid-cols-3">
             {data.services.map((service) => (
               <li key={service.id}>
                 <ServiceCard
@@ -231,7 +233,7 @@ export async function HomeSectionView({ section, data }: { section: HomeSection;
       if (!content.success) return null;
       return (
         <section className="mx-auto max-w-7xl px-4 pt-16">
-          <div className="flex flex-col items-start gap-4 rounded-2xl bg-brand-navy p-8 text-white sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col items-start gap-4 rounded-2xl bg-brand-navy p-6 text-white sm:flex-row sm:items-center sm:justify-between sm:p-8">
             <div className="space-y-1">
               <h2 className="font-script text-3xl !text-white">{title}</h2>
               {subtitle ? <p className="max-w-2xl text-white/80">{subtitle}</p> : null}

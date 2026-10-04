@@ -9,7 +9,7 @@ import { pickLocalized, type LocalizedJson } from "@/lib/i18n/localized";
 import { FARE_RULE_TRIP_TYPES, fareRulesFormSchema, type FareRulesFormInput } from "@/schemas/cab-admin";
 import { FareTable, GridInput, MoneyCell } from "./cab-catalog-forms";
 import { useCabSave } from "./cab-shared";
-import { useUnsavedChangesWarning } from "./form-fields";
+import { PageSaveRow, useUnsavedChangesWarning } from "./form-fields";
 import { FormSection } from "./hotel-shared";
 
 function CheckCell({ name, label }: { name: string; label: string }) {
@@ -96,11 +96,11 @@ export function FareGrid({
           );
         })}
         <p className="text-sm text-muted-foreground">{t("fares.emptyHelp")}</p>
-        <div className="flex justify-end">
+        <PageSaveRow>
           <Button type="submit" disabled={pending}>
             {tc("save")}
           </Button>
-        </div>
+        </PageSaveRow>
       </form>
     </FormProvider>
   );

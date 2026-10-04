@@ -51,7 +51,7 @@ function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; chi
       aria-pressed={on}
       onClick={onClick}
       className={cn(
-        "inline-flex min-h-10 shrink-0 items-center rounded-full border px-4 text-sm font-medium",
+        "inline-flex min-h-11 shrink-0 snap-start items-center rounded-full border px-4 text-sm font-medium whitespace-nowrap sm:min-h-10",
         on ? "border-primary bg-primary text-primary-foreground" : "bg-card hover:bg-accent",
       )}
     >
@@ -106,7 +106,11 @@ export function CabResults({
             </Button>
           ) : null}
         </div>
-        <div role="group" aria-label={t("filterType")} className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
+        <div
+          role="group"
+          aria-label={t("filterType")}
+          className="-mx-3 flex snap-x scroll-px-3 [scrollbar-width:none] gap-2 overflow-x-auto px-3 pb-1 sm:-mx-1 sm:px-1 [&::-webkit-scrollbar]:hidden"
+        >
           {offers.map((o) => (
             <Chip
               key={o.key}
@@ -121,7 +125,7 @@ export function CabResults({
           <div
             role="group"
             aria-label={t("filterFuel")}
-            className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1"
+            className="-mx-3 flex snap-x scroll-px-3 [scrollbar-width:none] gap-2 overflow-x-auto px-3 pb-1 sm:-mx-1 sm:px-1 [&::-webkit-scrollbar]:hidden"
           >
             {fuels.map((fuel) => (
               <Chip
@@ -138,7 +142,7 @@ export function CabResults({
           <div
             role="group"
             aria-label={t("filterModel")}
-            className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1"
+            className="-mx-3 flex snap-x scroll-px-3 [scrollbar-width:none] gap-2 overflow-x-auto px-3 pb-1 sm:-mx-1 sm:px-1 [&::-webkit-scrollbar]:hidden"
           >
             {models.map((model) => (
               <Chip

@@ -15,7 +15,7 @@ import {
   type LoyaltySettingsFormInput,
   type ReviewsSettingsFormInput,
 } from "@/schemas/engagement-admin";
-import { SwitchField, TextInputField, useUnsavedChangesWarning } from "./form-fields";
+import { CardSaveRow, SwitchField, TextInputField, useUnsavedChangesWarning } from "./form-fields";
 import { useSave } from "./use-save";
 
 /**
@@ -50,11 +50,11 @@ function SettingsCard({
         <p className="text-sm text-muted-foreground">{lead}</p>
       </div>
       {children}
-      <div className="flex justify-end">
+      <CardSaveRow>
         <Button type="submit" disabled={pending}>
           {t("save")}
         </Button>
-      </div>
+      </CardSaveRow>
     </form>
   );
 }

@@ -39,10 +39,13 @@ export function Logo({
   className?: string;
 }) {
   return (
-    <span className={cn("flex items-center gap-2.5", className)}>
-      <LogoMark />
-      <span className="flex flex-col leading-tight">
-        <span className="font-script text-lg font-bold text-heading sm:text-xl">{name}</span>
+    <span className={cn("flex min-w-0 items-center gap-2 sm:gap-2.5", className)}>
+      <LogoMark className="size-9 sm:size-10" />
+      <span className="flex min-w-0 flex-col leading-tight">
+        {/* Two short lines at most on narrow phones, also for the longer Hindi name. */}
+        <span className="font-script text-base leading-[1.15] font-bold text-balance text-heading sm:text-xl sm:leading-tight">
+          {name}
+        </span>
         {strapline ? (
           <span className="hidden text-[11px] font-medium text-muted-foreground sm:block xl:hidden 2xl:block">
             {strapline}

@@ -81,8 +81,8 @@ export function HotelImport() {
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardContent className="space-y-3 pt-6">
+      <Card className="py-4 sm:py-6">
+        <CardContent className="space-y-3 px-4 sm:px-6 sm:pt-6">
           <Label htmlFor="hotel-csv">{t("file")}</Label>
           <Input
             id="hotel-csv"
@@ -91,7 +91,7 @@ export function HotelImport() {
             disabled={pending}
             onChange={(e) => void onFile(e.target.files?.[0])}
           />
-          <p className="text-sm text-muted-foreground">{t("help")}</p>
+          <p className="text-sm break-words text-muted-foreground">{t("help")}</p>
         </CardContent>
       </Card>
 
@@ -125,7 +125,7 @@ export function HotelImport() {
             </li>
           </ul>
           <p className="text-sm text-muted-foreground">{t("previewNote")}</p>
-          <Button type="button" onClick={onApply} disabled={pending}>
+          <Button type="button" onClick={onApply} disabled={pending} className="w-full sm:w-auto">
             <Upload /> {t("apply")}
           </Button>
         </div>

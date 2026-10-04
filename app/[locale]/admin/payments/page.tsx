@@ -25,6 +25,8 @@ export default async function AdminPaymentsPage() {
         <PaymentSubnav active="payments" />
       </AdminPageHeader>
       <AdminTable
+        titleColumn={1}
+        statusColumn={4}
         empty={t("payments.empty")}
         headers={[
           t("paymentColumns.created"),

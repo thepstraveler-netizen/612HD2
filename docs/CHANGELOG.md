@@ -1,5 +1,24 @@
 # Changelog
 
+## Phones
+
+### Added
+
+- A bottom tab bar on phones (Home, Hotels, Cabs, Rides, My trips) on public and account pages; it steps aside on pages with their own bottom bar (D-110).
+- Sticky bottom bars on phones: price and Select room / Reserve now on hotel pages, Book now on tour pages, the amount due and pay button on every checkout and quote (tap the amount for the price breakdown), the next step and OTP box on driver and rider links, and Save on long admin forms.
+- Admin on phones: lists become tappable cards with a sort menu, detail pages get a bottom action bar with a "More actions" menu, long pages get a "jump to section" bar, and less-used filters fold under "More filters".
+- Filters on the hotel list open in a bottom sheet with a "Show N stays" button.
+
+### Changed
+
+- On phones the hotel search folds into a one-line summary once there are results, date fields no longer get cut off and open the picker on any tap, the 16 service cards are compact two-column tiles, chip and tab rows swipe sideways, and the footer groups fold up.
+- Account menu, admin tabs and partner portal tabs are sideways-scrolling rows on phones; trip lists, admin notifications and the services CMS no longer scroll sideways.
+- Buttons, links and inputs people tap on phones are at least 44px tall, and inputs use 16px text so iPhones don't zoom in.
+- The admin hotel calendar is a day-by-day list on phones; settlement ledgers are cards with a totals card.
+- With pay at hotel, checkout says "Pay at hotel" instead of "Pay now ₹0".
+- Pages draw under the iPhone notch and home bar (`viewportFit: cover`) with bottom bars padded clear of them.
+- The header logo fits on small phones in Hindi too. Desktop layouts are unchanged.
+
 ## Follow-ups after Phase 11
 
 ### Added

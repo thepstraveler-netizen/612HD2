@@ -1,5 +1,6 @@
 import { Search, X } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+import { MoreFilters } from "@/components/admin/more-filters";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -39,30 +40,32 @@ export async function PackageFiltersForm({
           ))}
         </NativeSelect>
       </div>
-      <div className="grid gap-1.5">
-        <Label htmlFor="pf-mode">{t("filters.mode")}</Label>
-        <NativeSelect id="pf-mode" name="mode" defaultValue={filters.mode ?? ""}>
-          <option value="">{t("filters.any")}</option>
-          {PACKAGE_BOOKING_MODES.map((m) => (
-            <option key={m} value={m}>
-              {t(`modes.${m}`)}
-            </option>
-          ))}
-        </NativeSelect>
-      </div>
-      <div className="grid gap-1.5">
-        <Label htmlFor="pf-category">{t("filters.category")}</Label>
-        <NativeSelect id="pf-category" name="category" defaultValue={filters.category ?? ""}>
-          <option value="">{t("filters.any")}</option>
-          {categories.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </NativeSelect>
-      </div>
+      <MoreFilters active={[filters.mode, filters.category].filter(Boolean).length}>
+        <div className="grid gap-1.5">
+          <Label htmlFor="pf-mode">{t("filters.mode")}</Label>
+          <NativeSelect id="pf-mode" name="mode" defaultValue={filters.mode ?? ""}>
+            <option value="">{t("filters.any")}</option>
+            {PACKAGE_BOOKING_MODES.map((m) => (
+              <option key={m} value={m}>
+                {t(`modes.${m}`)}
+              </option>
+            ))}
+          </NativeSelect>
+        </div>
+        <div className="grid gap-1.5">
+          <Label htmlFor="pf-category">{t("filters.category")}</Label>
+          <NativeSelect id="pf-category" name="category" defaultValue={filters.category ?? ""}>
+            <option value="">{t("filters.any")}</option>
+            {categories.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </NativeSelect>
+        </div>
+      </MoreFilters>
       <div className="flex flex-wrap items-center gap-2 sm:col-span-4">
-        <Button type="submit">
+        <Button type="submit" className="flex-1 sm:flex-none">
           <Search /> {t("filters.apply")}
         </Button>
         {active ? (

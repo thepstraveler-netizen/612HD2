@@ -1,4 +1,4 @@
-import { MapPin, MessageCircle, Phone } from "lucide-react";
+import { ChevronDown, MapPin, MessageCircle, Phone } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 import { LogoMark } from "@/components/shared/logo";
@@ -23,8 +23,8 @@ export async function SiteFooter() {
     <footer className="relative mt-16 bg-brand-navy-deep text-white">
       <TempleSkyline className="absolute -top-[59px] h-[60px] text-brand-navy-deep" />
       <PeacockFeather className="absolute top-6 right-4 hidden text-white/60 md:block" />
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="space-y-3">
+      <div className="mx-auto grid max-w-7xl gap-0 px-4 pt-10 pb-4 sm:grid-cols-2 sm:gap-10 sm:py-12 lg:grid-cols-4">
+        <div className="space-y-3 border-white/10 max-sm:border-b max-sm:pb-6">
           <div className="flex items-center gap-3">
             <LogoMark className="size-12" />
             <span className="font-script text-xl font-bold">{t("brand.name")}</span>
@@ -38,7 +38,7 @@ export async function SiteFooter() {
             {business.phone ? (
               <a
                 href={`tel:${business.phone.replace(/\s/g, "")}`}
-                className="inline-flex min-h-10 items-center gap-1.5 rounded-lg bg-white/10 px-3 text-sm"
+                className="inline-flex min-h-11 items-center gap-1.5 rounded-lg bg-white/10 px-4 text-sm"
               >
                 <Phone className="size-4" aria-hidden="true" /> {t("contact.call")}
               </a>
@@ -48,7 +48,7 @@ export async function SiteFooter() {
                 href={`https://wa.me/${whatsapp}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-10 items-center gap-1.5 rounded-lg bg-accent-green px-3 text-sm"
+                className="inline-flex min-h-11 items-center gap-1.5 rounded-lg bg-accent-green px-4 text-sm"
               >
                 <MessageCircle className="size-4" aria-hidden="true" /> {t("contact.whatsapp")}
               </a>
@@ -95,12 +95,29 @@ export async function SiteFooter() {
   );
 }
 
+/**
+ * A link group: a plain column from sm up; on phones a closed accordion, so
+ * the footer is a few rows instead of two screens. Only one of the two is
+ * ever displayed, so screen readers and tests see each link once.
+ */
 function FooterColumn({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <div>
-      <h2 className="mb-3 text-sm font-semibold tracking-wide !text-white uppercase">{title}</h2>
-      <ul className="space-y-1">{children}</ul>
-    </div>
+    <>
+      <details className="group border-b border-white/10 sm:hidden">
+        <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold tracking-wide uppercase focus-visible:ring-[3px] focus-visible:ring-white/40 focus-visible:outline-none [&::-webkit-details-marker]:hidden">
+          <h2 className="!text-white">{title}</h2>
+          <ChevronDown
+            className="size-5 shrink-0 text-white/70 transition-transform group-open:rotate-180 motion-reduce:transition-none"
+            aria-hidden="true"
+          />
+        </summary>
+        <ul className="grid grid-cols-2 gap-x-4 pb-3">{children}</ul>
+      </details>
+      <div className="max-sm:hidden">
+        <h2 className="mb-3 text-sm font-semibold tracking-wide !text-white uppercase">{title}</h2>
+        <ul className="space-y-1">{children}</ul>
+      </div>
+    </>
   );
 }
 
@@ -111,13 +128,16 @@ function FooterLink({ href, children }: { href: string; children: ReactNode }) {
       {external ? (
         <a
           href={href}
-          className="inline-flex min-h-9 items-center text-sm text-white/75 hover:text-white"
+          className="inline-flex min-h-11 items-center text-sm text-white/75 hover:text-white sm:min-h-9"
           rel="noopener noreferrer"
         >
           {children}
         </a>
       ) : (
-        <Link href={href} className="inline-flex min-h-9 items-center text-sm text-white/75 hover:text-white">
+        <Link
+          href={href}
+          className="inline-flex min-h-11 items-center text-sm text-white/75 hover:text-white sm:min-h-9"
+        >
           {children}
         </Link>
       )}

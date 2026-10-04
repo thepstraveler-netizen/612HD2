@@ -22,6 +22,9 @@ export default async function AdminNotificationLogsPage() {
         <NotificationSubnav active="logs" />
       </AdminPageHeader>
       <AdminTable
+        titleColumn={1}
+        statusColumn={5}
+        wide={[6]}
         empty={t("notifications.logsEmpty")}
         headers={[
           t("logColumns.when"),

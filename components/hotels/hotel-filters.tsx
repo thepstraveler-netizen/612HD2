@@ -7,7 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { FILTER_KEYS, queryString, toggleListValue, withParams } from "@/lib/hotels/url";
 import { formatPaise } from "@/lib/money";
@@ -53,7 +60,7 @@ function Check({
   return (
     <label
       htmlFor={id}
-      className="flex min-h-10 cursor-pointer items-center gap-3 rounded-lg px-1 text-sm hover:bg-muted/50"
+      className="flex min-h-11 cursor-pointer items-center gap-3 rounded-lg px-1 text-sm hover:bg-muted/50 lg:min-h-10"
     >
       <input
         id={id}
@@ -289,42 +296,73 @@ function FilterPanel({ query, options }: { query: Record<string, string>; option
   );
 }
 
-/** Sidebar on large screens; a "Filters" button opening a drawer on phones. */
+/**
+ * Sidebar on large screens; below lg a "Filters" button opening a bottom
+ * sheet. `variant` renders only one of the two, so the page can put the
+ * button in the sort chip row.
+ */
 export function HotelFilters({
   query,
   options,
   activeCount,
+  resultCount,
+  variant,
 }: {
   query: Record<string, string>;
   options: FilterOptions;
   activeCount: number;
+  /** Labels the sheet's close button ("Show 6 stays"); refreshes as filters apply. */
+  resultCount?: number;
+  variant?: "aside" | "sheet";
 }) {
   const t = useTranslations("hotels.filters");
   return (
     <>
-      <aside className="hidden lg:block">
-        <div className="sticky top-20 rounded-2xl border bg-card p-4">
-          <FilterPanel query={query} options={options} />
-        </div>
-      </aside>
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button variant="outline" className="lg:hidden">
-            <SlidersHorizontal /> {t("title")}
-            {activeCount ? (
-              <span className="rounded-full bg-primary px-1.5 text-xs text-primary-foreground">
-                {activeCount}
-              </span>
+      {variant === "sheet" ? null : (
+        <aside className="hidden lg:block">
+          <div className="sticky top-20 rounded-2xl border bg-card p-4">
+            <FilterPanel query={query} options={options} />
+          </div>
+        </aside>
+      )}
+      {variant === "aside" ? null : (
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button
+              variant="outline"
+              className={cn(
+                "lg:hidden",
+                variant === "sheet" && "h-11 shrink-0 snap-start rounded-full px-4 font-medium",
+                variant === "sheet" && activeCount > 0 && "border-primary text-primary",
+              )}
+            >
+              <SlidersHorizontal /> {t("title")}
+              {activeCount ? (
+                <span className="rounded-full bg-primary px-1.5 text-xs text-primary-foreground">
+                  {activeCount}
+                </span>
+              ) : null}
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="bottom" className="gap-0">
+            <SheetHeader className="sr-only">
+              <SheetTitle>{t("title")}</SheetTitle>
+            </SheetHeader>
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pt-4 pb-2">
+              <FilterPanel query={query} options={options} />
+            </div>
+            {resultCount !== undefined ? (
+              <div className="border-t p-3">
+                <SheetClose asChild>
+                  <Button size="lg" className="w-full">
+                    {t("showResults", { count: resultCount })}
+                  </Button>
+                </SheetClose>
+              </div>
             ) : null}
-          </Button>
-        </SheetTrigger>
-        <SheetContent side="left" className="overflow-y-auto p-4">
-          <SheetHeader className="sr-only">
-            <SheetTitle>{t("title")}</SheetTitle>
-          </SheetHeader>
-          <FilterPanel query={query} options={options} />
-        </SheetContent>
-      </Sheet>
+          </SheetContent>
+        </Sheet>
+      )}
     </>
   );
 }

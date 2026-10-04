@@ -25,7 +25,7 @@ export async function SiteHeader() {
         <MobileNav items={items} />
         <Link
           href="/"
-          className="mr-auto rounded-lg focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none xl:mr-0"
+          className="mr-auto min-w-0 rounded-lg focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none xl:mr-0"
         >
           <Logo name={t("brand.short")} strapline={t("brand.strapline")} />
         </Link>

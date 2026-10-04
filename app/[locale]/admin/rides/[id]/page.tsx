@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { z } from "zod";
 import { ToneBadge } from "@/components/admin/booking-status";
 import { indiaTime } from "@/components/admin/cab-trip-card";
-import { AdminPageHeader } from "@/components/admin/page-header";
+import { AdminActionBar, AdminPageHeader } from "@/components/admin/page-header";
 import { RideActions } from "@/components/admin/ride-actions";
 import { paymentText, rideRouteText } from "@/components/admin/ride-board";
 import { Link } from "@/i18n/navigation";
@@ -56,6 +56,24 @@ export default async function RideDetailPage({ params }: { params: Promise<{ id:
   const when = (iso: string | null) => indiaTime(format, iso);
   const point = (pid: string | null) => (pid ? lookups.points.get(pid) : undefined);
 
+  // Nothing to show (read-only viewer, finished ride): no action bar either.
+  const hasActions =
+    (canWrite && (canAssignRide(ride.status) || nextRideSteps(ride.status).length > 0)) ||
+    Boolean(ride.driver_id);
+  const actions = hasActions ? (
+    <RideActions
+      rideId={ride.id}
+      code={ride.booking?.code ?? ""}
+      canWrite={canWrite}
+      canAssign={canAssignRide(ride.status)}
+      assigned={Boolean(ride.driver_id)}
+      steps={nextRideSteps(ride.status)}
+      drivers={assign?.drivers ?? []}
+      vehicles={assign ? rideVehicleChoices(ride.vehicle_type_id, assign.vehicles) : []}
+      current={{ driverId: ride.driver_id, vehicleId: ride.vehicle_id, driverPhone: ride.driver_phone }}
+    />
+  ) : null;
+
   return (
     <div className="space-y-6">
       <AdminPageHeader
@@ -77,17 +95,7 @@ export default async function RideDetailPage({ params }: { params: Promise<{ id:
             </>
           ) : null}
         </div>
-        <RideActions
-          rideId={ride.id}
-          code={ride.booking?.code ?? ""}
-          canWrite={canWrite}
-          canAssign={canAssignRide(ride.status)}
-          assigned={Boolean(ride.driver_id)}
-          steps={nextRideSteps(ride.status)}
-          drivers={assign?.drivers ?? []}
-          vehicles={assign ? rideVehicleChoices(ride.vehicle_type_id, assign.vehicles) : []}
-          current={{ driverId: ride.driver_id, vehicleId: ride.vehicle_id, driverPhone: ride.driver_phone }}
-        />
+        {actions ? <div className="hidden sm:block">{actions}</div> : null}
       </AdminPageHeader>
 
       <div className="grid gap-4 lg:grid-cols-2">
@@ -209,6 +217,7 @@ export default async function RideDetailPage({ params }: { params: Promise<{ id:
           </ol>
         )}
       </Section>
+      {actions ? <AdminActionBar>{actions}</AdminActionBar> : null}
     </div>
   );
 }
