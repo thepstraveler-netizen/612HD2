@@ -15,8 +15,7 @@ export default async function AccountLayout({ children }: { children: ReactNode 
   await requireUser("/account");
   const pendingReferral = (await cookies()).has(REF_COOKIE);
   return (
-    // Bottom room on phones for the account tab bar (about 64px plus the safe area).
-    <div className="flex min-h-dvh flex-col pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0">
+    <div className="flex min-h-dvh flex-col">
       <SiteHeader />
       <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-4 md:grid md:grid-cols-[13rem_minmax(0,1fr)] md:gap-8 md:py-8">
         <aside className="md:sticky md:top-20 md:self-start">

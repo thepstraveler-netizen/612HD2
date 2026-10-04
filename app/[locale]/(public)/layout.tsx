@@ -14,7 +14,7 @@ export default async function PublicLayout({ children }: { children: ReactNode }
 
   return (
     // Room for a page's fixed bottom action bar (components/shared/mobile-action-bar.tsx).
-    <div className="flex min-h-dvh flex-col max-lg:has-[[data-action-bar]]:pb-[calc(4.25rem+env(safe-area-inset-bottom))]">
+    <div className="flex min-h-dvh flex-col max-lg:has-[[data-action-bar]]:pb-[var(--sticky-bar-h,calc(4.25rem+env(safe-area-inset-bottom)))]">
       {maintenance === "preview" ? <MaintenanceBanner /> : null}
       <SiteHeader />
       <main id="main" className="flex-1">

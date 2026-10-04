@@ -40,6 +40,7 @@ export function StickyActionBar({
   return (
     <div
       ref={ref}
+      data-action-bar=""
       role={label ? "region" : undefined}
       aria-label={label}
       className={cn(

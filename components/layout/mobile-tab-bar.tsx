@@ -25,6 +25,7 @@ const OWN_BOTTOM_BAR = [
   /^\/packages\/[^/]+$/,
   /^\/checkout(\/|$)/,
   /^\/(cabs|rides)\/review$/,
+  /^\/quote\//,
 ];
 
 function isActive(pathname: string, href: string) {
