@@ -1,7 +1,6 @@
 import { ArrowRight, Check, MapPin, Star } from "lucide-react";
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
-import { TempleSkyline } from "@/components/shared/motifs";
 import { SectionTitle } from "@/components/shared/section-title";
 import { ServiceCard } from "@/components/shared/service-card";
 import { Button } from "@/components/ui/button";
@@ -50,7 +49,20 @@ export async function HomeSectionView({ section, data }: { section: HomeSection;
       const tagline =
         content.success && content.data.tagline ? pickLocalized(content.data.tagline, locale) : null;
       return (
-        <section className="relative overflow-hidden bg-gradient-to-b from-brand-sky to-background pb-20">
+        <section className="relative isolate overflow-hidden pb-20">
+          {/* Prem Mandir at sunset; darkened at the top for the text, fading into the page below. */}
+          <Image
+            src="/images/home-hero.webp"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="-z-20 object-cover object-[70%_center]"
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 -z-10 bg-gradient-to-b from-black/65 via-black/40 to-background"
+          />
           <div className="mx-auto max-w-7xl space-y-6 px-4 pt-6 sm:space-y-8 sm:pt-14">
             <div className="grid gap-6 lg:grid-cols-[1.3fr_1fr] lg:items-end">
               <div className="space-y-3 sm:space-y-4">
@@ -59,22 +71,21 @@ export async function HomeSectionView({ section, data }: { section: HomeSection;
                   {t("brand.location")} ·{" "}
                   <span className="font-script text-base">{t("brand.locationTag")}</span>
                 </p>
-                <h1 className="text-[length:var(--text-display)] leading-tight font-extrabold tracking-tight">
+                <h1 className="text-[length:var(--text-display)] leading-tight font-extrabold tracking-tight !text-white drop-shadow-md">
                   {title}
                 </h1>
                 {subtitle ? (
-                  <p className="max-w-xl text-base text-muted-foreground sm:text-lg">{subtitle}</p>
+                  <p className="max-w-xl text-base text-white/90 drop-shadow sm:text-lg">{subtitle}</p>
                 ) : null}
               </div>
               {tagline ? (
-                <p className="font-script text-xl leading-snug text-primary sm:text-2xl lg:text-right lg:text-3xl">
+                <p className="font-script text-xl leading-snug text-amber-100 drop-shadow-md sm:text-2xl lg:text-right lg:text-3xl">
                   {tagline}
                 </p>
               ) : null}
             </div>
             <SearchCard tabs={content.success ? content.data.search_tabs : []} />
           </div>
-          <TempleSkyline className="absolute bottom-0 h-16 text-brand-navy/10 dark:text-white/5" />
         </section>
       );
     }
