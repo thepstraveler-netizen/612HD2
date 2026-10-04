@@ -108,13 +108,16 @@ export function FormSection({
   title,
   children,
   className,
+  id,
 }: {
   title: string;
   children: ReactNode;
   className?: string;
+  /** Anchor for a section jump menu. */
+  id?: string;
 }) {
   return (
-    <section className={cn("grid gap-4 rounded-2xl border bg-card p-4", className)}>
+    <section id={id} className={cn("grid scroll-mt-32 gap-4 rounded-2xl border bg-card p-4", className)}>
       <h2 className="text-base font-semibold">{title}</h2>
       {children}
     </section>
@@ -132,7 +135,7 @@ export function SubmitBar({
 }) {
   const t = useTranslations("cms.actions");
   return (
-    <div className="sticky bottom-0 z-10 -mx-4 flex flex-wrap items-center justify-between gap-2 border-t bg-background/95 px-4 py-3 backdrop-blur sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:px-0">
+    <div className="sticky bottom-0 z-10 -mx-4 flex items-center justify-between gap-2 border-t bg-background/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur sm:static sm:mx-0 sm:flex-wrap sm:border-0 sm:bg-transparent sm:px-0 sm:pb-3">
       <div>{extra}</div>
       <Button type="submit" disabled={pending}>
         {isNew ? t("create") : t("save")}

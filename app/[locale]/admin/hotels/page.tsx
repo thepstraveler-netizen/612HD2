@@ -2,8 +2,6 @@ import { Download, Upload } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { DataTable } from "@/components/admin/data-table";
 import { AdminPageHeader } from "@/components/admin/page-header";
-import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/navigation";
 import { requirePermission } from "@/lib/auth/guards";
 import { listAdminHotels } from "@/lib/hotels/admin";
 import { hasPermission } from "@/lib/permissions/check";
@@ -21,21 +19,19 @@ export default async function AdminHotelsPage() {
         lead={t("hotelsAdmin.lead")}
         newHref={canWrite ? "/admin/hotels/new" : undefined}
         newLabel={t("hotelsAdmin.new")}
-      >
-        <Button asChild variant="outline">
-          {/* Route handler, not a localized page: a plain link with no locale prefix. */}
-          <a href="/api/admin/hotels/export" download>
-            <Download /> {t("hotelsAdmin.exportCsv")}
-          </a>
-        </Button>
-        {canWrite ? (
-          <Button asChild variant="outline">
-            <Link href="/admin/hotels/import">
-              <Upload /> {t("hotelsAdmin.importCsv")}
-            </Link>
-          </Button>
-        ) : null}
-      </AdminPageHeader>
+        actions={[
+          // Route handler, not a localized page: a plain link with no locale prefix.
+          {
+            href: "/api/admin/hotels/export",
+            label: t("hotelsAdmin.exportCsv"),
+            icon: <Download />,
+            download: true,
+          },
+          ...(canWrite
+            ? [{ href: "/admin/hotels/import", label: t("hotelsAdmin.importCsv"), icon: <Upload /> }]
+            : []),
+        ]}
+      />
       <DataTable
         rows={hotels.map((h) => ({
           id: h.id,

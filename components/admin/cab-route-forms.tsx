@@ -18,6 +18,7 @@ import {
 import { FareTable, MoneyCell } from "./cab-catalog-forms";
 import { FormIssue, useCabSave } from "./cab-shared";
 import {
+  PageSaveRow,
   LocalizedField,
   SelectField,
   SwitchField,
@@ -206,11 +207,11 @@ export function RouteFaresForm({
               ],
             }))}
           />
-          <div className="flex justify-end">
+          <PageSaveRow>
             <Button type="submit" disabled={pending}>
               {tc("save")}
             </Button>
-          </div>
+          </PageSaveRow>
         </FormSection>
       </form>
     </FormProvider>

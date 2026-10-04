@@ -110,7 +110,7 @@ export function NotificationTemplateForm({
                 rows={12}
                 lang={locale}
                 aria-invalid={!!bodyError}
-                className="font-mono text-sm"
+                className="font-mono text-base sm:text-sm"
                 {...form.register("body")}
               />
               {bodyError ? (

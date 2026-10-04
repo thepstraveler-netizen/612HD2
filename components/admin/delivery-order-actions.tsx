@@ -103,7 +103,13 @@ export function DeliveryOrderActions({
   return (
     <div className="flex flex-wrap gap-2">
       {canWrite && primary ? (
-        <Button type="button" size="sm" disabled={pending} onClick={() => move(primary)}>
+        <Button
+          type="button"
+          size="sm"
+          className="h-11 sm:h-9"
+          disabled={pending}
+          onClick={() => move(primary)}
+        >
           {t(`actions.moves.${primary}`)}
         </Button>
       ) : null}
@@ -113,6 +119,7 @@ export function DeliveryOrderActions({
               key={s}
               type="button"
               size="sm"
+              className="h-11 sm:h-9"
               variant="secondary"
               disabled={pending}
               onClick={() => move(s)}
@@ -126,7 +133,7 @@ export function DeliveryOrderActions({
           type="button"
           size="sm"
           variant="outline"
-          className="text-destructive"
+          className="h-11 text-destructive sm:h-9"
           disabled={pending}
           onClick={() => setRejectOpen(true)}
         >
@@ -137,6 +144,7 @@ export function DeliveryOrderActions({
         <Button
           type="button"
           size="sm"
+          className="h-11 sm:h-9"
           variant="outline"
           disabled={pending}
           onClick={() => setAssignOpen(true)}
@@ -145,7 +153,14 @@ export function DeliveryOrderActions({
         </Button>
       ) : null}
       {assigned ? (
-        <Button type="button" size="sm" variant="ghost" disabled={pending} onClick={showLink}>
+        <Button
+          type="button"
+          size="sm"
+          className="h-11 sm:h-9"
+          variant="ghost"
+          disabled={pending}
+          onClick={showLink}
+        >
           <Link2 /> {t("actions.copyLink")}
         </Button>
       ) : null}
@@ -241,13 +256,19 @@ export function DeliveryOrderActions({
             readOnly
             value={link}
             aria-label={t("actions.riderLink")}
-            className="h-9 min-w-0 flex-1 font-mono text-xs"
+            className="h-11 min-w-0 flex-1 font-mono text-base sm:h-9 sm:text-xs"
             onFocus={(e) => e.target.select()}
           />
-          <Button type="button" size="sm" variant="outline" onClick={() => void copy(link)}>
+          <Button
+            type="button"
+            size="sm"
+            className="h-11 sm:h-9"
+            variant="outline"
+            onClick={() => void copy(link)}
+          >
             <Copy /> {t("actions.copy")}
           </Button>
-          <Button asChild size="sm" variant="outline">
+          <Button asChild size="sm" className="h-11 sm:h-9" variant="outline">
             <a
               href={whatsappShareUrl(current.partnerPhone, t("actions.whatsappText", { code, link }))}
               target="_blank"

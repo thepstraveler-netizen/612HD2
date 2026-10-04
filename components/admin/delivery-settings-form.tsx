@@ -11,6 +11,7 @@ import {
   type DeliverySettingsFormInput,
 } from "@/schemas/delivery-admin";
 import {
+  CardSaveRow,
   LocalizedField,
   SelectField,
   SwitchField,
@@ -101,11 +102,11 @@ export function DeliverySettingsForm({ defaultValues }: { defaultValues: Deliver
           label={s("medicineNotice")}
           multiline
         />
-        <div className="flex justify-end">
+        <CardSaveRow>
           <Button type="submit" disabled={pending}>
             {t("cms.actions.save")}
           </Button>
-        </div>
+        </CardSaveRow>
       </form>
     </FormProvider>
   );

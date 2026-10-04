@@ -29,7 +29,7 @@ export function AdminSidebarNav({
   const isActive = (href: string) => (href === "/admin" ? pathname === "/admin" : pathname.startsWith(href));
   const linkClass = (active: boolean) =>
     cn(
-      "flex min-h-10 items-center gap-2.5 rounded-lg px-3 text-sm font-medium transition-colors",
+      "flex min-h-11 items-center gap-2.5 rounded-lg px-3 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:outline-none lg:min-h-10",
       active
         ? "bg-sidebar-accent text-white"
         : "text-sidebar-foreground/85 hover:bg-sidebar-accent/60 hover:text-white",
@@ -43,7 +43,7 @@ export function AdminSidebarNav({
         if (modules.length === 0 && !showAudit) return null;
         return (
           <Collapsible key={group} defaultOpen>
-            <CollapsibleTrigger className="group flex min-h-9 w-full items-center justify-between rounded-lg px-3 text-xs font-semibold tracking-wider text-sidebar-foreground/60 uppercase hover:text-white">
+            <CollapsibleTrigger className="group flex min-h-10 w-full items-center justify-between rounded-lg px-3 text-xs font-semibold tracking-wider text-sidebar-foreground/60 uppercase hover:text-white">
               {t(`groups.${group}`)}
               <ChevronDown
                 className="size-4 transition-transform group-data-[state=closed]:-rotate-90"

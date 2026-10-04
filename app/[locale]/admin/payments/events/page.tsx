@@ -24,6 +24,8 @@ export default async function AdminPaymentEventsPage() {
         <PaymentSubnav active="events" />
       </AdminPageHeader>
       <AdminTable
+        titleColumn={1}
+        wide={[4]}
         empty={t("payments.eventsEmpty")}
         headers={[
           t("events.received"),

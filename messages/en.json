@@ -880,6 +880,13 @@
         "addRule": "Add rule",
         "removeRule": "Remove rule"
       }
+    },
+    "ui": {
+      "sortBy": "Sort",
+      "sortDefault": "Default order",
+      "moreActions": "More actions",
+      "moreFilters": "More filters",
+      "jumpTo": "Jump to section"
     }
   },
   "vendor": {

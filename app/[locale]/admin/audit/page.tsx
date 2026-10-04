@@ -1,4 +1,5 @@
 import { getFormatter, getTranslations } from "next-intl/server";
+import { AdminTable } from "@/components/admin/payment-table";
 import { Badge } from "@/components/ui/badge";
 import { requirePermission } from "@/lib/auth/guards";
 import { createClient } from "@/lib/supabase/server";
@@ -29,38 +30,43 @@ export default async function AuditLogPage() {
       {!rows || rows.length === 0 ? (
         <p className="text-muted-foreground">{t("auditEmpty")}</p>
       ) : (
-        <div className="overflow-x-auto rounded-2xl border bg-card">
-          <table className="w-full text-left text-sm">
-            <thead className="border-b bg-muted/50 text-xs text-muted-foreground uppercase">
-              <tr>
-                <th className="px-4 py-3">{t("auditWhen")}</th>
-                <th className="px-4 py-3">{t("auditActor")}</th>
-                <th className="px-4 py-3">{t("auditAction")}</th>
-                <th className="px-4 py-3">{t("auditTable")}</th>
-                <th className="px-4 py-3">{t("auditRecord")}</th>
-                <th className="px-4 py-3">{t("auditFields")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row) => (
-                <tr key={row.id} className="border-b last:border-0">
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    {format.dateTime(new Date(row.occurred_at), { dateStyle: "medium", timeStyle: "short" })}
-                  </td>
-                  <td className="px-4 py-3 font-mono text-xs">
-                    {row.actor_id?.slice(0, 8) ?? row.actor_role}
-                  </td>
-                  <td className="px-4 py-3">
-                    <Badge variant={ACTION_VARIANT[row.action]}>{row.action}</Badge>
-                  </td>
-                  <td className="px-4 py-3">{row.table_name}</td>
-                  <td className="max-w-[12rem] truncate px-4 py-3 font-mono text-xs">{row.record_id}</td>
-                  <td className="px-4 py-3 text-xs">{row.changed_fields?.join(", ")}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <AdminTable
+          titleColumn={3}
+          statusColumn={2}
+          wide={[4, 5]}
+          empty={t("auditEmpty")}
+          headers={[
+            t("auditWhen"),
+            t("auditActor"),
+            t("auditAction"),
+            t("auditTable"),
+            t("auditRecord"),
+            t("auditFields"),
+          ]}
+          rows={rows.map((row) => ({
+            key: String(row.id),
+            cells: [
+              <span key="w" className="whitespace-nowrap">
+                {format.dateTime(new Date(row.occurred_at), { dateStyle: "medium", timeStyle: "short" })}
+              </span>,
+              <span key="a" className="font-mono text-xs">
+                {row.actor_id?.slice(0, 8) ?? row.actor_role}
+              </span>,
+              <Badge key="x" variant={ACTION_VARIANT[row.action]}>
+                {row.action}
+              </Badge>,
+              row.table_name,
+              <span key="r" className="block font-mono text-xs break-all md:max-w-[12rem] md:truncate">
+                {row.record_id}
+              </span>,
+              row.changed_fields?.length ? (
+                <span key="f" className="text-xs">
+                  {row.changed_fields.join(", ")}
+                </span>
+              ) : null,
+            ],
+          }))}
+        />
       )}
     </div>
   );

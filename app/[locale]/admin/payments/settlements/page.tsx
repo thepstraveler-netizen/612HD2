@@ -39,6 +39,7 @@ export default async function SettlementsOverviewPage() {
         {t("overview.cycle", { days: settings.cycle_days, date: day(periodEnd) })}
       </p>
       <AdminTable
+        wide={[5]}
         empty={t("overview.empty")}
         headers={[
           t("overview.vendor"),

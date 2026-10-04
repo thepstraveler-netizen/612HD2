@@ -94,7 +94,7 @@ export default async function AdminDashboardPage({
       {data ? (
         <>
           <ReportRangeBar basePath="/admin" range={range} />
-          <ul className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <ul className="grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-4">
             <li>
               <KpiCard
                 label={t("kpi.revenue")}
@@ -205,7 +205,7 @@ export default async function AdminDashboardPage({
               {data.top_hotels.length ? (
                 <ol className="grid gap-2 text-sm">
                   {data.top_hotels.map((h, i) => (
-                    <li key={h.id} className="flex items-center gap-3">
+                    <li key={h.id} className="flex flex-wrap items-center gap-x-3 gap-y-0.5">
                       <span className="w-5 text-muted-foreground tabular-nums">{i + 1}</span>
                       <span className="min-w-0 flex-1 truncate">
                         {can("hotels.read") ? (
@@ -231,7 +231,7 @@ export default async function AdminDashboardPage({
               {data.top_routes.length ? (
                 <ol className="grid gap-2 text-sm">
                   {data.top_routes.map((r, i) => (
-                    <li key={i} className="flex items-center gap-3">
+                    <li key={i} className="flex flex-wrap items-center gap-x-3 gap-y-0.5">
                       <span className="w-5 text-muted-foreground tabular-nums">{i + 1}</span>
                       <span className="min-w-0 flex-1">
                         <span className="block truncate">
@@ -277,7 +277,7 @@ export default async function AdminDashboardPage({
         <h2 id="admin-modules" className="text-lg font-semibold">
           {t("modules")}
         </h2>
-        <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <ul className="grid grid-cols-2 gap-2 sm:gap-3 xl:grid-cols-3">
           {ADMIN_MODULE_DEFS.filter((m) => m.key !== "dashboard" && allowed.has(m.key)).map(
             ({ key, icon: Icon }) => (
               <li key={key}>
@@ -285,10 +285,10 @@ export default async function AdminDashboardPage({
                   href={adminModuleHref(key)}
                   className="block h-full rounded-2xl focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
                 >
-                  <Card className="h-full transition hover:shadow-md">
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <span className="grid size-9 place-items-center rounded-full bg-secondary text-secondary-foreground">
+                  <Card className="h-full justify-center py-3 transition hover:shadow-md sm:py-6">
+                    <CardHeader className="px-3 sm:px-6">
+                      <CardTitle className="flex items-center gap-2 text-sm leading-tight sm:text-base sm:leading-none">
+                        <span className="grid size-9 shrink-0 place-items-center rounded-full bg-secondary text-secondary-foreground">
                           <Icon className="size-4" aria-hidden="true" />
                         </span>
                         {tAdmin(`modules.${key}`)}

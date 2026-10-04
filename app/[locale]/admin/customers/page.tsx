@@ -33,13 +33,11 @@ export default async function AdminCustomersPage({
 
   return (
     <div className="space-y-6">
-      <AdminPageHeader title={t("title")} lead={t("lead")}>
-        <Button asChild variant="outline">
-          <Link href="/admin/customers/privacy">
-            <ShieldCheck /> {tPrivacy("title")}
-          </Link>
-        </Button>
-      </AdminPageHeader>
+      <AdminPageHeader
+        title={t("title")}
+        lead={t("lead")}
+        actions={[{ href: "/admin/customers/privacy", label: tPrivacy("title"), icon: <ShieldCheck /> }]}
+      />
       <form method="get" className="flex flex-wrap items-end gap-3 rounded-2xl border bg-card p-4">
         <div className="grid min-w-56 flex-1 gap-1.5">
           <Label htmlFor="cf-q">{t("filters.search")}</Label>
@@ -75,6 +73,7 @@ export default async function AdminCustomersPage({
         {t("filters.results", { count: list.total })}
       </p>
       <AdminTable
+        statusColumn={6}
         empty={t("empty")}
         headers={[
           t("columns.customer"),

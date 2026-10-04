@@ -25,7 +25,13 @@ import {
   type PackagesSettingsFormInput,
   type TravelSettingsFormInput,
 } from "@/schemas/package-admin";
-import { LocalizedField, SelectField, TextInputField, useUnsavedChangesWarning } from "./form-fields";
+import {
+  CardSaveRow,
+  LocalizedField,
+  SelectField,
+  TextInputField,
+  useUnsavedChangesWarning,
+} from "./form-fields";
 import { useSave } from "./use-save";
 
 /**
@@ -59,11 +65,11 @@ function SettingsCard({
         <p className="text-sm text-muted-foreground">{lead}</p>
       </div>
       {children}
-      <div className="flex justify-end">
+      <CardSaveRow>
         <Button type="submit" disabled={pending}>
           {t("save")}
         </Button>
-      </div>
+      </CardSaveRow>
     </form>
   );
 }

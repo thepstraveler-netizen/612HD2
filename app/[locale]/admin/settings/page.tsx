@@ -1,8 +1,7 @@
 import { Users } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/navigation";
 import { AdminPageHeader } from "@/components/admin/page-header";
+import { SectionJumpNav } from "@/components/admin/section-jump-nav";
 import {
   BusinessProfileForm,
   CabSettingsForm,
@@ -102,78 +101,120 @@ export default async function AdminSettingsPage() {
 
   return (
     <div className="space-y-6">
-      <AdminPageHeader title={t("admin.modules.settings")} lead={t("cms.settingsLead")}>
-        {canManageRoles ? (
-          <Button asChild variant="outline">
-            <Link href="/admin/settings/users">
-              <Users /> {t("rolesAdmin.title")}
-            </Link>
-          </Button>
-        ) : null}
-      </AdminPageHeader>
-      {canWrite ? <BusinessProfileForm defaultValues={profile} /> : null}
+      <AdminPageHeader
+        title={t("admin.modules.settings")}
+        lead={t("cms.settingsLead")}
+        actions={
+          canManageRoles
+            ? [{ href: "/admin/settings/users", label: t("rolesAdmin.title"), icon: <Users /> }]
+            : undefined
+        }
+      />
       {canWrite ? (
-        <PaymentSettingsForm
-          defaultValues={paymentSettingsFormValues(
-            payments.success ? payments.data : paymentSettingsSchema.parse({}),
-          )}
+        <SectionJumpNav
+          label={t("admin.ui.jumpTo")}
+          items={[
+            { id: "settings-business", label: t("cms.nav.business") },
+            { id: "settings-payments", label: t("bookingsAdmin.settings.payments.title") },
+            { id: "settings-invoice", label: t("bookingsAdmin.settings.invoice.title") },
+            { id: "settings-cabs", label: t("cabsAdmin.settings.title") },
+            { id: "settings-rides", label: t("admin.rides.settings.title") },
+            { id: "settings-delivery", label: t("deliveryAdmin.settings.title") },
+            { id: "settings-packages", label: t("packagesAdmin.settings.title") },
+            { id: "settings-partners", label: t("vendorsAdmin.settings.title") },
+            { id: "settings-engagement", label: t("engagementSettings.title") },
+            { id: "settings-security", label: t("securitySettings.title") },
+            { id: "settings-flags", label: t("cms.nav.flags") },
+          ]}
         />
       ) : null}
       {canWrite ? (
-        <InvoiceSettingsForm
-          defaultValues={invoiceSettingsFormValues(
-            invoice.success ? invoice.data : invoiceSettingsSchema.parse({}),
-          )}
-        />
+        <div id="settings-business">
+          <BusinessProfileForm defaultValues={profile} />
+        </div>
       ) : null}
       {canWrite ? (
-        <CabSettingsForm
-          defaultValues={cabSettingsFormValues(cabs.success ? cabs.data : cabSettingsSchema.parse({}))}
-        />
+        <div id="settings-payments">
+          <PaymentSettingsForm
+            defaultValues={paymentSettingsFormValues(
+              payments.success ? payments.data : paymentSettingsSchema.parse({}),
+            )}
+          />
+        </div>
       ) : null}
       {canWrite ? (
-        <RideSettingsForm
-          defaultValues={rideSettingsFormValues(rides.success ? rides.data : rideSettingsSchema.parse({}))}
-        />
+        <div id="settings-invoice">
+          <InvoiceSettingsForm
+            defaultValues={invoiceSettingsFormValues(
+              invoice.success ? invoice.data : invoiceSettingsSchema.parse({}),
+            )}
+          />
+        </div>
       ) : null}
       {canWrite ? (
-        <DeliverySettingsForm
-          defaultValues={deliverySettingsFormValues(
-            delivery.success ? delivery.data : deliverySettingsSchema.parse({}),
-          )}
-        />
+        <div id="settings-cabs">
+          <CabSettingsForm
+            defaultValues={cabSettingsFormValues(cabs.success ? cabs.data : cabSettingsSchema.parse({}))}
+          />
+        </div>
       ) : null}
       {canWrite ? (
-        <PackagesSettingsForms
-          packages={packagesSettingsFormValues(
-            packages.success ? packages.data : packagesSettingsSchema.parse({}),
-          )}
-          leads={leadsSettingsFormValues(leads.success ? leads.data : leadsSettingsSchema.parse({}))}
-          travel={travelSettingsFormValues(travelValue)}
-          travelProvider={travelValue.provider}
-        />
+        <div id="settings-rides">
+          <RideSettingsForm
+            defaultValues={rideSettingsFormValues(rides.success ? rides.data : rideSettingsSchema.parse({}))}
+          />
+        </div>
       ) : null}
       {canWrite ? (
-        <PartnersSettingsForms
-          partners={partnersSettingsFormValues(
-            partners.success ? partners.data : partnersSettingsSchema.parse({}),
-          )}
-          settlements={settlementsSettingsFormValues(settlementsValue)}
-          provider={settlementsValue.provider}
-        />
+        <div id="settings-delivery">
+          <DeliverySettingsForm
+            defaultValues={deliverySettingsFormValues(
+              delivery.success ? delivery.data : deliverySettingsSchema.parse({}),
+            )}
+          />
+        </div>
       ) : null}
       {canWrite ? (
-        <EngagementSettingsForms
-          reviews={reviewsSettingsFormValues(
-            reviewsSettings.success ? reviewsSettings.data : reviewsSettingsSchema.parse({}),
-          )}
-          loyalty={loyaltySettingsFormValues(parseLoyaltySettings(storedValue("loyalty.defaults")))}
-        />
+        <div id="settings-packages">
+          <PackagesSettingsForms
+            packages={packagesSettingsFormValues(
+              packages.success ? packages.data : packagesSettingsSchema.parse({}),
+            )}
+            leads={leadsSettingsFormValues(leads.success ? leads.data : leadsSettingsSchema.parse({}))}
+            travel={travelSettingsFormValues(travelValue)}
+            travelProvider={travelValue.provider}
+          />
+        </div>
       ) : null}
       {canWrite ? (
-        <SecuritySettingsForm defaultValues={securitySettingsFormValues(await getSecuritySettings())} />
+        <div id="settings-partners">
+          <PartnersSettingsForms
+            partners={partnersSettingsFormValues(
+              partners.success ? partners.data : partnersSettingsSchema.parse({}),
+            )}
+            settlements={settlementsSettingsFormValues(settlementsValue)}
+            provider={settlementsValue.provider}
+          />
+        </div>
       ) : null}
-      <FeatureFlagList flags={flags ?? []} canWrite={canWrite} />
+      {canWrite ? (
+        <div id="settings-engagement">
+          <EngagementSettingsForms
+            reviews={reviewsSettingsFormValues(
+              reviewsSettings.success ? reviewsSettings.data : reviewsSettingsSchema.parse({}),
+            )}
+            loyalty={loyaltySettingsFormValues(parseLoyaltySettings(storedValue("loyalty.defaults")))}
+          />
+        </div>
+      ) : null}
+      {canWrite ? (
+        <div id="settings-security">
+          <SecuritySettingsForm defaultValues={securitySettingsFormValues(await getSecuritySettings())} />
+        </div>
+      ) : null}
+      <div id="settings-flags">
+        <FeatureFlagList flags={flags ?? []} canWrite={canWrite} />
+      </div>
     </div>
   );
 }

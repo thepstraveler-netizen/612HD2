@@ -42,12 +42,13 @@ export default async function AdminLayout({ children }: { children: ReactNode })
         <AdminSidebarNav allowed={allowed} canAudit={canAudit} />
       </aside>
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 flex h-16 items-center gap-2 border-b bg-background/90 px-4 backdrop-blur">
+        <header className="sticky top-0 z-30 flex h-16 items-center gap-1 border-b bg-background/90 px-2 backdrop-blur sm:gap-2 sm:px-4">
           <AdminMobileNav allowed={allowed} canAudit={canAudit} />
           <div className="mr-auto" />
-          <Button asChild variant="ghost" size="sm" className="h-10">
-            <Link href="/">
-              <ExternalLink /> <span className="hidden sm:inline">{t("openSite")}</span>
+          <Button asChild variant="ghost" size="sm" className="size-11 sm:h-10 sm:w-auto">
+            <Link href="/" aria-label={t("openSite")}>
+              <ExternalLink className="size-5 sm:size-4" />{" "}
+              <span className="hidden sm:inline">{t("openSite")}</span>
             </Link>
           </Button>
           <LanguageSwitcher />

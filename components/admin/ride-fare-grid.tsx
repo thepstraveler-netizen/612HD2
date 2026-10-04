@@ -8,7 +8,7 @@ import { pickLocalized, type LocalizedJson } from "@/lib/i18n/localized";
 import { saveRideFares } from "@/lib/rides/admin-actions";
 import { RIDE_MODES, rideFaresFormSchema, type RideFaresFormInput } from "@/schemas/ride-admin";
 import { FareTable, GridInput, MoneyCell } from "./cab-catalog-forms";
-import { useUnsavedChangesWarning } from "./form-fields";
+import { PageSaveRow, useUnsavedChangesWarning } from "./form-fields";
 import { FormSection } from "./hotel-shared";
 import { useRideSave } from "./ride-shared";
 
@@ -122,11 +122,11 @@ export function RideFareGrid({
           );
         })}
         <p className="text-sm text-muted-foreground">{f("emptyHelp")}</p>
-        <div className="flex justify-end">
+        <PageSaveRow>
           <Button type="submit" disabled={pending}>
             {tc("save")}
           </Button>
-        </div>
+        </PageSaveRow>
       </form>
     </FormProvider>
   );

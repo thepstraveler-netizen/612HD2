@@ -117,7 +117,7 @@ export function FleetDocuments({
               </span>
               <span className="flex flex-wrap gap-2">
                 {d.url ? (
-                  <Button asChild variant="outline" size="sm">
+                  <Button asChild variant="outline" size="sm" className="h-11 sm:h-9">
                     <a href={d.url} target="_blank" rel="noopener noreferrer">
                       <ExternalLink /> {t("open")}
                     </a>

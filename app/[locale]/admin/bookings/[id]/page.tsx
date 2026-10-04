@@ -262,6 +262,8 @@ export default async function AdminBookingPage({ params }: { params: Promise<{ i
         <>
           <Section title={t("detail.payments")}>
             <AdminTable
+              wide={[4]}
+              statusColumn={2}
               empty={t("detail.noPayments")}
               headers={[
                 t("paymentColumns.provider"),
@@ -311,6 +313,8 @@ export default async function AdminBookingPage({ params }: { params: Promise<{ i
 
       <Section title={t("detail.notifications")}>
         <AdminTable
+          titleColumn={1}
+          statusColumn={4}
           empty={t("detail.noNotifications")}
           headers={[
             t("logColumns.when"),

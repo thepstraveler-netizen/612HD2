@@ -251,7 +251,7 @@ export function GridInput({
         aria-invalid={!!error}
         inputMode={inputMode}
         placeholder={placeholder}
-        className="h-10 min-w-24"
+        className="h-11 min-w-24 sm:h-10"
         {...register(name)}
       />
       {error ? <span className="text-xs text-destructive">{t.has(error) ? t(error) : error}</span> : null}
