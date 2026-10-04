@@ -70,6 +70,7 @@ You can also see which roles a person has on their customer page (Admin → Cust
 - **Language** and **light/dark** switches sit at the top right.
 - Lists keep their filters in the web address, so you can bookmark a filtered view or send it to a colleague.
 - Most edit pages warn you if you try to leave with unsaved changes.
+- **On a phone**, lists show each row as a card (tap it to open; the Sort menu sits above the list), extra filters are under **More filters**, and booking, trip, ride, lead and application pages keep their actions in a bar at the bottom, with cancel and other rarely used actions under **More actions**. Long pages have a **Jump to section** bar near the top, and Save stays at the bottom of the screen while you edit.
 - Prices are typed in rupees. Text that customers see usually has an English box and a Hindi box; Hindi is optional and English is shown when it is empty.
 
 ---
