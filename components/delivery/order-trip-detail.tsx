@@ -315,7 +315,7 @@ export async function OrderTripDetail({
         </section>
       ) : null}
 
-      <div className="grid gap-6 md:grid-cols-[1.4fr_1fr]">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-[1.4fr_1fr]">
         <section className="space-y-4 rounded-2xl border bg-card p-4 text-sm">
           <h2 className="text-base font-bold">
             {to("itemsTitle", { count: items.reduce((s, i) => s + i.quantity, 0) })}

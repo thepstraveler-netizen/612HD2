@@ -238,7 +238,7 @@ export async function RideTripDetail({
         </section>
       ) : null}
 
-      <div className="grid gap-6 md:grid-cols-[1.4fr_1fr]">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-[1.4fr_1fr]">
         <section className="space-y-4 rounded-2xl border bg-card p-4 text-sm">
           <dl className="grid grid-cols-2 gap-3">
             {pickupAt ? (

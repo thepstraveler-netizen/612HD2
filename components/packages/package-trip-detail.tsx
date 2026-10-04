@@ -213,7 +213,7 @@ export async function PackageTripDetail({
       </div>
       <Banner data={data} locale={locale} />
 
-      <div className="grid gap-6 md:grid-cols-[1.4fr_1fr]">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-[1.4fr_1fr]">
         <section className="space-y-4 rounded-2xl border bg-card p-4 text-sm">
           <dl className="grid grid-cols-2 gap-3">
             <div className="col-span-2">
@@ -345,7 +345,7 @@ export async function QuoteTripDetail({ data, locale }: { data: TripData; locale
       </div>
       <Banner data={data} locale={locale} />
 
-      <div className="grid gap-6 md:grid-cols-[1.4fr_1fr]">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-[1.4fr_1fr]">
         <section className="space-y-4 rounded-2xl border bg-card p-4 text-sm">
           <dl className="grid grid-cols-2 gap-3">
             {snap?.trip?.route ? (

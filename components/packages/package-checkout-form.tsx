@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { useRef, useState, useTransition, type ReactNode } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { MobilePayBar, MobilePriceDetails } from "@/components/booking/mobile-pay-bar";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -529,24 +530,25 @@ export function PackageCheckoutForm({
           </div>
         </aside>
 
-        {/* Mobile: summary inline and a sticky pay bar. */}
-        <section aria-label={tc("summaryTitle")} className="rounded-2xl border bg-card p-4 lg:hidden">
-          <h2 className="mb-3 text-base font-bold">{t("priceTitle")}</h2>
-          <div className={cn("transition-opacity", pricing && "opacity-60")}>{summary}</div>
-        </section>
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t bg-background/95 p-3 backdrop-blur lg:hidden">
-          <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
-            <div>
-              <p className="text-xs text-muted-foreground">
-                {mode === "full" ? tc("total") : tc("payNowLabel")}
-              </p>
-              <p className="text-lg font-extrabold">{money(preview.payableNowPaise)}</p>
-            </div>
-            <Button type="submit" size="lg" disabled={blocked}>
-              {submitting ? <Loader2 className="animate-spin" /> : <Lock />} {tc("pay")}
-            </Button>
-          </div>
-        </div>
+        {/* Mobile: a foldable price breakdown and a sticky pay bar. */}
+        <MobilePriceDetails
+          id="package-price"
+          title={t("priceTitle")}
+          totalLabel={tc("total")}
+          total={money(preview.totalPaise)}
+          dimmed={pricing}
+        >
+          {summary}
+        </MobilePriceDetails>
+        <MobilePayBar
+          detailsId="package-price"
+          label={mode === "full" ? tc("total") : tc("payNowLabel")}
+          amount={money(preview.payableNowPaise)}
+        >
+          <Button type="submit" size="lg" disabled={blocked}>
+            {submitting ? <Loader2 className="animate-spin" /> : <Lock />} {tc("pay")}
+          </Button>
+        </MobilePayBar>
       </form>
     </Form>
   );

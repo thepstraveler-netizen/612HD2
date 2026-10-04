@@ -3,6 +3,7 @@ import {
   Car,
   CheckCircle2,
   MapPin,
+  MessageCircle,
   Navigation,
   Phone,
   Route,
@@ -26,6 +27,7 @@ const mapsLink = (address: string) =>
   `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
 
 const tel = (phone: string) => `tel:${phone.replace(/[^0-9+]/g, "")}`;
+const whatsapp = (phone: string) => `https://wa.me/${phone.replace(/[^0-9]/g, "")}`;
 
 /**
  * The driver's trip page, opened from the secret link sent at assignment.
@@ -68,21 +70,30 @@ export default async function DriverTripPage({ params }: Props) {
           <CheckCircle2 className="size-5 text-accent-green" aria-hidden="true" />{" "}
           {t(`finished.${trip.status}`)}
         </p>
-      ) : (
-        <DriverStepPanel token={token} actions={actions} />
-      )}
+      ) : null}
 
       <section aria-labelledby="customer" className="space-y-3 rounded-2xl border bg-card p-4">
         <h2 id="customer" className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
           {t("customer")}
         </h2>
-        <div className="flex items-center justify-between gap-3">
-          <p className="flex items-center gap-2 text-lg font-bold">
-            <UserRound className="size-5 text-primary" aria-hidden="true" /> {trip.customerName}
-          </p>
+        <p className="flex min-w-0 items-center gap-2 text-lg font-bold">
+          <UserRound className="size-5 shrink-0 text-primary" aria-hidden="true" />
+          <span className="min-w-0 break-words">{trip.customerName}</span>
+        </p>
+        <div className="grid grid-cols-2 gap-2">
           <Button asChild size="lg" className="h-12">
             <a href={tel(trip.customerPhone)} aria-label={t("callCustomer", { name: trip.customerName })}>
               <Phone /> {t("call")}
+            </a>
+          </Button>
+          <Button asChild size="lg" variant="outline" className="h-12">
+            <a
+              href={whatsapp(trip.customerPhone)}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={t("whatsappCustomer", { name: trip.customerName })}
+            >
+              <MessageCircle /> {t("whatsapp")}
             </a>
           </Button>
         </div>
@@ -172,6 +183,9 @@ export default async function DriverTripPage({ params }: Props) {
           <p className="font-semibold">{t("nothingToCollect")}</p>
         )}
       </section>
+
+      {/* The next step sits in a bar pinned to the bottom; only the no-show button stays down here. */}
+      {finished ? null : <DriverStepPanel token={token} actions={actions} />}
 
       {business.phone ? (
         <Button asChild variant="ghost" className="w-full">

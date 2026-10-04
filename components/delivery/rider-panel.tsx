@@ -4,6 +4,7 @@ import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
+import { StickyActionBar } from "@/components/booking/sticky-action-bar";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "@/i18n/navigation";
 import { riderStep } from "@/lib/delivery/rider-actions";
@@ -40,9 +41,9 @@ export function RiderPanel({ token, actions }: { token: string; actions: RiderAc
     });
 
   return (
-    <section aria-label={t("nextStep")} className="space-y-3">
+    <StickyActionBar label={t("nextStep")} innerClassName="space-y-2">
       {actions.map((action) => (
-        <div key={action.status} className="space-y-3">
+        <div key={action.status} className="space-y-2">
           {action.needsOtp ? (
             <div className="space-y-1.5">
               <label htmlFor="rider-otp" className="block text-sm font-semibold">
@@ -84,6 +85,6 @@ export function RiderPanel({ token, actions }: { token: string; actions: RiderAc
           </span>
         ) : null}
       </p>
-    </section>
+    </StickyActionBar>
   );
 }

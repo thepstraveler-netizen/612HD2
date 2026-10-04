@@ -18,6 +18,7 @@ import { formatPaise } from "@/lib/money";
 import { openRazorpay } from "@/lib/payments/checkout-client";
 import type { AddonKey } from "@/lib/pricing/booking";
 import { cn } from "@/lib/utils";
+import { MobilePayBar, MobilePriceDetails } from "./mobile-pay-bar";
 import { SavedTravellerPicker } from "./saved-traveller-picker";
 import { guestDetailsFormSchema, type GuestDetailsInput, type PaymentModeKey } from "@/schemas/booking";
 
@@ -278,7 +279,13 @@ export function CheckoutForm({
                   <span className="font-bold">{preview.coupon.code}</span> ·{" "}
                   {t("couponSaving", { amount: formatPaise(preview.coupon.discountPaise, request.locale) })}
                 </span>
-                <Button type="button" size="sm" variant="ghost" onClick={() => reprice({ coupon: null })}>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  className="h-11 sm:h-9"
+                  onClick={() => reprice({ coupon: null })}
+                >
                   <X /> {t("removeCoupon")}
                 </Button>
               </div>
@@ -552,27 +559,28 @@ export function CheckoutForm({
           </div>
         </aside>
 
-        {/* Mobile: summary inline and a sticky pay bar. */}
-        <section aria-label={t("summaryTitle")} className="rounded-2xl border bg-card p-4 lg:hidden">
-          <h2 className="mb-3 text-base font-bold">{t("summaryTitle")}</h2>
-          <div className={cn("transition-opacity", pricing && "opacity-60")}>{summary}</div>
-        </section>
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t bg-background/95 p-3 backdrop-blur lg:hidden">
-          <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
-            <div>
-              <p className="text-xs text-muted-foreground">
-                {mode === "full" ? t("total") : t("payNowLabel")}
-              </p>
-              <p className="text-lg font-extrabold">
-                {formatPaise(mode === "full" ? preview.totalPaise : preview.payableNowPaise, request.locale)}
-              </p>
-            </div>
-            <Button type="submit" size="lg" disabled={busy || Boolean(pendingOrder)}>
-              {submitting ? <Loader2 className="animate-spin" /> : <Lock />}{" "}
-              {mode === "pay_at_hotel" ? t("confirmBooking") : t("pay")}
-            </Button>
-          </div>
-        </div>
+        {/* Mobile: a foldable price breakdown and a sticky pay bar. */}
+        <MobilePriceDetails
+          id="checkout-price"
+          title={t("summaryTitle")}
+          totalLabel={t("total")}
+          total={formatPaise(preview.totalPaise, request.locale)}
+          dimmed={pricing}
+        >
+          {summary}
+        </MobilePriceDetails>
+        <MobilePayBar
+          detailsId="checkout-price"
+          label={
+            mode === "pay_at_hotel" ? t("payAtHotelLabel") : mode === "full" ? t("total") : t("payNowLabel")
+          }
+          amount={formatPaise(mode === "part" ? preview.payableNowPaise : preview.totalPaise, request.locale)}
+        >
+          <Button type="submit" size="lg" disabled={busy || Boolean(pendingOrder)}>
+            {submitting ? <Loader2 className="animate-spin" /> : <Lock />}{" "}
+            {mode === "pay_at_hotel" ? t("confirmBooking") : t("pay")}
+          </Button>
+        </MobilePayBar>
       </form>
     </Form>
   );

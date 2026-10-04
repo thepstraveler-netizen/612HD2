@@ -203,7 +203,7 @@ export function VendorOrderCard({
           {order.customerPhone ? (
             <a
               href={tel(order.customerPhone)}
-              className="inline-flex items-center gap-1 font-medium text-primary"
+              className="-my-2 inline-flex min-h-11 shrink-0 items-center gap-1 rounded-lg px-1 font-medium text-primary outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
             >
               <Phone className="size-4" aria-hidden="true" /> {order.customerPhone}
             </a>
@@ -241,7 +241,10 @@ export function VendorOrderCard({
             <>
               <span className="font-medium">{order.partner.name}</span>
               {order.partner.phone ? (
-                <a href={tel(order.partner.phone)} className="text-primary">
+                <a
+                  href={tel(order.partner.phone)}
+                  className="inline-flex min-h-11 items-center rounded-lg text-primary outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                >
                   {order.partner.phone}
                 </a>
               ) : null}
@@ -285,7 +288,14 @@ export function VendorOrderCard({
           </div>
         ) : null}
         {!closed && ownRider && !link ? (
-          <Button type="button" variant="ghost" size="sm" disabled={pending} onClick={showLink}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="h-11 sm:h-9"
+            disabled={pending}
+            onClick={showLink}
+          >
             {t("rider.showLink")}
           </Button>
         ) : null}
@@ -295,13 +305,19 @@ export function VendorOrderCard({
               readOnly
               value={link.url}
               aria-label={t("rider.link")}
-              className="h-9 min-w-0 flex-1 font-mono text-xs"
+              className="h-11 min-w-0 basis-full font-mono text-xs sm:h-9 sm:grow sm:basis-0"
               onFocus={(e) => e.target.select()}
             />
-            <Button type="button" size="sm" variant="outline" onClick={() => void copy(link.url)}>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="h-11 flex-1 sm:h-9 sm:flex-none"
+              onClick={() => void copy(link.url)}
+            >
               <Copy /> {t("rider.copy")}
             </Button>
-            <Button asChild size="sm" variant="outline">
+            <Button asChild size="sm" variant="outline" className="h-11 flex-1 sm:h-9 sm:flex-none">
               <a
                 href={whatsappUrl(link.phone, t("rider.whatsappText", { code: order.code, link: link.url }))}
                 target="_blank"
@@ -357,9 +373,12 @@ export function VendorOrderCard({
       </p>
 
       {actions.length ? (
-        <div className="grid gap-2 sm:grid-cols-2">
+        // One-handed: the main step is a full-width button; the rest share a row, and
+        // Reject stays an outline until it is being confirmed.
+        <div className="grid grid-cols-2 gap-2">
           {actions.map((action) => {
             const confirming = open === action.status;
+            const wide = action.primary || actions.filter((a) => !a.primary).length < 2;
             const disabled =
               pending ||
               (confirming && action.needsReason && reason.trim().length < 3) ||
@@ -369,8 +388,23 @@ export function VendorOrderCard({
                 key={action.status}
                 type="button"
                 size="lg"
-                variant={action.needsReason ? "destructive" : action.primary ? "default" : "outline"}
-                className={cn("h-14 text-base font-bold", action.primary && "sm:col-span-2")}
+                variant={
+                  action.needsReason
+                    ? confirming
+                      ? "destructive"
+                      : "outline"
+                    : action.primary
+                      ? "default"
+                      : "outline"
+                }
+                className={cn(
+                  "h-14 text-base font-bold whitespace-normal",
+                  wide && "col-span-2",
+                  !action.primary && !confirming && "h-12",
+                  action.needsReason &&
+                    !confirming &&
+                    "border-destructive/40 text-destructive hover:bg-destructive/10 hover:text-destructive",
+                )}
                 disabled={disabled}
                 onClick={() => move(action)}
               >
@@ -383,7 +417,7 @@ export function VendorOrderCard({
             <Button
               type="button"
               variant="ghost"
-              className="sm:col-span-2"
+              className="col-span-2"
               onClick={() => {
                 setOpen(null);
                 setError(null);

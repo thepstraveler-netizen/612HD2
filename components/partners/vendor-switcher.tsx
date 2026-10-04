@@ -15,12 +15,15 @@ export async function VendorSwitcher({
   if (vendors.length < 2) return null;
   const t = await getTranslations("vendorOrders.nav");
   return (
-    <nav aria-label={t("switcher")} className="-mx-4 overflow-x-auto px-4">
+    <nav
+      aria-label={t("switcher")}
+      className="-mx-4 snap-x scroll-px-4 [scrollbar-width:none] overflow-x-auto px-4 [&::-webkit-scrollbar]:hidden"
+    >
       <ul className="flex gap-2">
         {vendors.map((v) => {
           const active = v.id === currentId;
           return (
-            <li key={v.id}>
+            <li key={v.id} className="shrink-0 snap-start">
               <Link
                 href={`${path}?v=${v.id}`}
                 aria-current={active ? "true" : undefined}

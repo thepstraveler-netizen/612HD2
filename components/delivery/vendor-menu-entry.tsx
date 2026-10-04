@@ -87,10 +87,10 @@ export function VendorMenuEntry({ kind, id, name, available, pricePaise, stock, 
 
   return (
     <div className={cn("space-y-2", className)}>
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex min-h-11 items-center justify-between gap-3">
         <label
           htmlFor={`${uid}-on`}
-          className={cn("min-w-0 font-medium", !on && "text-muted-foreground line-through")}
+          className={cn("min-w-0 font-medium break-words", !on && "text-muted-foreground line-through")}
         >
           {name}
         </label>
@@ -99,8 +99,14 @@ export function VendorMenuEntry({ kind, id, name, available, pricePaise, stock, 
           <Switch id={`${uid}-on`} checked={on} disabled={pending} onCheckedChange={toggle} />
         </span>
       </div>
-      <div className="flex flex-wrap items-end gap-2">
-        <div className="w-28 space-y-1">
+      {/* Phones: price, stock and save side by side in one tidy row. */}
+      <div
+        className={cn(
+          "grid items-end gap-2 sm:flex sm:flex-wrap",
+          hasStock ? "grid-cols-[1fr_1fr_auto]" : "grid-cols-[1fr_auto]",
+        )}
+      >
+        <div className="min-w-0 space-y-1 sm:w-28">
           <label htmlFor={`${uid}-price`} className="block text-xs text-muted-foreground">
             {t("price")}
           </label>
@@ -109,11 +115,11 @@ export function VendorMenuEntry({ kind, id, name, available, pricePaise, stock, 
             inputMode="decimal"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
-            className="h-10"
+            className="h-11 sm:h-10"
           />
         </div>
         {hasStock ? (
-          <div className="w-28 space-y-1">
+          <div className="min-w-0 space-y-1 sm:w-28">
             <label htmlFor={`${uid}-stock`} className="block text-xs text-muted-foreground">
               {t("stock")}
             </label>
@@ -123,11 +129,17 @@ export function VendorMenuEntry({ kind, id, name, available, pricePaise, stock, 
               value={count}
               placeholder={t("untracked")}
               onChange={(e) => setCount(e.target.value.replace(/[^0-9]/g, ""))}
-              className="h-10"
+              className="h-11 px-2.5 placeholder:text-[0.8125rem] sm:h-10 sm:px-3.5"
             />
           </div>
         ) : null}
-        <Button type="button" variant="outline" className="h-10" disabled={pending || !dirty} onClick={save}>
+        <Button
+          type="button"
+          variant="outline"
+          className="h-11 sm:h-10"
+          disabled={pending || !dirty}
+          onClick={save}
+        >
           {pending ? <Loader2 className="animate-spin" /> : null} {t("save")}
         </Button>
       </div>

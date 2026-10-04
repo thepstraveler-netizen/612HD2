@@ -1785,7 +1785,10 @@
     "paymentPendingHint": "Your rooms are held for {minutes} minutes. Complete the payment to confirm.",
     "retryPayment": "Complete payment",
     "summaryTitle": "Price summary",
-    "secureNote": "Payments are processed securely by Razorpay. Your total is calculated by our server, including GST."
+    "secureNote": "Payments are processed securely by Razorpay. Your total is calculated by our server, including GST.",
+    "mobileBar": {
+      "details": "Show the price breakdown"
+    }
   },
   "trips": {
     "title": "My trips",
@@ -3080,6 +3083,8 @@
     "customer": "Customer",
     "callCustomer": "Call {name}",
     "call": "Call",
+    "whatsapp": "WhatsApp",
+    "whatsappCustomer": "WhatsApp {name}",
     "passengers": "{count, plural, one {# passenger} other {# passengers}}",
     "where": "Where",
     "pickupAddress": "Pickup",
@@ -3353,6 +3358,8 @@
       "customer": "Customer",
       "callCustomer": "Call {name}",
       "call": "Call",
+      "whatsapp": "WhatsApp",
+      "whatsappCustomer": "WhatsApp {name}",
       "passengers": "{count, plural, one {# person} other {# people}}",
       "where": "Where",
       "pickup": "Pickup",
@@ -3649,6 +3656,8 @@
     "pickup": "Pick up from",
     "callStore": "Call {name}",
     "call": "Call",
+    "whatsapp": "WhatsApp",
+    "whatsappCustomer": "WhatsApp {name}",
     "openStoreMap": "Store in Google Maps",
     "drop": "Deliver to",
     "callCustomer": "Call {name}",

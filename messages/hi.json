@@ -1785,7 +1785,10 @@
     "paymentPendingHint": "आपके कमरे {minutes} मिनट के लिए रोके गए हैं। कन्फ़र्म करने के लिए भुगतान पूरा करें।",
     "retryPayment": "भुगतान पूरा करें",
     "summaryTitle": "कीमत का सारांश",
-    "secureNote": "भुगतान Razorpay द्वारा सुरक्षित रूप से होता है। GST सहित आपका कुल हमारे सर्वर पर गिना जाता है।"
+    "secureNote": "भुगतान Razorpay द्वारा सुरक्षित रूप से होता है। GST सहित आपका कुल हमारे सर्वर पर गिना जाता है।",
+    "mobileBar": {
+      "details": "कीमत का पूरा ब्योरा देखें"
+    }
   },
   "trips": {
     "title": "मेरी यात्राएँ",
@@ -3080,6 +3083,8 @@
     "customer": "यात्री",
     "callCustomer": "{name} को कॉल करें",
     "call": "कॉल करें",
+    "whatsapp": "WhatsApp",
+    "whatsappCustomer": "{name} को WhatsApp करें",
     "passengers": "{count, plural, other {# यात्री}}",
     "where": "कहाँ",
     "pickupAddress": "पिकअप",
@@ -3402,6 +3407,8 @@
       "customer": "ग्राहक",
       "callCustomer": "{name} को कॉल करें",
       "call": "कॉल",
+      "whatsapp": "WhatsApp",
+      "whatsappCustomer": "{name} को WhatsApp करें",
       "passengers": "{count, plural, other {# लोग}}",
       "where": "कहाँ",
       "pickup": "पिकअप",
@@ -3649,6 +3656,8 @@
     "pickup": "यहाँ से उठाएँ",
     "callStore": "{name} को कॉल करें",
     "call": "कॉल करें",
+    "whatsapp": "WhatsApp",
+    "whatsappCustomer": "{name} को WhatsApp करें",
     "openStoreMap": "स्टोर Google Maps में",
     "drop": "यहाँ पहुँचाएँ",
     "callCustomer": "{name} को कॉल करें",
