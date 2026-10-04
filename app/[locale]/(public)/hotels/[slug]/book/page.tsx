@@ -12,6 +12,7 @@ import { cancellationText } from "@/lib/hotels/policy-text";
 import { pickStay, toQuery, type RawParams } from "@/lib/hotels/url";
 import { pickLocalized } from "@/lib/i18n/localized";
 import { createPublicClient } from "@/lib/supabase/public";
+import { cn } from "@/lib/utils";
 import { hotelCheckoutSchema } from "@/schemas/booking";
 
 type Props = { params: Promise<{ locale: string; slug: string }>; searchParams: Promise<RawParams> };
@@ -87,7 +88,7 @@ export default async function BookHotelPage({ params, searchParams }: Props) {
   const details = (
     <div className="space-y-6">
       <section aria-labelledby="stay" className="overflow-hidden rounded-2xl border bg-card">
-        <div className="grid gap-4 p-4 sm:grid-cols-[10rem_1fr]">
+        <div className={cn("grid gap-4 p-4", image && "sm:grid-cols-[10rem_1fr]")}>
           {image ? (
             // eslint-disable-next-line @next/next/no-img-element -- small summary thumbnail
             <img src={image.url} alt="" className="aspect-[4/3] w-full rounded-xl object-cover" />

@@ -400,7 +400,7 @@ export function VendorOrderCard({
                 className={cn(
                   "h-14 text-base font-bold whitespace-normal",
                   wide && "col-span-2",
-                  !action.primary && !confirming && "h-12",
+                  !action.primary && !confirming && "h-12 text-sm leading-tight",
                   action.needsReason &&
                     !confirming &&
                     "border-destructive/40 text-destructive hover:bg-destructive/10 hover:text-destructive",
