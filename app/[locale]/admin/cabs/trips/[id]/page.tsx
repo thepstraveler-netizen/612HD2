@@ -5,7 +5,7 @@ import { z } from "zod";
 import { ToneBadge } from "@/components/admin/booking-status";
 import { indiaTime, tripRouteText } from "@/components/admin/cab-trip-card";
 import { TripActions } from "@/components/admin/cab-trip-actions";
-import { AdminPageHeader } from "@/components/admin/page-header";
+import { AdminActionBar, AdminPageHeader } from "@/components/admin/page-header";
 import { Link } from "@/i18n/navigation";
 import { requirePermission } from "@/lib/auth/guards";
 import { getAssignOptions, getTrip, listCategories, tripLookups } from "@/lib/cabs/admin";
@@ -54,6 +54,20 @@ export default async function CabTripPage({ params }: { params: Promise<{ id: st
   const when = (iso: string | null) => indiaTime(format, iso);
   const stops = stopsInput(trip.stops).map((s) => s.name);
 
+  // Nothing to show (read-only viewer, finished trip): no action bar either.
+  const actions =
+    assign && (canAssign(trip.status) || nextTripSteps(trip.status).length > 0 || trip.driver_id) ? (
+      <TripActions
+        tripId={trip.id}
+        canAssign={canAssign(trip.status)}
+        assigned={Boolean(trip.driver_id)}
+        steps={nextTripSteps(trip.status)}
+        drivers={assign.drivers.map((d) => ({ value: d.id, label: `${d.full_name} · ${d.phone}` }))}
+        vehicles={vehicleChoices(trip.category_id, categories, assign.vehicles)}
+        current={{ driverId: trip.driver_id, vehicleId: trip.vehicle_id }}
+      />
+    ) : null;
+
   return (
     <div className="space-y-6">
       <AdminPageHeader
@@ -73,17 +87,7 @@ export default async function CabTripPage({ params }: { params: Promise<{ id: st
             </>
           ) : null}
         </div>
-        {assign ? (
-          <TripActions
-            tripId={trip.id}
-            canAssign={canAssign(trip.status)}
-            assigned={Boolean(trip.driver_id)}
-            steps={nextTripSteps(trip.status)}
-            drivers={assign.drivers.map((d) => ({ value: d.id, label: `${d.full_name} · ${d.phone}` }))}
-            vehicles={vehicleChoices(trip.category_id, categories, assign.vehicles)}
-            current={{ driverId: trip.driver_id, vehicleId: trip.vehicle_id }}
-          />
-        ) : null}
+        {actions ? <div className="hidden sm:block">{actions}</div> : null}
       </AdminPageHeader>
 
       <div className="grid gap-4 lg:grid-cols-2">
@@ -147,6 +151,7 @@ export default async function CabTripPage({ params }: { params: Promise<{ id: st
           </ol>
         )}
       </Section>
+      {actions ? <AdminActionBar>{actions}</AdminActionBar> : null}
     </div>
   );
 }

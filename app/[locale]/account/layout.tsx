@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import type { ReactNode } from "react";
 import { AccountNav } from "@/components/account/account-nav";
 import { ReferralClaimer } from "@/components/account/referral-claimer";
+import { MobileTabBar } from "@/components/layout/mobile-tab-bar";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { requireUser } from "@/lib/auth/guards";
@@ -26,6 +27,7 @@ export default async function AccountLayout({ children }: { children: ReactNode 
       </div>
       {pendingReferral ? <ReferralClaimer /> : null}
       <SiteFooter />
+      <MobileTabBar />
     </div>
   );
 }

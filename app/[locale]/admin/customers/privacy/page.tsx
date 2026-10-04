@@ -27,6 +27,8 @@ export default async function AdminPrivacyRequestsPage() {
         backLabel={t("back")}
       />
       <AdminTable
+        wide={[2, 4]}
+        statusColumn={3}
         empty={t("empty")}
         headers={[
           t("columns.customer"),

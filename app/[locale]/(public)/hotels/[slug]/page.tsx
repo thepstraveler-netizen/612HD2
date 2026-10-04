@@ -21,6 +21,7 @@ import { HotelSearchBar } from "@/components/hotels/hotel-search-bar";
 import { RatingBadge, StarRow } from "@/components/hotels/rating";
 import { ReviewsSection } from "@/components/reviews/reviews-section";
 import { JsonLd } from "@/components/seo/json-ld";
+import { ActionBarPrice, MobileActionBar } from "@/components/shared/mobile-action-bar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { WishlistButton } from "@/components/wishlist/wishlist-button";
@@ -185,8 +186,23 @@ export default async function HotelPage({ params, searchParams }: Props) {
     ]),
   ];
 
+  const bookHref =
+    bookingOpen && offer?.ok && stay
+      ? {
+          pathname: `/hotels/${hotel.slug}/book` as const,
+          query: {
+            plan: offer.ratePlanId,
+            checkin: stay.checkIn,
+            checkout: stay.checkOut,
+            rooms: String(stay.rooms),
+            adults: String(stay.adults),
+            children: String(stay.children),
+          },
+        }
+      : null;
+
   return (
-    <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:py-8">
+    <div className="mx-auto max-w-7xl space-y-5 px-4 py-4 sm:space-y-6 sm:py-8">
       <JsonLd data={jsonLd} />
       <Link
         href={{ pathname: "/hotels", query: stayQuery }}
@@ -408,7 +424,12 @@ export default async function HotelPage({ params, searchParams }: Props) {
                                       </>
                                     )}
                                     {quote?.ok ? (
-                                      <Button asChild size="sm" variant={selected ? "default" : "outline"}>
+                                      <Button
+                                        asChild
+                                        size="sm"
+                                        variant={selected ? "default" : "outline"}
+                                        className="max-sm:h-11 max-sm:w-full"
+                                      >
                                         <Link
                                           href={{
                                             pathname: `/hotels/${hotel.slug}`,
@@ -568,21 +589,9 @@ export default async function HotelPage({ params, searchParams }: Props) {
                 <p className="text-xs text-muted-foreground">{td("addDatesForPrices")}</p>
               </div>
             ) : null}
-            {bookingOpen && offer?.ok && stay ? (
+            {bookHref ? (
               <Button asChild size="lg" className="w-full">
-                <Link
-                  href={{
-                    pathname: `/hotels/${hotel.slug}/book`,
-                    query: {
-                      plan: offer.ratePlanId,
-                      checkin: stay.checkIn,
-                      checkout: stay.checkOut,
-                      rooms: String(stay.rooms),
-                      adults: String(stay.adults),
-                      children: String(stay.children),
-                    },
-                  }}
-                >
+                <Link href={bookHref}>
                   <CalendarCheck /> {td("reserve")}
                 </Link>
               </Button>
@@ -611,6 +620,42 @@ export default async function HotelPage({ params, searchParams }: Props) {
           </div>
         </aside>
       </div>
+
+      {/* Phones: the booking card sits below everything, so keep the price and next step in reach. */}
+      <MobileActionBar label={td("bookTitle")} hideWhileVisible="book">
+        {offer?.ok ? (
+          <ActionBarPrice
+            caption={td("staySummary", {
+              nights,
+              rooms: stay?.rooms ?? 1,
+              guests: (stay?.adults ?? 0) + (stay?.children ?? 0),
+            })}
+            amount={formatPaise(offer.totalPaise, locale)}
+            note={td("totalShort")}
+          />
+        ) : fromPrice !== null ? (
+          <ActionBarPrice
+            caption={t("card.from")}
+            amount={formatPaise(fromPrice, locale)}
+            note={td("perNightShort")}
+          />
+        ) : (
+          <span />
+        )}
+        {bookHref ? (
+          <Button asChild className="shrink-0">
+            <Link href={bookHref}>
+              <CalendarCheck /> {td("reserve")}
+            </Link>
+          </Button>
+        ) : (
+          <Button asChild className="shrink-0">
+            <a href={offer?.ok ? "#book" : "#rooms-section"}>
+              {offer?.ok ? td("bookTitle") : td("selectRoom")}
+            </a>
+          </Button>
+        )}
+      </MobileActionBar>
     </div>
   );
 }

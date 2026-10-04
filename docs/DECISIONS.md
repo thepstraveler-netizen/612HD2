@@ -456,3 +456,17 @@ Admin → Settings → Staff and roles (`users.manage_roles`) grants a role to a
 ### D-109 · Account deletion removes uploaded files
 
 Completing a deletion now removes the customer's prescriptions (`prescriptions/<user id>/`), partner application documents (`documents/partners/<user id>/`) and review photos (`media/reviews/<user id>/`), found both by listing those folders and from the database rows, before the account itself is deleted. If any file can't be removed, nothing is deleted and staff are asked to try again. Vendor documents belong to the business, not to one member, and are kept.
+
+## Phones
+
+### D-110 · Phone layout rules
+
+Most visitors and many staff use phones, so every page was checked at 375px and these rules now apply:
+
+- **Nothing scrolls sideways.** Wide grids sit in their own swipeable box (with a "swipe" hint in admin); lists become cards below `md` instead of squeezed tables.
+- **The main action stays in reach.** Pages with one obvious next step (book, pay, the driver's next step, save) pin it to the bottom of the screen on phones, padded clear of the iPhone home bar. Public and account pages otherwise show a bottom tab bar; it hides on pages that pin their own bar (hotel and tour pages, checkouts, the quote page, cab and ride review) so two bars never stack. Bars hide from `lg` up, where the booking card is beside the content.
+- **Tap targets are 44px** and form inputs use 16px text (iOS zooms into smaller text).
+- **Secondary things fold.** Extra filters, header actions and the footer link groups fold away on phones; destructive actions sit last in a "More actions" menu, away from the main button.
+- **Desktop is unchanged.** All of this is below `md` or `lg`; the 1280px screenshots match the old ones.
+
+The shared pieces are `MobileTabBar`, `MobileActionBar` (public detail pages), `StickyActionBar` and `MobilePayBar` (checkouts and driver links), and in admin `DataTable` cards, `AdminActionBar`, `CardSaveRow` / `PageSaveRow`, `MoreFilters`, `HeaderActions`, `SectionJumpNav` and `ScrollRow`. New screens should use them rather than building their own.

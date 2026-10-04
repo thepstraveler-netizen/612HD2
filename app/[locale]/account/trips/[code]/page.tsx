@@ -222,15 +222,15 @@ export default async function TripPage({ params }: Props) {
         <ArrowLeft className="size-4" aria-hidden="true" /> {t("allTrips")}
       </Link>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
+        <div className="min-w-0">
           <p className="text-sm text-muted-foreground">{t("bookingId", { code: booking.code })}</p>
-          <h1 className="text-[length:var(--text-title)] leading-tight font-bold">{hotelName}</h1>
+          <h1 className="text-[length:var(--text-title)] leading-tight font-bold break-words">{hotelName}</h1>
         </div>
         <BookingStatusBadge status={status} className="text-sm" />
       </div>
       {banner}
 
-      <div className="grid gap-6 md:grid-cols-[1.4fr_1fr]">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-[1.4fr_1fr]">
         <section className="space-y-4 rounded-2xl border bg-card p-4 text-sm">
           {hotel?.address ? (
             <p className="flex items-start gap-1 text-muted-foreground">

@@ -2,7 +2,7 @@ import { ArrowRight } from "lucide-react";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { ToneBadge } from "@/components/admin/booking-status";
-import { AdminPageHeader } from "@/components/admin/page-header";
+import { AdminActionBar, AdminPageHeader } from "@/components/admin/page-header";
 import { ApplicationActions } from "@/components/admin/vendor-actions";
 import { DetailCard, DocumentLink, FactList, whenFormatter } from "@/components/admin/vendor-shared";
 import { Button } from "@/components/ui/button";
@@ -40,6 +40,15 @@ export default async function AdminApplicationPage({ params }: { params: Promise
   const detailValue = (key: string, value: string) =>
     tp.has(`detailFields.${key}.options.${value}`) ? tp(`detailFields.${key}.options.${value}`) : value;
 
+  const actions =
+    canWrite && (app.status === "submitted" || app.status === "under_review") ? (
+      <ApplicationActions
+        id={app.id}
+        status={app.status}
+        defaultCommissionPercent={bpsToPercentInput(defaultCommissionBps(settings, app.business_type))}
+      />
+    ) : null;
+
   return (
     <div className="space-y-6">
       <AdminPageHeader
@@ -58,13 +67,7 @@ export default async function AdminApplicationPage({ params }: { params: Promise
             </Button>
           ) : null}
         </div>
-        {canWrite && (app.status === "submitted" || app.status === "under_review") ? (
-          <ApplicationActions
-            id={app.id}
-            status={app.status}
-            defaultCommissionPercent={bpsToPercentInput(defaultCommissionBps(settings, app.business_type))}
-          />
-        ) : null}
+        {actions ? <div className="hidden sm:block">{actions}</div> : null}
       </AdminPageHeader>
 
       {app.review_note || app.reviewed_at ? (
@@ -152,6 +155,7 @@ export default async function AdminApplicationPage({ params }: { params: Promise
           />
         </DetailCard>
       </div>
+      {actions ? <AdminActionBar>{actions}</AdminActionBar> : null}
     </div>
   );
 }

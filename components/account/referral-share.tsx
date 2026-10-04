@@ -32,7 +32,7 @@ export function ReferralShare({ code, link }: { code: string; link: string }) {
           className="h-11 w-full rounded-xl border border-input bg-background px-3 font-mono text-sm"
         />
       </div>
-      <div className="flex flex-wrap gap-2">
+      <div className="grid gap-2 sm:flex sm:flex-wrap">
         <CopyButton value={link} label={t("copyLink")} variant="default" />
         <Button asChild variant="outline">
           <a href={whatsappShareUrl(t("shareText", { link }))} target="_blank" rel="noopener noreferrer">

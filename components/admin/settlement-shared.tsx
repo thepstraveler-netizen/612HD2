@@ -77,108 +77,174 @@ export async function LedgerTable({
   const th = "px-3 py-3 whitespace-nowrap";
   const td = "px-3 py-2.5 text-right whitespace-nowrap";
 
+  const payoutCell = (r: LedgerRow) =>
+    r.payout_id ? (
+      <Link href={`/admin/payments/settlements/payouts/${r.payout_id}`} className="font-mono text-primary">
+        {r.payoutNumber === null ? t("payout") : payoutReference(r.payoutNumber)}
+      </Link>
+    ) : (
+      <span className="text-muted-foreground">{t("unsettled")}</span>
+    );
+
   return (
-    <div className="overflow-x-auto rounded-2xl border bg-card">
-      <table className="w-full text-left text-sm">
-        <thead className="border-b bg-muted/50 text-xs text-muted-foreground uppercase">
-          <tr>
-            <th scope="col" className={th}>
-              {t("date")}
-            </th>
-            <th scope="col" className={th}>
-              {t("booking")}
-            </th>
-            <th scope="col" className={th}>
-              {t("kind")}
-            </th>
-            {AMOUNT_KEYS.map(([, key]) => (
-              <th key={key} scope="col" className={cn(th, "text-right")}>
-                {t(key)}
-              </th>
-            ))}
-            <th scope="col" className={cn(th, "text-right")}>
-              {t("net")}
-            </th>
-            {showPayout ? (
-              <th scope="col" className={th}>
-                {t("payout")}
-              </th>
-            ) : null}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.length === 0 ? (
+    <>
+      {/* Phones: one card per entry (non-zero amounts only) and a totals card. */}
+      <ul className="grid gap-2 md:hidden">
+        {rows.length === 0 ? (
+          <li className="rounded-2xl border bg-card px-4 py-8 text-center text-sm text-muted-foreground">
+            {t("empty")}
+          </li>
+        ) : (
+          rows.map((r) => (
+            <li key={r.id} className="grid gap-2 rounded-2xl border bg-card p-4 text-sm">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="font-semibold">
+                    {r.booking_id ? (
+                      <Link
+                        href={`/admin/bookings/${r.booking_id}`}
+                        className="font-mono font-medium text-primary"
+                      >
+                        {r.bookingCode ?? t("booking")}
+                      </Link>
+                    ) : (
+                      t(`kinds.${r.kind}`)
+                    )}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {day(r.entry_date)}
+                    {r.booking_id ? ` · ${t(`kinds.${r.kind}`)}` : ""}
+                  </p>
+                </div>
+                <span className="shrink-0 text-right">
+                  <span className="block text-xs text-muted-foreground">{t("net")}</span>
+                  <span className="font-semibold tabular-nums">{formatPaise(r.net_paise, locale)}</span>
+                </span>
+              </div>
+              {r.note ? <p className="text-xs text-muted-foreground">{r.note}</p> : null}
+              <dl className="grid grid-cols-2 gap-x-4 gap-y-1.5">
+                {AMOUNT_KEYS.filter(([column]) => r[column] !== 0).map(([column, key]) => (
+                  <div key={key} className="min-w-0">
+                    <dt className="text-xs text-muted-foreground">{t(key)}</dt>
+                    <dd className="tabular-nums">{money(r[column])}</dd>
+                  </div>
+                ))}
+                {showPayout ? (
+                  <div className="min-w-0">
+                    <dt className="text-xs text-muted-foreground">{t("payout")}</dt>
+                    <dd>{payoutCell(r)}</dd>
+                  </div>
+                ) : null}
+              </dl>
+            </li>
+          ))
+        )}
+        {rows.length ? (
+          <li className="grid gap-2 rounded-2xl border bg-muted/30 p-4 text-sm">
+            <div className="flex items-baseline justify-between gap-2 font-semibold">
+              <span>{t("total", { count: totals.count })}</span>
+              <span className="tabular-nums">{formatPaise(totals.net_paise, locale)}</span>
+            </div>
+            <dl className="grid grid-cols-2 gap-x-4 gap-y-1.5">
+              {AMOUNT_KEYS.map(([column, key]) => (
+                <div key={key} className="min-w-0">
+                  <dt className="text-xs text-muted-foreground">{t(key)}</dt>
+                  <dd className="tabular-nums">{formatPaise(totals[column], locale)}</dd>
+                </div>
+              ))}
+            </dl>
+          </li>
+        ) : null}
+      </ul>
+      <div className="hidden overflow-x-auto rounded-2xl border bg-card md:block">
+        <table className="w-full text-left text-sm">
+          <thead className="border-b bg-muted/50 text-xs text-muted-foreground uppercase">
             <tr>
-              <td
-                colSpan={AMOUNT_KEYS.length + (showPayout ? 5 : 4)}
-                className="px-4 py-8 text-center text-muted-foreground"
-              >
-                {t("empty")}
-              </td>
+              <th scope="col" className={th}>
+                {t("date")}
+              </th>
+              <th scope="col" className={th}>
+                {t("booking")}
+              </th>
+              <th scope="col" className={th}>
+                {t("kind")}
+              </th>
+              {AMOUNT_KEYS.map(([, key]) => (
+                <th key={key} scope="col" className={cn(th, "text-right")}>
+                  {t(key)}
+                </th>
+              ))}
+              <th scope="col" className={cn(th, "text-right")}>
+                {t("net")}
+              </th>
+              {showPayout ? (
+                <th scope="col" className={th}>
+                  {t("payout")}
+                </th>
+              ) : null}
             </tr>
-          ) : (
-            rows.map((r) => (
-              <tr key={r.id} className="border-b align-top last:border-0">
-                <td className="px-3 py-2.5 whitespace-nowrap">{day(r.entry_date)}</td>
-                <td className="px-3 py-2.5 whitespace-nowrap">
-                  {r.booking_id ? (
-                    <Link
-                      href={`/admin/bookings/${r.booking_id}`}
-                      className="font-mono font-medium text-primary"
-                    >
-                      {r.bookingCode ?? t("booking")}
-                    </Link>
-                  ) : (
-                    "–"
-                  )}
+          </thead>
+          <tbody>
+            {rows.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={AMOUNT_KEYS.length + (showPayout ? 5 : 4)}
+                  className="px-4 py-8 text-center text-muted-foreground"
+                >
+                  {t("empty")}
                 </td>
-                <td className="px-3 py-2.5">
-                  <span className="whitespace-nowrap">{t(`kinds.${r.kind}`)}</span>
-                  {r.note ? (
-                    <span className="block max-w-56 text-xs text-muted-foreground">{r.note}</span>
-                  ) : null}
+              </tr>
+            ) : (
+              rows.map((r) => (
+                <tr key={r.id} className="border-b align-top last:border-0">
+                  <td className="px-3 py-2.5 whitespace-nowrap">{day(r.entry_date)}</td>
+                  <td className="px-3 py-2.5 whitespace-nowrap">
+                    {r.booking_id ? (
+                      <Link
+                        href={`/admin/bookings/${r.booking_id}`}
+                        className="font-mono font-medium text-primary"
+                      >
+                        {r.bookingCode ?? t("booking")}
+                      </Link>
+                    ) : (
+                      "–"
+                    )}
+                  </td>
+                  <td className="px-3 py-2.5">
+                    <span className="whitespace-nowrap">{t(`kinds.${r.kind}`)}</span>
+                    {r.note ? (
+                      <span className="block max-w-56 text-xs text-muted-foreground">{r.note}</span>
+                    ) : null}
+                  </td>
+                  {AMOUNT_KEYS.map(([column, key]) => (
+                    <td key={key} className={td}>
+                      {money(r[column])}
+                    </td>
+                  ))}
+                  <td className={cn(td, "font-semibold")}>{formatPaise(r.net_paise, locale)}</td>
+                  {showPayout ? <td className="px-3 py-2.5 whitespace-nowrap">{payoutCell(r)}</td> : null}
+                </tr>
+              ))
+            )}
+          </tbody>
+          {rows.length ? (
+            <tfoot className="border-t bg-muted/30 font-semibold">
+              <tr>
+                <td className="px-3 py-2.5" colSpan={3}>
+                  {t("total", { count: totals.count })}
                 </td>
                 {AMOUNT_KEYS.map(([column, key]) => (
                   <td key={key} className={td}>
-                    {money(r[column])}
+                    {formatPaise(totals[column], locale)}
                   </td>
                 ))}
-                <td className={cn(td, "font-semibold")}>{formatPaise(r.net_paise, locale)}</td>
-                {showPayout ? (
-                  <td className="px-3 py-2.5 whitespace-nowrap">
-                    {r.payout_id ? (
-                      <Link
-                        href={`/admin/payments/settlements/payouts/${r.payout_id}`}
-                        className="font-mono text-primary"
-                      >
-                        {r.payoutNumber === null ? t("payout") : payoutReference(r.payoutNumber)}
-                      </Link>
-                    ) : (
-                      <span className="text-muted-foreground">{t("unsettled")}</span>
-                    )}
-                  </td>
-                ) : null}
+                <td className={td}>{formatPaise(totals.net_paise, locale)}</td>
+                {showPayout ? <td /> : null}
               </tr>
-            ))
-          )}
-        </tbody>
-        {rows.length ? (
-          <tfoot className="border-t bg-muted/30 font-semibold">
-            <tr>
-              <td className="px-3 py-2.5" colSpan={3}>
-                {t("total", { count: totals.count })}
-              </td>
-              {AMOUNT_KEYS.map(([column, key]) => (
-                <td key={key} className={td}>
-                  {formatPaise(totals[column], locale)}
-                </td>
-              ))}
-              <td className={td}>{formatPaise(totals.net_paise, locale)}</td>
-              {showPayout ? <td /> : null}
-            </tr>
-          </tfoot>
-        ) : null}
-      </table>
-    </div>
+            </tfoot>
+          ) : null}
+        </table>
+      </div>
+    </>
   );
 }

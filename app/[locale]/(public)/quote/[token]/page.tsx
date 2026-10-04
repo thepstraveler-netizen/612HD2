@@ -2,12 +2,14 @@ import { CheckCircle2, Clock, CreditCard, FileText, MessageCircle, Phone, XCircl
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { MobilePayBar } from "@/components/booking/mobile-pay-bar";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { getBusinessInfo } from "@/lib/catalog/queries";
 import { getQuoteByToken } from "@/lib/leads/quote-page";
 import { formatPaise } from "@/lib/money";
 import { quotePageState } from "@/lib/packages/ui";
+import { cn } from "@/lib/utils";
 
 type Props = { params: Promise<{ locale: string; token: string }> };
 
@@ -31,6 +33,7 @@ export default async function QuotePage({ params }: Props) {
   const [quote, business] = await Promise.all([getQuoteByToken(token), getBusinessInfo()]);
   if (!quote) notFound();
   const t = await getTranslations("quotePage");
+  const tc = await getTranslations("checkout");
   const money = (paise: number) => formatPaise(paise, locale);
   const state = quotePageState(quote.status);
   const validUntil = new Intl.DateTimeFormat(locale === "hi" ? "hi-IN" : "en-IN", {
@@ -137,8 +140,10 @@ export default async function QuotePage({ params }: Props) {
       </section>
     );
 
+  const payBar = state === "payable" && Boolean(quote.payUrl);
+
   return (
-    <div className="mx-auto max-w-3xl space-y-6 px-4 py-8">
+    <div className={cn("mx-auto max-w-3xl space-y-6 px-4 py-8", payBar && "pb-32 lg:pb-8")}>
       <header className="space-y-1">
         <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
           <FileText className="size-4" aria-hidden="true" />
@@ -210,6 +215,19 @@ export default async function QuotePage({ params }: Props) {
           <p className="text-muted-foreground">{t("questions")}</p>
           {contact}
         </section>
+      ) : null}
+
+      {payBar && quote.payUrl ? (
+        <MobilePayBar
+          label={quote.payNowPaise < quote.totalPaise ? t("payable.advance") : t("payable.full")}
+          amount={money(quote.payNowPaise)}
+        >
+          <Button asChild size="lg">
+            <a href={quote.payUrl} rel="noreferrer">
+              <CreditCard /> {tc("pay")}
+            </a>
+          </Button>
+        </MobilePayBar>
       ) : null}
     </div>
   );

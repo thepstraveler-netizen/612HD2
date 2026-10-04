@@ -321,6 +321,23 @@ This creates the user with a confirmed email (or promotes an existing one) and g
 3. Admin → Settings → Staff and roles: grant `agent` to a test account, then remove it; both show in Admin → Audit.
 4. Assign the same driver to two cab trips at the same time: the second is refused.
 
+## 18. Phones
+
+### Setup
+
+Nothing to set up: no database changes and no new settings.
+
+### Smoke test
+
+Open the site on a phone (or Chrome DevTools at 375px):
+
+1. Home: the bottom tab bar shows; service tiles are two to a row; check-in and check-out sit side by side and open the date picker.
+2. Hotels → search with dates: the search folds to one line with Edit; Filters opens a sheet from the bottom.
+3. Open a hotel: a bar at the bottom shows the price and Select room; pick a plan and it changes to Reserve now. Continue to checkout: the bar shows the amount and the pay button, and tapping the amount opens the breakdown.
+4. Account → My trips: the menu scrolls sideways and nothing on the page does.
+5. Admin → Bookings: rows are cards; open one and the actions are in a bar at the bottom. Admin → Settings: Save stays at the bottom of each card.
+6. Switch to Hindi: the header logo fits on two lines.
+
 ## Optional extras
 
 - **Optional:** a Google Maps key (`NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`), restricted to your domains, for road distances; cabs and rides work without it (D-046, D-053).

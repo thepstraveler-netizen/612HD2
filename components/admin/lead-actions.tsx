@@ -146,16 +146,26 @@ export function LeadContact({
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-wrap gap-2">
-        <Button asChild variant="secondary">
+      {/* Phones: three equal tiles with the icon above the label. */}
+      <div className="grid auto-cols-fr grid-flow-col gap-2 sm:flex sm:flex-wrap">
+        <Button
+          asChild
+          variant="secondary"
+          className="h-auto min-h-14 flex-col gap-1 px-2 py-2 text-xs sm:h-11 sm:min-h-0 sm:flex-row sm:gap-2 sm:px-5 sm:py-0 sm:text-sm"
+        >
           <a href={`tel:${phone}`}>
             <Phone /> {t("call")}
           </a>
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button type="button" variant="secondary" disabled={loading}>
-              <MessageCircle /> {t("whatsapp")} <ChevronDown aria-hidden="true" />
+            <Button
+              type="button"
+              variant="secondary"
+              disabled={loading}
+              className="h-auto min-h-14 flex-col gap-1 px-2 py-2 text-xs sm:h-11 sm:min-h-0 sm:flex-row sm:gap-2 sm:px-5 sm:py-0 sm:text-sm"
+            >
+              <MessageCircle /> {t("whatsapp")} <ChevronDown aria-hidden="true" className="hidden sm:block" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
@@ -174,7 +184,11 @@ export function LeadContact({
           </DropdownMenuContent>
         </DropdownMenu>
         {email ? (
-          <Button asChild variant="secondary">
+          <Button
+            asChild
+            variant="secondary"
+            className="h-auto min-h-14 flex-col gap-1 px-2 py-2 text-xs sm:h-11 sm:min-h-0 sm:flex-row sm:gap-2 sm:px-5 sm:py-0 sm:text-sm"
+          >
             <a href={`mailto:${email}`}>
               <Mail /> {t("email")}
             </a>

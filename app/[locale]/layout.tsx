@@ -30,6 +30,8 @@ export function generateStaticParams() {
 }
 
 export const viewport: Viewport = {
+  // Lets fixed bottom bars pad themselves with env(safe-area-inset-bottom) on notched phones.
+  viewportFit: "cover",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#0B2E6B" },
     { media: "(prefers-color-scheme: dark)", color: "#071F4A" },

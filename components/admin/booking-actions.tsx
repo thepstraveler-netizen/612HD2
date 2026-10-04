@@ -1,12 +1,27 @@
 "use client";
 
 import { zodResolver } from "@/lib/forms/zod-resolver";
-import { Ban, CheckCheck, HandCoins, Link2, Mail, Undo2, type LucideIcon } from "lucide-react";
+import {
+  Ban,
+  CheckCheck,
+  HandCoins,
+  Link2,
+  Mail,
+  MoreHorizontal,
+  Undo2,
+  type LucideIcon,
+} from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useState, useTransition, type ReactNode } from "react";
 import { FormProvider, useForm, type FieldValues, type Path, type UseFormReturn } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useRouter } from "@/i18n/navigation";
 import {
@@ -66,6 +81,7 @@ export function BookingActions({
   canRefund: boolean;
 }) {
   const t = useTranslations("bookingsAdmin.actions");
+  const tUi = useTranslations("admin.ui");
   const locale = useLocale();
   const errorText = useBookingsErrorText();
   const router = useRouter();
@@ -108,10 +124,52 @@ export function BookingActions({
   };
 
   if (actions.length === 0) return null;
+  // Phones: the first non-destructive action as a wide button, the rest in a menu (cancel last).
+  const primary = actions.find((a) => a !== "cancel") ?? actions[0];
+  const rest = [
+    ...actions.filter((a) => a !== primary && a !== "cancel"),
+    ...actions.filter((a) => a === "cancel" && a !== primary),
+  ];
+  const PrimaryIcon = ICONS[primary];
 
   return (
     <>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex gap-2 sm:hidden">
+        <Button
+          type="button"
+          variant={primary === "cancel" ? "outline" : "default"}
+          className={primary === "cancel" ? "flex-1 text-destructive" : "flex-1"}
+          disabled={pending}
+          onClick={() => quick(primary)}
+        >
+          <PrimaryIcon /> {t(primary)}
+        </Button>
+        {rest.length ? (
+          // Not modal: some items open a sheet, and a modal menu would leave the page locked.
+          <DropdownMenu modal={false}>
+            <DropdownMenuTrigger asChild>
+              <Button type="button" variant="outline" disabled={pending}>
+                <MoreHorizontal /> {tUi("moreActions")}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" side="top" className="min-w-56">
+              {rest.map((action) => {
+                const Icon = ICONS[action];
+                return (
+                  <DropdownMenuItem
+                    key={action}
+                    className={action === "cancel" ? "min-h-11 text-destructive" : "min-h-11"}
+                    onSelect={() => quick(action)}
+                  >
+                    <Icon /> {t(action)}
+                  </DropdownMenuItem>
+                );
+              })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : null}
+      </div>
+      <div className="hidden flex-wrap gap-2 sm:flex">
         {actions.map((action) => {
           const Icon = ICONS[action];
           return (

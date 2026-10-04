@@ -1,8 +1,8 @@
 "use client";
 
-import { Search } from "lucide-react";
-import { useTranslations } from "next-intl";
-import { useState, type FormEvent, type ReactNode } from "react";
+import { Pencil, Search } from "lucide-react";
+import { useFormatter, useTranslations } from "next-intl";
+import { useId, useState, type FormEvent, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 
 function Field({ label, htmlFor, children }: { label: string; htmlFor: string; children: ReactNode }) {
   return (
-    <div className="grid gap-1.5">
+    <div className="grid min-w-0 gap-1.5">
       <Label
         htmlFor={htmlFor}
         className="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
@@ -26,8 +26,60 @@ function Field({ label, htmlFor, children }: { label: string; htmlFor: string; c
 }
 
 /**
+ * Phone summary of the current search ("Vrindavan · 12 Oct – 14 Oct · 2 guests");
+ * tapping it opens the full form, so results start on the first screen.
+ */
+function SearchSummary({
+  query,
+  placeholder,
+  controls,
+  onEdit,
+}: {
+  query: Record<string, string>;
+  placeholder?: string;
+  controls: string;
+  onEdit: () => void;
+}) {
+  const t = useTranslations("hotels.search");
+  const format = useFormatter();
+  const day = (iso: string) =>
+    format.dateTime(new Date(`${iso}T00:00:00Z`), { day: "numeric", month: "short", timeZone: "UTC" });
+  const checkin = query.checkin ?? "";
+  const checkout = query.checkout ?? "";
+  const dates =
+    isIsoDate(checkin) && isIsoDate(checkout) ? `${day(checkin)} – ${day(checkout)}` : t("addDates");
+  const guests = (Number(query.adults) || 2) + (Number(query.children) || 0);
+  const rooms = Number(query.rooms) || 1;
+
+  return (
+    <button
+      type="button"
+      onClick={onEdit}
+      aria-expanded={false}
+      aria-controls={controls}
+      className="flex min-h-14 w-full items-center gap-3 rounded-2xl border bg-card py-2 ps-4 pe-2 text-start shadow-sm transition focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none active:scale-[0.99] motion-reduce:transition-none"
+    >
+      <Search className="size-5 shrink-0 text-primary" aria-hidden="true" />
+      <span className="grid min-w-0 flex-1">
+        <span className="truncate text-sm font-semibold text-heading">
+          {query.q || placeholder || t("destination")}
+        </span>
+        <span className="truncate text-xs text-muted-foreground">
+          {dates} · {t("summaryRooms", { count: rooms })} · {t("summaryGuests", { count: guests })}
+        </span>
+      </span>
+      <span className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-xl bg-secondary px-3 text-sm font-semibold text-secondary-foreground">
+        <Pencil className="size-3.5" aria-hidden="true" />
+        {t("edit")}
+      </span>
+    </button>
+  );
+}
+
+/**
  * Destination, dates, rooms and guests. Submitting rewrites only these keys
  * of the current query, so filters chosen on the listing survive a date change.
+ * `collapsible`: below md the form starts folded into a one-line summary.
  */
 export function HotelSearchBar({
   pathname,
@@ -36,6 +88,7 @@ export function HotelSearchBar({
   maxRooms,
   showDestination = true,
   placeholder,
+  collapsible = false,
   className,
 }: {
   pathname: string;
@@ -44,11 +97,14 @@ export function HotelSearchBar({
   maxRooms: number;
   showDestination?: boolean;
   placeholder?: string;
+  collapsible?: boolean;
   className?: string;
 }) {
   const t = useTranslations("hotels.search");
   const router = useRouter();
   const [checkin, setCheckin] = useState(query.checkin ?? "");
+  const [expanded, setExpanded] = useState(false);
+  const formId = useId();
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -65,22 +121,25 @@ export function HotelSearchBar({
       children: value("children") === "0" ? null : value("children") || null,
     };
     if (showDestination) changes.q = value("q") || null;
+    setExpanded(false);
     router.push(`${pathname}${queryString(withParams(query, changes))}`);
   };
 
   const minCheckout = isIsoDate(checkin) ? addDays(checkin, 1) : addDays(today, 1);
 
-  return (
+  const form = (
     <form
+      id={formId}
       onSubmit={onSubmit}
       role="search"
       aria-label={t("label")}
       className={cn(
         "grid gap-3 rounded-2xl border bg-card p-3 shadow-sm sm:grid-cols-2 sm:p-4",
+        collapsible && !expanded && "max-md:hidden",
         showDestination
           ? "lg:grid-cols-[1.6fr_1fr_1fr_0.6fr_0.6fr_0.6fr_auto] lg:items-end"
           : "lg:grid-cols-[1fr_1fr_0.6fr_0.6fr_0.6fr_auto] lg:items-end",
-        className,
+        !collapsible && className,
       )}
     >
       {showDestination ? (
@@ -154,5 +213,22 @@ export function HotelSearchBar({
         <Search /> {showDestination ? t("submit") : t("update")}
       </Button>
     </form>
+  );
+
+  if (!collapsible) return form;
+  return (
+    <div className={className}>
+      {expanded ? null : (
+        <div className="md:hidden">
+          <SearchSummary
+            query={query}
+            placeholder={placeholder}
+            controls={formId}
+            onEdit={() => setExpanded(true)}
+          />
+        </div>
+      )}
+      {form}
+    </div>
   );
 }

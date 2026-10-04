@@ -3,6 +3,7 @@ import { FleetAlerts } from "@/components/admin/cab-expiry";
 import { CabSubnav } from "@/components/admin/cab-subnav";
 import { TripCard, type AssignOptions } from "@/components/admin/cab-trip-card";
 import { AdminPageHeader } from "@/components/admin/page-header";
+import { SectionJumpNav } from "@/components/admin/section-jump-nav";
 import { requirePermission } from "@/lib/auth/guards";
 import {
   getAssignOptions,
@@ -50,6 +51,17 @@ export default async function CabsDispatchPage() {
         <CabSubnav active="dispatch" />
       </AdminPageHeader>
       <FleetAlerts alerts={alerts} />
+      {trips.length > 0 ? (
+        <SectionJumpNav
+          className="xl:hidden"
+          label={t("nav.dispatch")}
+          items={GROUPS.map((group) => ({
+            id: `group-${group}`,
+            label: t(`dispatch.groups.${group}`),
+            count: trips.filter((trip) => dispatchGroup(trip.status) === group).length,
+          }))}
+        />
+      ) : null}
       {trips.length === 0 ? (
         <p className="rounded-2xl border bg-card p-6 text-center text-muted-foreground">
           {t("dispatch.empty")}
@@ -59,8 +71,13 @@ export default async function CabsDispatchPage() {
           {GROUPS.map((group) => {
             const rows = trips.filter((trip) => dispatchGroup(trip.status) === group);
             return (
-              <section key={group} aria-labelledby={`group-${group}`} className="space-y-3">
-                <h2 id={`group-${group}`} className="flex items-center gap-2 text-base font-semibold">
+              <section
+                key={group}
+                id={`group-${group}`}
+                aria-labelledby={`group-${group}-title`}
+                className="space-y-3"
+              >
+                <h2 id={`group-${group}-title`} className="flex items-center gap-2 text-base font-semibold">
                   {t(`dispatch.groups.${group}`)}
                   <span className="rounded-full bg-muted px-2 text-sm font-medium text-muted-foreground">
                     {rows.length}

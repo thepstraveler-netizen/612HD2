@@ -53,7 +53,7 @@ export async function HotelCard({
           .slice(0, 8)
           .map((i) => ({ url: i.url, alt: i.alt ? pickLocalized(i.alt, locale) : name }))}
         sizes="(min-width: 640px) 18rem, 100vw"
-        className="aspect-[4/3] sm:aspect-auto sm:min-h-56"
+        className="aspect-[16/10] sm:aspect-auto sm:min-h-56"
         priority={priority}
       />
       <WishlistButton type="hotel" id={hotel.id} name={name} className="absolute start-2 top-2" />

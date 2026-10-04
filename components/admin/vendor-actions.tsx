@@ -209,6 +209,7 @@ export function DocumentReview({
         <Button
           type="button"
           size="sm"
+          className="h-11 sm:h-9"
           variant="secondary"
           disabled={pending}
           onClick={() => run(reviewVendorDocument, { id, status: "verified", note: "" }, t("verified"))}
@@ -221,7 +222,7 @@ export function DocumentReview({
           type="button"
           size="sm"
           variant="outline"
-          className="text-destructive"
+          className="h-11 text-destructive sm:h-9"
           disabled={pending}
           onClick={() => setOpen(true)}
         >
@@ -232,6 +233,7 @@ export function DocumentReview({
         <Button
           type="button"
           size="sm"
+          className="h-11 sm:h-9"
           variant="ghost"
           disabled={pending}
           onClick={() => run(reviewVendorDocument, { id, status: "pending", note: "" }, t("reset"))}

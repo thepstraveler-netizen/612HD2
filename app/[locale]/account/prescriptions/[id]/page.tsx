@@ -231,7 +231,22 @@ export default async function PrescriptionPage({ params }: Props) {
               {t("quote.validUntil", { time: formatIndiaDateTime(live.valid_until, locale) })}
             </p>
           </div>
-          <div className="overflow-x-auto">
+          {/* Phones: one row per medicine; the table from `sm` up. */}
+          <ul className="divide-y text-sm sm:hidden" aria-label={t("quote.linesCaption")}>
+            {quoteView.lines.map((l, i) => (
+              <li key={i} className="flex items-start justify-between gap-3 py-2.5">
+                <div className="min-w-0">
+                  <p className="font-medium break-words">{l.name}</p>
+                  {l.pack ? <p className="text-xs text-muted-foreground">{l.pack}</p> : null}
+                  <p className="text-xs text-muted-foreground">
+                    {l.qty} × {money(l.unitPaise)} · {t("quote.gst", { rate: l.taxBps / 100 })}
+                  </p>
+                </div>
+                <p className="shrink-0 font-semibold">{money(l.amountPaise)}</p>
+              </li>
+            ))}
+          </ul>
+          <div className="hidden overflow-x-auto sm:block">
             <table className="w-full text-sm">
               <caption className="sr-only">{t("quote.linesCaption")}</caption>
               <thead>
@@ -296,7 +311,7 @@ export default async function PrescriptionPage({ params }: Props) {
         </p>
       ) : null}
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <section className="space-y-2 rounded-2xl border bg-card p-4 text-sm">
           <h2 className="text-base font-bold">{t("account.details")}</h2>
           <dl className="grid gap-2">

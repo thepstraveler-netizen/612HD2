@@ -23,7 +23,7 @@ export function NewLeadButton({ sources }: { sources: string[] }) {
   const [open, setOpen] = useState(false);
   return (
     <>
-      <Button type="button" onClick={() => setOpen(true)}>
+      <Button type="button" onClick={() => setOpen(true)} className="w-full sm:w-auto">
         <Plus /> {t("newLead")}
       </Button>
       <LeadSheet

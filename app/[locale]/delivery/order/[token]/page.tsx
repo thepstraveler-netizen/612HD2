@@ -1,4 +1,14 @@
-import { Banknote, CheckCircle2, MapPin, Navigation, Package, Phone, Store, UserRound } from "lucide-react";
+import {
+  Banknote,
+  CheckCircle2,
+  MapPin,
+  MessageCircle,
+  Navigation,
+  Package,
+  Phone,
+  Store,
+  UserRound,
+} from "lucide-react";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { RiderPanel } from "@/components/delivery/rider-panel";
@@ -13,6 +23,7 @@ import { formatPaise } from "@/lib/money";
 type Props = { params: Promise<{ locale: string; token: string }> };
 
 const tel = (phone: string) => `tel:${phone.replace(/[^0-9+]/g, "")}`;
+const whatsapp = (phone: string) => `https://wa.me/${phone.replace(/[^0-9]/g, "")}`;
 
 /**
  * The rider's order page, opened from the secret link sent at assignment.
@@ -110,14 +121,24 @@ export default async function RiderOrderPage({ params }: Props) {
         <h2 id="drop" className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
           {t("drop")}
         </h2>
-        <div className="flex items-center justify-between gap-3">
-          <p className="flex min-w-0 items-center gap-2 text-lg font-bold">
-            <UserRound className="size-5 shrink-0 text-primary" aria-hidden="true" />
-            <span className="truncate">{order.customer.name}</span>
-          </p>
-          <Button asChild size="lg" className="h-12 shrink-0">
+        <p className="flex min-w-0 items-center gap-2 text-lg font-bold">
+          <UserRound className="size-5 shrink-0 text-primary" aria-hidden="true" />
+          <span className="min-w-0 break-words">{order.customer.name}</span>
+        </p>
+        <div className="grid grid-cols-2 gap-2">
+          <Button asChild size="lg" className="h-12">
             <a href={tel(order.customer.phone)} aria-label={t("callCustomer", { name: order.customer.name })}>
               <Phone /> {t("call")}
+            </a>
+          </Button>
+          <Button asChild size="lg" variant="outline" className="h-12">
+            <a
+              href={whatsapp(order.customer.phone)}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={t("whatsappCustomer", { name: order.customer.name })}
+            >
+              <MessageCircle /> {t("whatsapp")}
             </a>
           </Button>
         </div>

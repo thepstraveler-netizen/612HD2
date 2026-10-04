@@ -142,7 +142,7 @@ export function LeadLogForm({ leadId }: { leadId: string }) {
         />
 
         <div className="flex flex-wrap items-end gap-3">
-          <div className="grid min-w-0 flex-1 gap-1.5 sm:max-w-64">
+          <div className="grid min-w-full flex-1 gap-1.5 sm:max-w-64 sm:min-w-0">
             <Label htmlFor="log-follow-up">{t("logForm.followUp")}</Label>
             <Input
               id="log-follow-up"
@@ -151,7 +151,7 @@ export function LeadLogForm({ leadId }: { leadId: string }) {
               onChange={(e) => setFollowUp(e.target.value)}
             />
           </div>
-          <Button type="submit" disabled={pending}>
+          <Button type="submit" disabled={pending} className="flex-1 sm:flex-none">
             <Send /> {t("logForm.submit")}
           </Button>
         </div>

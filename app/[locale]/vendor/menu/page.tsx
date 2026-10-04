@@ -113,7 +113,7 @@ export default async function VendorMenuPage({ params, searchParams }: Props) {
               href={{ pathname: "/vendor/menu", query: { store: s.id } }}
               aria-current={s.id === store.id ? "page" : undefined}
               className={cn(
-                "inline-flex h-10 items-center rounded-full border px-4 text-sm font-medium",
+                "inline-flex h-11 items-center rounded-full border px-4 text-sm font-medium",
                 s.id === store.id && "border-primary bg-primary text-primary-foreground",
               )}
             >

@@ -20,6 +20,8 @@ import { LEAD_STATUSES, type LeadFilters, type LeadStatus } from "@/schemas/lead
 import { LEAD_KINDS } from "@/schemas/packages";
 import { ToneBadge } from "./booking-status";
 import { LeadStatusMenu } from "./lead-status-menu";
+import { MoreFilters } from "./more-filters";
+import { ScrollRow } from "./scroll-row";
 
 type Format = Awaited<ReturnType<typeof getFormatter>>;
 type Translate = Awaited<ReturnType<typeof getTranslations>>;
@@ -180,60 +182,97 @@ export async function LeadTable({ leads }: { leads: LeadCard[] }) {
     );
   }
   return (
-    <div className="overflow-x-auto rounded-2xl border bg-card">
-      <table className="w-full text-left text-sm">
-        <thead className="border-b bg-muted/50 text-xs text-muted-foreground uppercase">
-          <tr>
-            <th className="px-4 py-3">{t("columns.lead")}</th>
-            <th className="px-4 py-3">{t("columns.summary")}</th>
-            <th className="px-4 py-3">{t("columns.status")}</th>
-            <th className="px-4 py-3">{t("columns.source")}</th>
-            <th className="px-4 py-3">{t("columns.assignee")}</th>
-            <th className="px-4 py-3">{t("columns.value")}</th>
-            <th className="px-4 py-3">{t("columns.followUp")}</th>
-            <th className="px-4 py-3">{t("columns.created")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {leads.map((lead) => (
-            <tr key={lead.id} className="border-b last:border-0">
-              <td className="px-4 py-2.5">
-                <Link
-                  href={`/admin/leads/${lead.id}`}
-                  className="inline-flex min-h-11 flex-col justify-center font-medium text-primary"
-                >
-                  {lead.name}
-                  <span className="font-mono text-xs text-muted-foreground">
-                    {lead.reference} · {lead.phone}
-                  </span>
-                </Link>
-              </td>
-              <td className="min-w-48 px-4 py-2.5">{lead.summary || t(`kinds.${lead.kind}`)}</td>
-              <td className="px-4 py-2.5">
-                <LeadStatusBadge status={lead.status} label={t(`status.${lead.status}`)} />
-              </td>
-              <td className="px-4 py-2.5">{sourceLabel(t, lead.source)}</td>
-              <td className="px-4 py-2.5">
-                {lead.assigneeName ?? <span className="text-accent-amber">{t("board.unassigned")}</span>}
-              </td>
-              <td className="px-4 py-2.5 whitespace-nowrap">
-                {lead.valuePaise ? formatPaise(lead.valuePaise, locale) : "–"}
-              </td>
-              <td className="px-4 py-2.5">
-                {lead.followUp ? <FollowUpBadge lead={lead} t={t} format={format} /> : "–"}
-              </td>
-              <td className="px-4 py-2.5 whitespace-nowrap">
-                {format.dateTime(new Date(lead.createdAt), {
-                  day: "numeric",
-                  month: "short",
-                  timeZone: "Asia/Kolkata",
-                })}
-              </td>
+    <>
+      <ul className="grid gap-2 md:hidden">
+        {leads.map((lead) => (
+          <li
+            key={lead.id}
+            className="relative grid gap-2 rounded-2xl border bg-card p-4 text-sm active:bg-muted/50"
+          >
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0">
+                <p className="font-semibold break-words">
+                  <Link href={`/admin/leads/${lead.id}`} className="after:absolute after:inset-0">
+                    {lead.name}
+                  </Link>
+                </p>
+                <p className="font-mono text-xs text-muted-foreground">
+                  {lead.reference} · {lead.phone}
+                </p>
+              </div>
+              <LeadStatusBadge status={lead.status} label={t(`status.${lead.status}`)} />
+            </div>
+            <p className="break-words">{lead.summary || t(`kinds.${lead.kind}`)}</p>
+            <div className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+              <span className="rounded-full bg-muted px-2 py-0.5">{sourceLabel(t, lead.source)}</span>
+              <span aria-hidden="true">·</span>
+              {lead.assigneeName ?? <span className="text-accent-amber">{t("board.unassigned")}</span>}
+              {lead.valuePaise ? (
+                <>
+                  <span aria-hidden="true">·</span>
+                  <span className="font-medium text-foreground">{formatPaise(lead.valuePaise, locale)}</span>
+                </>
+              ) : null}
+            </div>
+            {lead.followUp ? <FollowUpBadge lead={lead} t={t} format={format} /> : null}
+          </li>
+        ))}
+      </ul>
+      <div className="hidden overflow-x-auto rounded-2xl border bg-card md:block">
+        <table className="w-full text-left text-sm">
+          <thead className="border-b bg-muted/50 text-xs text-muted-foreground uppercase">
+            <tr>
+              <th className="px-4 py-3">{t("columns.lead")}</th>
+              <th className="px-4 py-3">{t("columns.summary")}</th>
+              <th className="px-4 py-3">{t("columns.status")}</th>
+              <th className="px-4 py-3">{t("columns.source")}</th>
+              <th className="px-4 py-3">{t("columns.assignee")}</th>
+              <th className="px-4 py-3">{t("columns.value")}</th>
+              <th className="px-4 py-3">{t("columns.followUp")}</th>
+              <th className="px-4 py-3">{t("columns.created")}</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {leads.map((lead) => (
+              <tr key={lead.id} className="border-b last:border-0">
+                <td className="px-4 py-2.5">
+                  <Link
+                    href={`/admin/leads/${lead.id}`}
+                    className="inline-flex min-h-11 flex-col justify-center font-medium text-primary"
+                  >
+                    {lead.name}
+                    <span className="font-mono text-xs text-muted-foreground">
+                      {lead.reference} · {lead.phone}
+                    </span>
+                  </Link>
+                </td>
+                <td className="min-w-48 px-4 py-2.5">{lead.summary || t(`kinds.${lead.kind}`)}</td>
+                <td className="px-4 py-2.5">
+                  <LeadStatusBadge status={lead.status} label={t(`status.${lead.status}`)} />
+                </td>
+                <td className="px-4 py-2.5">{sourceLabel(t, lead.source)}</td>
+                <td className="px-4 py-2.5">
+                  {lead.assigneeName ?? <span className="text-accent-amber">{t("board.unassigned")}</span>}
+                </td>
+                <td className="px-4 py-2.5 whitespace-nowrap">
+                  {lead.valuePaise ? formatPaise(lead.valuePaise, locale) : "–"}
+                </td>
+                <td className="px-4 py-2.5">
+                  {lead.followUp ? <FollowUpBadge lead={lead} t={t} format={format} /> : "–"}
+                </td>
+                <td className="px-4 py-2.5 whitespace-nowrap">
+                  {format.dateTime(new Date(lead.createdAt), {
+                    day: "numeric",
+                    month: "short",
+                    timeZone: "Asia/Kolkata",
+                  })}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }
 
@@ -246,8 +285,8 @@ export async function LeadViewBar({ filters, overdue }: { filters: LeadFilters; 
       active ? "bg-primary text-primary-foreground" : "border bg-card hover:bg-accent",
     );
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      <nav aria-label={t("view.label")} className="flex gap-1">
+    <ScrollRow className="-mx-4 sm:mx-0" innerClassName="items-center gap-2 px-4 pb-1 sm:flex-wrap sm:px-0">
+      <nav aria-label={t("view.label")} className="flex shrink-0 gap-1">
         <Link
           href={`/admin/leads${leadFiltersQuery(filters, { view: "board", page: 1 })}`}
           aria-current={filters.view === "board" ? "page" : undefined}
@@ -280,7 +319,7 @@ export async function LeadViewBar({ filters, overdue }: { filters: LeadFilters; 
       >
         <CalendarClock className="size-4" aria-hidden="true" /> {t("view.dueToday")}
       </Link>
-    </div>
+    </ScrollRow>
   );
 }
 
@@ -314,66 +353,72 @@ export async function LeadFiltersForm({
           placeholder={t("filters.searchPlaceholder")}
         />
       </div>
-      <div className="grid gap-1.5">
-        <Label htmlFor="lf-status">{t("filters.status")}</Label>
-        <NativeSelect id="lf-status" name="status" defaultValue={filters.status ?? ""}>
-          <option value="">{t("filters.any")}</option>
-          {LEAD_STATUSES.map((s) => (
-            <option key={s} value={s}>
-              {t(`status.${s}`)}
-            </option>
-          ))}
-        </NativeSelect>
-      </div>
-      <div className="grid gap-1.5">
-        <Label htmlFor="lf-kind">{t("filters.kind")}</Label>
-        <NativeSelect id="lf-kind" name="kind" defaultValue={filters.kind ?? ""}>
-          <option value="">{t("filters.any")}</option>
-          {LEAD_KINDS.map((k) => (
-            <option key={k} value={k}>
-              {t(`kinds.${k}`)}
-            </option>
-          ))}
-        </NativeSelect>
-      </div>
-      <div className="grid gap-1.5">
-        <Label htmlFor="lf-source">{t("filters.source")}</Label>
-        <NativeSelect id="lf-source" name="source" defaultValue={filters.source ?? ""}>
-          <option value="">{t("filters.any")}</option>
-          {sourceOptions.map((s) => (
-            <option key={s} value={s}>
-              {sourceLabel(t, s)}
-            </option>
-          ))}
-        </NativeSelect>
-      </div>
-      <div className="grid gap-1.5">
-        <Label htmlFor="lf-assignee">{t("filters.assignee")}</Label>
-        <NativeSelect id="lf-assignee" name="assignee" defaultValue={filters.assignee ?? ""}>
-          <option value="">{t("filters.anyone")}</option>
-          <option value="me">{t("filters.me")}</option>
-          <option value="unassigned">{t("filters.unassigned")}</option>
-          {staff.length ? (
-            <optgroup label={t("filters.staff")}>
-              {staff.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name}
-                </option>
-              ))}
-            </optgroup>
-          ) : null}
-        </NativeSelect>
-      </div>
-      <div className="grid gap-1.5">
-        <Label htmlFor="lf-due">{t("filters.due")}</Label>
-        <NativeSelect id="lf-due" name="due" defaultValue={filters.due ?? ""}>
-          <option value="">{t("filters.any")}</option>
-          <option value="overdue">{t("followUp.overdue")}</option>
-          <option value="today">{t("filters.dueToday")}</option>
-        </NativeSelect>
-      </div>
+      <MoreFilters
+        active={
+          [filters.status, filters.kind, filters.source, filters.assignee, filters.due].filter(Boolean).length
+        }
+      >
+        <div className="grid gap-1.5">
+          <Label htmlFor="lf-status">{t("filters.status")}</Label>
+          <NativeSelect id="lf-status" name="status" defaultValue={filters.status ?? ""}>
+            <option value="">{t("filters.any")}</option>
+            {LEAD_STATUSES.map((s) => (
+              <option key={s} value={s}>
+                {t(`status.${s}`)}
+              </option>
+            ))}
+          </NativeSelect>
+        </div>
+        <div className="grid gap-1.5">
+          <Label htmlFor="lf-kind">{t("filters.kind")}</Label>
+          <NativeSelect id="lf-kind" name="kind" defaultValue={filters.kind ?? ""}>
+            <option value="">{t("filters.any")}</option>
+            {LEAD_KINDS.map((k) => (
+              <option key={k} value={k}>
+                {t(`kinds.${k}`)}
+              </option>
+            ))}
+          </NativeSelect>
+        </div>
+        <div className="grid gap-1.5">
+          <Label htmlFor="lf-source">{t("filters.source")}</Label>
+          <NativeSelect id="lf-source" name="source" defaultValue={filters.source ?? ""}>
+            <option value="">{t("filters.any")}</option>
+            {sourceOptions.map((s) => (
+              <option key={s} value={s}>
+                {sourceLabel(t, s)}
+              </option>
+            ))}
+          </NativeSelect>
+        </div>
+        <div className="grid gap-1.5">
+          <Label htmlFor="lf-assignee">{t("filters.assignee")}</Label>
+          <NativeSelect id="lf-assignee" name="assignee" defaultValue={filters.assignee ?? ""}>
+            <option value="">{t("filters.anyone")}</option>
+            <option value="me">{t("filters.me")}</option>
+            <option value="unassigned">{t("filters.unassigned")}</option>
+            {staff.length ? (
+              <optgroup label={t("filters.staff")}>
+                {staff.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
+                ))}
+              </optgroup>
+            ) : null}
+          </NativeSelect>
+        </div>
+        <div className="grid gap-1.5">
+          <Label htmlFor="lf-due">{t("filters.due")}</Label>
+          <NativeSelect id="lf-due" name="due" defaultValue={filters.due ?? ""}>
+            <option value="">{t("filters.any")}</option>
+            <option value="overdue">{t("followUp.overdue")}</option>
+            <option value="today">{t("filters.dueToday")}</option>
+          </NativeSelect>
+        </div>
+      </MoreFilters>
       <div className="flex flex-wrap items-center gap-2 sm:col-span-2 lg:col-span-5">
-        <Button type="submit">
+        <Button type="submit" className="flex-1 sm:flex-none">
           <Search /> {t("filters.apply")}
         </Button>
         {hasLeadFilters(filters) ? (

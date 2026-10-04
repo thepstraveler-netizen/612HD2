@@ -126,7 +126,7 @@ export function MfaManager({ factors, canManage }: { factors: FactorView[]; canM
               alt={t("qrAlt")}
               width={176}
               height={176}
-              className="size-44 rounded-lg border bg-white p-2"
+              className="mx-auto size-44 shrink-0 rounded-lg border bg-white p-2 sm:mx-0"
             />
             <div className="grid min-w-0 flex-1 gap-2">
               <p className="text-sm text-muted-foreground">{t("cantScan")}</p>

@@ -22,21 +22,31 @@ function SheetContent({
   children,
   side = "left",
   ...props
-}: React.ComponentProps<typeof SheetPrimitive.Content> & { side?: "left" | "right" }) {
+}: React.ComponentProps<typeof SheetPrimitive.Content> & { side?: "left" | "right" | "bottom" }) {
   return (
     <SheetPrimitive.Portal>
-      <SheetPrimitive.Overlay className="fixed inset-0 z-50 bg-black/50 data-[state=open]:animate-in data-[state=open]:fade-in-0" />
+      <SheetPrimitive.Overlay className="fixed inset-0 z-50 bg-black/50 data-[state=open]:animate-in data-[state=open]:fade-in-0 motion-reduce:animate-none" />
       <SheetPrimitive.Content
         data-slot="sheet-content"
+        data-side={side}
         className={cn(
-          "fixed inset-y-0 z-50 flex h-full w-[85%] max-w-sm flex-col gap-4 bg-background shadow-lg data-[state=open]:animate-in data-[state=open]:duration-300",
-          side === "left"
-            ? "left-0 border-r data-[state=open]:slide-in-from-left"
-            : "right-0 border-l data-[state=open]:slide-in-from-right",
+          "fixed z-50 flex flex-col gap-4 bg-background shadow-lg data-[state=open]:animate-in data-[state=open]:duration-300 motion-reduce:animate-none",
+          side === "bottom"
+            ? // A phone-style bottom sheet: thumb-reachable, never taller than most of the screen.
+              "inset-x-0 bottom-0 max-h-[90dvh] w-full rounded-t-2xl border-t pb-[env(safe-area-inset-bottom)] data-[state=open]:slide-in-from-bottom"
+            : "inset-y-0 h-full w-[85%] max-w-sm",
+          side === "left" && "left-0 border-r data-[state=open]:slide-in-from-left",
+          side === "right" && "right-0 border-l data-[state=open]:slide-in-from-right",
           className,
         )}
         {...props}
       >
+        {side === "bottom" ? (
+          <span
+            aria-hidden="true"
+            className="mx-auto mt-2 -mb-2 h-1.5 w-10 shrink-0 rounded-full bg-border"
+          />
+        ) : null}
         {children}
         <SheetPrimitive.Close className="absolute top-3 right-3 grid size-11 place-items-center rounded-lg opacity-70 transition-opacity hover:opacity-100 focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none">
           <XIcon className="size-5" />

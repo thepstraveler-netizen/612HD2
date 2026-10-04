@@ -46,7 +46,7 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
   return (
     <div className="space-y-6">
       <div className="space-y-1">
-        <h1 className="text-[length:var(--text-title)] font-bold">{t("greeting", { name })}</h1>
+        <h1 className="text-[length:var(--text-title)] font-bold break-words">{t("greeting", { name })}</h1>
         <p className="text-muted-foreground">{t("lead")}</p>
       </div>
 
@@ -72,13 +72,13 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
 
       <div className="grid gap-6 md:grid-cols-[2fr_1fr]">
         <Card>
-          <CardHeader>
+          <CardHeader className="max-sm:px-4">
             <CardTitle>{t("trips")}</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-3 max-sm:px-4">
             {trips.length ? (
               <>
-                <ul className="grid gap-3">
+                <ul className="grid grid-cols-1 gap-3">
                   {trips.map((trip) => (
                     <li key={trip.code}>
                       <TripCard trip={trip} locale={locale} />
@@ -96,10 +96,10 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
         </Card>
         <div className="space-y-6">
           <Card>
-            <CardHeader>
+            <CardHeader className="max-sm:px-4">
               <CardTitle>{t("overview.quickLinks")}</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="max-sm:px-4">
               <ul className="grid gap-1">
                 {visibleLinks.map(({ href, key, icon: Icon }) => (
                   <li key={href}>
@@ -119,10 +119,10 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
           </Card>
           {session.roles.some((r) => r !== "customer") ? (
             <Card>
-              <CardHeader>
+              <CardHeader className="max-sm:px-4">
                 <CardTitle>{t("roles")}</CardTitle>
               </CardHeader>
-              <CardContent className="flex flex-wrap gap-2">
+              <CardContent className="flex flex-wrap gap-2 max-sm:px-4">
                 {session.roles.map((role) => (
                   <Badge key={role} variant="secondary">
                     {ROLE_LABELS[role as RoleKey] ?? role}

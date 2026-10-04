@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useEffect } from "react";
+import { useEffect, type ReactNode } from "react";
 import { useController, useFormContext, useFormState, type FieldValues, type Path } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -158,4 +158,26 @@ export function useUnsavedChangesWarning(isDirty: boolean) {
     window.addEventListener("beforeunload", handler);
     return () => window.removeEventListener("beforeunload", handler);
   }, [isDirty]);
+}
+
+/**
+ * Save row at the end of a card form (`p-4` card). On phones it sticks to
+ * the bottom of the screen while the card is in view, so Save is always in
+ * reach on a long form; from `sm` up it is a plain right-aligned row.
+ */
+export function CardSaveRow({ children }: { children: ReactNode }) {
+  return (
+    <div className="sticky bottom-0 z-10 -mx-4 -mb-4 flex justify-end gap-2 rounded-b-2xl border-t bg-card/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur sm:static sm:mx-0 sm:mb-0 sm:rounded-none sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none [&>button]:flex-1 sm:[&>button]:flex-none">
+      {children}
+    </div>
+  );
+}
+
+/** Save row at the end of a full-page form: a bar pinned to the bottom of the screen on phones. */
+export function PageSaveRow({ children }: { children: ReactNode }) {
+  return (
+    <div className="sticky bottom-0 z-10 -mx-4 flex justify-end gap-2 border-t bg-background/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none [&>button]:flex-1 sm:[&>button]:flex-none">
+      {children}
+    </div>
+  );
 }
