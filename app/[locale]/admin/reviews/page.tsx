@@ -1,6 +1,7 @@
 import { Camera, MessageSquareReply, Search } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { ToneBadge } from "@/components/admin/booking-status";
+import { MoreFilters } from "@/components/admin/more-filters";
 import { AdminPageHeader } from "@/components/admin/page-header";
 import { Stars } from "@/components/reviews/stars";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -77,34 +78,38 @@ export default async function AdminReviewsPage({
             <option value="all">{t("filters.all")}</option>
           </NativeSelect>
         </div>
-        <div className="grid gap-1.5">
-          <Label htmlFor="rf-subject">{t("filters.subject")}</Label>
-          <NativeSelect id="rf-subject" name="subject" defaultValue={filters.subject}>
-            <option value="all">{t("filters.all")}</option>
-            {REVIEW_SUBJECTS.map((s) => (
-              <option key={s} value={s}>
-                {t(`subjects.${s}`)}
-              </option>
-            ))}
-          </NativeSelect>
-        </div>
-        <div className="grid gap-1.5">
-          <Label htmlFor="rf-rating">{t("filters.rating")}</Label>
-          <NativeSelect
-            id="rf-rating"
-            name="rating"
-            defaultValue={filters.rating ? String(filters.rating) : ""}
-          >
-            <option value="">{t("filters.anyRating")}</option>
-            {[5, 4, 3, 2, 1].map((n) => (
-              <option key={n} value={n}>
-                {tr("starsShort", { count: n })}
-              </option>
-            ))}
-          </NativeSelect>
-        </div>
+        <MoreFilters
+          active={[filters.subject !== "all" ? filters.subject : null, filters.rating].filter(Boolean).length}
+        >
+          <div className="grid gap-1.5">
+            <Label htmlFor="rf-subject">{t("filters.subject")}</Label>
+            <NativeSelect id="rf-subject" name="subject" defaultValue={filters.subject}>
+              <option value="all">{t("filters.all")}</option>
+              {REVIEW_SUBJECTS.map((s) => (
+                <option key={s} value={s}>
+                  {t(`subjects.${s}`)}
+                </option>
+              ))}
+            </NativeSelect>
+          </div>
+          <div className="grid gap-1.5">
+            <Label htmlFor="rf-rating">{t("filters.rating")}</Label>
+            <NativeSelect
+              id="rf-rating"
+              name="rating"
+              defaultValue={filters.rating ? String(filters.rating) : ""}
+            >
+              <option value="">{t("filters.anyRating")}</option>
+              {[5, 4, 3, 2, 1].map((n) => (
+                <option key={n} value={n}>
+                  {tr("starsShort", { count: n })}
+                </option>
+              ))}
+            </NativeSelect>
+          </div>
+        </MoreFilters>
         <div className="flex items-end gap-2 sm:col-span-2 lg:col-span-5">
-          <Button type="submit">
+          <Button type="submit" className="flex-1 sm:flex-none">
             <Search /> {t("filters.apply")}
           </Button>
           <Button asChild variant="ghost">

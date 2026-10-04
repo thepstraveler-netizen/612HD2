@@ -59,14 +59,18 @@ export default async function CommissionReportPage({
         <PaymentSubnav active="settlements" />
         <SettlementSubnav active="report" />
       </AdminPageHeader>
-      <form method="get" className="flex flex-wrap items-end gap-3 rounded-2xl border bg-card p-4">
-        <div className="grid gap-1.5">
+      {/* Phones: From and To side by side, the two buttons sharing the row under them. */}
+      <form
+        method="get"
+        className="grid grid-cols-2 items-end gap-3 rounded-2xl border bg-card p-4 sm:flex sm:flex-wrap"
+      >
+        <div className="grid min-w-0 gap-1.5">
           <Label htmlFor="rf-from">{t("filters.from")}</Label>
-          <Input id="rf-from" name="from" type="date" defaultValue={from} />
+          <Input id="rf-from" name="from" type="date" defaultValue={from} className="px-2.5" />
         </div>
-        <div className="grid gap-1.5">
+        <div className="grid min-w-0 gap-1.5">
           <Label htmlFor="rf-to">{t("filters.to")}</Label>
-          <Input id="rf-to" name="to" type="date" defaultValue={to} />
+          <Input id="rf-to" name="to" type="date" defaultValue={to} className="px-2.5" />
         </div>
         <Button type="submit">
           <Search /> {t("filters.apply")}

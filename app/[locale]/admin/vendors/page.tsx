@@ -42,8 +42,12 @@ export default async function AdminVendorsPage({
       >
         <VendorSubnav active="vendors" />
       </AdminPageHeader>
-      <form method="get" role="search" className="grid gap-3 rounded-2xl border bg-card p-4 sm:grid-cols-3">
-        <div className="grid gap-1.5">
+      <form
+        method="get"
+        role="search"
+        className="grid grid-cols-2 gap-3 rounded-2xl border bg-card p-4 sm:grid-cols-3"
+      >
+        <div className="col-span-2 grid gap-1.5 sm:col-span-1">
           <Label htmlFor="vf-q">{t("filters.search")}</Label>
           <Input
             id="vf-q"
@@ -52,7 +56,7 @@ export default async function AdminVendorsPage({
             placeholder={t("filters.searchPlaceholder")}
           />
         </div>
-        <div className="grid gap-1.5">
+        <div className="grid min-w-0 gap-1.5">
           <Label htmlFor="vf-kind">{t("filters.kind")}</Label>
           <NativeSelect id="vf-kind" name="kind" defaultValue={filters.kind ?? ""}>
             <option value="">{t("filters.any")}</option>
@@ -63,7 +67,7 @@ export default async function AdminVendorsPage({
             ))}
           </NativeSelect>
         </div>
-        <div className="grid gap-1.5">
+        <div className="grid min-w-0 gap-1.5">
           <Label htmlFor="vf-status">{t("filters.status")}</Label>
           <NativeSelect id="vf-status" name="status" defaultValue={filters.status ?? ""}>
             <option value="">{t("filters.any")}</option>
@@ -74,8 +78,8 @@ export default async function AdminVendorsPage({
             ))}
           </NativeSelect>
         </div>
-        <div className="flex flex-wrap items-center gap-2 sm:col-span-3">
-          <Button type="submit">
+        <div className="col-span-2 flex flex-wrap items-center gap-2 sm:col-span-3">
+          <Button type="submit" className="flex-1 sm:flex-none">
             <Search /> {t("filters.apply")}
           </Button>
           {active ? (

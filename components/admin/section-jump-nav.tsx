@@ -50,7 +50,7 @@ export function SectionJumpNav({
         className,
       )}
     >
-      <ScrollRow as="nav" label={label} activeKey={active} innerClassName="px-4 sm:px-6">
+      <ScrollRow as="nav" label={label} activeKey={active} innerClassName="px-4 sm:scroll-px-6 sm:px-6">
         {items.map((item) => {
           const current = item.id === active;
           return (
