@@ -97,3 +97,18 @@ export function AdminSubnav({
     </ScrollRow>
   );
 }
+
+/**
+ * The main actions of a detail page (assign, move status, approve…) for
+ * staff on the move. Render it as the page's last child: on phones it is a
+ * bar pinned to the bottom of the screen, so the actions stay in reach
+ * while reading the details; from `sm` up it is hidden and the page shows
+ * the same actions under its title (wrapped in `hidden sm:block`).
+ */
+export function AdminActionBar({ children }: { children: ReactNode }) {
+  return (
+    <div className="sticky bottom-0 z-20 -mx-4 -mb-4 border-t bg-background/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur sm:hidden [&_[data-slot=button]]:grow">
+      {children}
+    </div>
+  );
+}

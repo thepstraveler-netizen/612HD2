@@ -65,7 +65,7 @@ export function NotificationTemplateForm({
   return (
     <FormProvider {...form}>
       <form onSubmit={onSubmit} className="grid gap-5 lg:grid-cols-2" noValidate>
-        <div className="grid content-start gap-5">
+        <div className="grid min-w-0 content-start gap-5">
           <FormSection title={t("notifications.sections.template")}>
             {isNew ? (
               <>
@@ -147,11 +147,15 @@ export function NotificationTemplateForm({
           </FormSection>
         </div>
 
-        <FormSection title={t("notifications.preview")} className="content-start lg:sticky lg:top-20">
+        <FormSection title={t("notifications.preview")} className="min-w-0 content-start lg:sticky lg:top-20">
           <p className="text-xs text-muted-foreground">{t("notifications.previewLead")}</p>
           <div className="space-y-2 rounded-xl border bg-background p-3" lang={locale}>
-            {channel === "email" ? <p className="font-semibold">{renderTemplate(subject, samples)}</p> : null}
-            <p className="text-sm break-words whitespace-pre-wrap">{renderTemplate(body, samples)}</p>
+            {channel === "email" ? (
+              <p className="font-semibold [overflow-wrap:anywhere]">{renderTemplate(subject, samples)}</p>
+            ) : null}
+            <p className="text-sm [overflow-wrap:anywhere] whitespace-pre-wrap">
+              {renderTemplate(body, samples)}
+            </p>
           </div>
         </FormSection>
 

@@ -2,7 +2,7 @@ import { ArrowRight, ExternalLink } from "lucide-react";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { ToneBadge } from "@/components/admin/booking-status";
-import { AdminPageHeader } from "@/components/admin/page-header";
+import { AdminActionBar, AdminPageHeader } from "@/components/admin/page-header";
 import { ReviewModeration, ReviewReplyForm } from "@/components/admin/review-actions";
 import { DetailCard, FactList, whenFormatter } from "@/components/admin/vendor-shared";
 import { PhotoStrip } from "@/components/reviews/review-list";
@@ -39,6 +39,8 @@ export default async function AdminReviewPage({
   const { review, booking } = found;
   const subject = found.subjectName ?? t(`services.${review.service}`);
 
+  const actions = canWrite ? <ReviewModeration id={review.id} status={review.status} /> : null;
+
   return (
     <div className="space-y-6">
       <AdminPageHeader
@@ -57,7 +59,7 @@ export default async function AdminReviewPage({
             </Button>
           ) : null}
         </div>
-        {canWrite ? <ReviewModeration id={review.id} status={review.status} /> : null}
+        {actions ? <div className="hidden sm:block">{actions}</div> : null}
       </AdminPageHeader>
 
       {review.moderated_at ? (
@@ -131,6 +133,7 @@ export default async function AdminReviewPage({
           <p className="text-sm text-muted-foreground">{t("detail.noReply")}</p>
         )}
       </DetailCard>
+      {actions ? <AdminActionBar>{actions}</AdminActionBar> : null}
     </div>
   );
 }

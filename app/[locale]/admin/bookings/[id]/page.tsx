@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { z } from "zod";
 import { BookingActions } from "@/components/admin/booking-actions";
 import { BookingStatusBadge, ToneBadge, stateTone } from "@/components/admin/booking-status";
-import { AdminPageHeader } from "@/components/admin/page-header";
+import { AdminActionBar, AdminPageHeader } from "@/components/admin/page-header";
 import { AdminTable } from "@/components/admin/payment-table";
 import { Button } from "@/components/ui/button";
 import { requirePermission } from "@/lib/auth/guards";
@@ -73,6 +73,21 @@ export default async function AdminBookingPage({ params }: { params: Promise<{ i
   const quote = suggestedRefund(b, new Date());
   const gst = gstSchema.safeParse(b.gst_details);
 
+  const actionButtons = actions.length ? (
+    <BookingActions
+      bookingId={b.id}
+      actions={actions}
+      refundablePaise={refundable(b)}
+      balancePaise={balance}
+      suggestion={{
+        refundPaise: quote.refundPaise,
+        percent: quote.percent,
+        hoursBefore: quote.hoursBefore,
+      }}
+      canRefund={can("payments.refund")}
+    />
+  ) : null;
+
   return (
     <div className="space-y-6">
       <AdminPageHeader title={b.code} backHref="/admin/bookings" backLabel={t("detail.backToList")}>
@@ -82,18 +97,7 @@ export default async function AdminBookingPage({ params }: { params: Promise<{ i
           <span aria-hidden="true">·</span>
           <span>{t("detail.created", { date: when(b.created_at) })}</span>
         </div>
-        <BookingActions
-          bookingId={b.id}
-          actions={actions}
-          refundablePaise={refundable(b)}
-          balancePaise={balance}
-          suggestion={{
-            refundPaise: quote.refundPaise,
-            percent: quote.percent,
-            hoursBefore: quote.hoursBefore,
-          }}
-          canRefund={can("payments.refund")}
-        />
+        {actionButtons ? <div className="hidden sm:block">{actionButtons}</div> : null}
       </AdminPageHeader>
 
       {b.status === "cancelled" || b.cancelled_at ? (
@@ -340,6 +344,7 @@ export default async function AdminBookingPage({ params }: { params: Promise<{ i
           }))}
         />
       </Section>
+      {actionButtons ? <AdminActionBar>{actionButtons}</AdminActionBar> : null}
     </div>
   );
 }

@@ -9,8 +9,9 @@ import { LeadLogForm } from "@/components/admin/lead-log-form";
 import { LeadQuotes } from "@/components/admin/lead-quotes";
 import { LeadStatusMenu } from "@/components/admin/lead-status-menu";
 import { LeadTimeline } from "@/components/admin/lead-timeline";
-import { AdminPageHeader } from "@/components/admin/page-header";
+import { AdminActionBar, AdminPageHeader } from "@/components/admin/page-header";
 import { Link } from "@/i18n/navigation";
+import { manualNext } from "@/lib/leads/status";
 import { requirePermission } from "@/lib/auth/guards";
 import { getLeadDetail, getLeadStaff } from "@/lib/leads/crm";
 import { getLeadsSettings } from "@/lib/leads/settings";
@@ -87,6 +88,18 @@ export default async function AdminLeadPage({ params }: { params: Promise<{ id: 
       <span className="font-mono">{code}</span>
     );
 
+  // Same filter as LeadStatusMenu: no manual move left means no action bar.
+  const hasMoves = manualNext(lead.status).some((s) => s !== "new" && s !== "quoted");
+  const statusActions =
+    canWrite && hasMoves ? (
+      <LeadStatusMenu
+        leadId={lead.id}
+        status={lead.status}
+        lostReasons={settings.lost_reasons}
+        variant="buttons"
+      />
+    ) : null;
+
   return (
     <div className="space-y-6">
       <AdminPageHeader title={lead.name} backHref="/admin/leads" backLabel={t("detail.backToList")}>
@@ -103,14 +116,7 @@ export default async function AdminLeadPage({ params }: { params: Promise<{ id: 
             </>
           ) : null}
         </div>
-        {canWrite ? (
-          <LeadStatusMenu
-            leadId={lead.id}
-            status={lead.status}
-            lostReasons={settings.lost_reasons}
-            variant="buttons"
-          />
-        ) : null}
+        {statusActions ? <div className="hidden sm:block">{statusActions}</div> : null}
         <LeadContact
           leadId={lead.id}
           phone={lead.phone}
@@ -268,6 +274,7 @@ export default async function AdminLeadPage({ params }: { params: Promise<{ id: 
           </Section>
         </div>
       </div>
+      {statusActions ? <AdminActionBar>{statusActions}</AdminActionBar> : null}
     </div>
   );
 }

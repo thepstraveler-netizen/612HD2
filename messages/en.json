@@ -886,7 +886,8 @@
       "sortDefault": "Default order",
       "moreActions": "More actions",
       "moreFilters": "More filters",
-      "jumpTo": "Jump to section"
+      "jumpTo": "Jump to section",
+      "swipeHint": "Swipe sideways to see every column"
     }
   },
   "vendor": {
