@@ -1,4 +1,5 @@
 import { Check, MapPin, SlidersHorizontal, Store as StoreIcon, X } from "lucide-react";
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { EmptyState } from "@/components/shared/empty-state";
 import { TempleSkyline } from "@/components/shared/motifs";
@@ -82,18 +83,29 @@ export async function ShopListing({ shop, locale, raw }: { shop: CartShop; local
 
   return (
     <>
-      <section className="relative overflow-hidden bg-gradient-to-b from-brand-sky to-background pb-14">
+      <section className="relative isolate overflow-hidden pb-14">
+        <Image
+          src={shop === "food" ? "/images/food-hero.jpg" : "/images/grocery-hero.jpg"}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="-z-20 object-cover object-[70%_center]"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 bg-gradient-to-b from-black/75 via-black/50 to-background"
+        />
         <div className="mx-auto max-w-6xl space-y-4 px-4 pt-8 sm:pt-12">
           <p className="inline-flex items-center gap-1.5 rounded-full bg-card px-3 py-1 text-sm font-medium text-primary shadow-sm">
             <StoreIcon className="size-4" aria-hidden="true" /> {t(`${shop}.eyebrow`)}
           </p>
-          <h1 className="text-[length:var(--text-display)] leading-tight font-extrabold tracking-tight">
+          <h1 className="text-[length:var(--text-display)] leading-tight font-extrabold tracking-tight !text-white drop-shadow-md">
             {t(`${shop}.title`)}
           </h1>
-          <p className="max-w-2xl text-lg text-muted-foreground">{t(`${shop}.subtitle`)}</p>
+          <p className="max-w-2xl text-lg text-white/90 drop-shadow">{t(`${shop}.subtitle`)}</p>
           {!open ? <OrderingPaused shop={shop} /> : null}
         </div>
-        <TempleSkyline className="absolute bottom-0 h-12 text-brand-navy/10 dark:text-white/5" />
       </section>
 
       <div className="mx-auto max-w-6xl space-y-6 px-4 py-8">

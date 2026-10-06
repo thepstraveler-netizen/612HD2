@@ -11,6 +11,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import type { Metadata } from "next";
+import Image from "next/image";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { CabSearchForm } from "@/components/cabs/cab-search-form";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -89,16 +90,28 @@ export default async function CabsPage({ params, searchParams }: Props) {
   return (
     <>
       <JsonLd data={jsonLd} />
-      <section className="relative overflow-hidden bg-gradient-to-b from-brand-sky to-background pb-16">
+      <section className="relative isolate overflow-hidden pb-16">
+        <Image
+          src="/images/cab-hero.jpg"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="-z-20 object-cover object-[70%_center]"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 bg-gradient-to-b from-black/75 via-black/50 to-background"
+        />
         <div className="mx-auto max-w-5xl space-y-6 px-4 pt-8 sm:pt-12">
           <div className="space-y-3">
             <p className="inline-flex items-center gap-1.5 rounded-full bg-card px-3 py-1 text-sm font-medium text-primary shadow-sm">
               <MapPin className="size-4" aria-hidden="true" /> {t("landing.eyebrow")}
             </p>
-            <h1 className="text-[length:var(--text-display)] leading-tight font-extrabold tracking-tight">
+            <h1 className="text-[length:var(--text-display)] leading-tight font-extrabold tracking-tight !text-white drop-shadow-md">
               {t("landing.title")}
             </h1>
-            <p className="max-w-2xl text-lg text-muted-foreground">{t("landing.subtitle")}</p>
+            <p className="max-w-2xl text-lg text-white/90 drop-shadow">{t("landing.subtitle")}</p>
           </div>
           <CabSearchForm options={options} initial={initial} locale={locale} />
           {freeHours !== null ? (

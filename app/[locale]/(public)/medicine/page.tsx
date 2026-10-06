@@ -1,5 +1,6 @@
 import { BadgeCheck, ClipboardCheck, FileUp, LogIn, Pill, ShieldCheck, Truck } from "lucide-react";
 import type { Metadata } from "next";
+import Image from "next/image";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { OrderingPaused } from "@/components/delivery/ordering-paused";
 import { PrescriptionForm } from "@/components/delivery/prescription-form";
@@ -91,15 +92,27 @@ export default async function MedicinePage({ params }: Props) {
 
   return (
     <>
-      <section className="relative overflow-hidden bg-gradient-to-b from-brand-sky to-background pb-14">
+      <section className="relative isolate overflow-hidden pb-14">
+        <Image
+          src="/images/medicine-hero.jpg"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="-z-20 object-cover object-[70%_center]"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 bg-gradient-to-b from-black/75 via-black/50 to-background"
+        />
         <div className="mx-auto max-w-5xl space-y-4 px-4 pt-8 sm:pt-12">
           <p className="inline-flex items-center gap-1.5 rounded-full bg-card px-3 py-1 text-sm font-medium text-primary shadow-sm">
             <Pill className="size-4" aria-hidden="true" /> {t("eyebrow")}
           </p>
-          <h1 className="text-[length:var(--text-display)] leading-tight font-extrabold tracking-tight">
+          <h1 className="text-[length:var(--text-display)] leading-tight font-extrabold tracking-tight !text-white drop-shadow-md">
             {t("title")}
           </h1>
-          <p className="max-w-2xl text-lg text-muted-foreground">{t("subtitle")}</p>
+          <p className="max-w-2xl text-lg text-white/90 drop-shadow">{t("subtitle")}</p>
           <aside
             aria-labelledby="medicine-notice"
             className="flex items-start gap-3 rounded-2xl border-2 border-primary/40 bg-card p-4 text-sm"
@@ -115,7 +128,6 @@ export default async function MedicinePage({ params }: Props) {
           </aside>
           {!open ? <OrderingPaused shop="medicine" /> : null}
         </div>
-        <TempleSkyline className="absolute bottom-0 h-12 text-brand-navy/10 dark:text-white/5" />
       </section>
 
       <div className="mx-auto max-w-5xl space-y-10 px-4 py-8">
