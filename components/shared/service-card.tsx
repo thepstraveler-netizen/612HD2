@@ -21,9 +21,17 @@ export function ServiceCard({
 }) {
   const accent = ACCENT_CLASSES[service.accent];
   const Icon = getIcon(service.icon);
+
+  const directLinks: Record<string, string> = {
+    food: "/food",
+    essentials: "/essentials",
+    medicine: "/medicine",
+  };
+  const href = directLinks[service.slug] || `/services/${service.slug}`;
+
   return (
     <Link
-      href={`/services/${service.slug}`}
+      href={href}
       className="group flex h-full flex-col gap-2.5 rounded-2xl border bg-card p-3 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none active:scale-[0.98] motion-reduce:transition-none sm:flex-row sm:gap-4 sm:p-4 sm:active:scale-100"
     >
       <span

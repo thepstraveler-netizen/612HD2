@@ -80,7 +80,10 @@ export default async function ServicePage({ params }: { params: Params }) {
   const travelCtas = TRAVEL_CTAS[service.slug];
   const lang = locale === "hi" ? "hi" : "en";
   // Enquiry services get the form; a travel hand-off page keeps it only when it sells plans.
-  const showEnquiry = service.kind === "enquiry" && !rideType && (!travelCtas || plans.length > 0);
+  // We also fallback to the enquiry form if a service is 'bookable' but has no plans or CTAs yet.
+  const showEnquiry =
+    (service.kind === "enquiry" && (!travelCtas || plans.length > 0)) ||
+    (!rideType && !travelCtas && plans.length === 0);
   const pageUrl = absoluteUrl(`/services/${service.slug}`, locale);
   const jsonLd = [
     {

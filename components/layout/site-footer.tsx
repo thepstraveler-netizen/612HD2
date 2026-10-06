@@ -89,6 +89,7 @@ export async function SiteFooter() {
           <p className="text-xs text-white/60">
             © {year} {business.name || t("brand.name")}. {t("footer.rights")}
           </p>
+          <p className="mt-1 text-xs text-white/60">Website Made And maintance By Inbora Studio</p>
         </div>
       </div>
     </footer>
