@@ -29,7 +29,8 @@ describe("baseline content", () => {
     );
     expect(services.rows[0].n).toBe(14);
     expect(sections.rows[0].n).toBe(9);
-    expect(nav.rows[0].n).toBe(10);
+    // 10 baseline links plus Reviews (20261013000100_reviews_nav.sql).
+    expect(nav.rows[0].n).toBe(11);
   });
 
   it("is idempotent when the migration runs again", async () => {
@@ -39,7 +40,7 @@ describe("baseline content", () => {
     const file = readdirSync(dir).find((f) => f.endsWith("_content_baseline.sql"))!;
     await db.exec(readFileSync(join(dir, file), "utf8"));
     const { rows } = await db.query<{ n: number }>("select count(*)::int as n from public.navigation_links");
-    expect(rows[0].n).toBe(13);
+    expect(rows[0].n).toBe(14);
   });
 
   it("requires English for localized text", async () => {
