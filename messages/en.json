@@ -448,6 +448,12 @@
     "submitMagic": "Email me a login link",
     "submitForgot": "Send reset link",
     "submitUpdate": "Update password",
+    "passwordHint": "At least 8 characters with letters, a number and a symbol, e.g. Radhe@2026.",
+    "adminPasswordTitle": "Enter your password",
+    "adminPasswordLead": "The admin area needs your password, even when you signed in with an email link or Google.",
+    "adminPasswordSubmit": "Open admin",
+    "adminPasswordForgot": "Forgot or never set a password?",
+    "adminStrengthNotice": "Admin accounts need a stronger password: at least 8 characters with letters, a number and a symbol. Set a new one to continue.",
     "forgotLink": "Forgot password?",
     "noAccount": "New here?",
     "haveAccount": "Already have an account?",
@@ -468,7 +474,9 @@
       "rateLimited": "Too many attempts. Please wait a minute and try again.",
       "notConfigured": "Sign-in is not configured yet.",
       "generic": "Something went wrong. Please try again.",
-      "captcha": "We couldn't confirm you're not a robot. Please complete the check and try again."
+      "captcha": "We couldn't confirm you're not a robot. Please complete the check and try again.",
+      "passwordWeak": "Use letters, at least one number and one symbol (like @ # !).",
+      "wrongPassword": "That password is incorrect."
     }
   },
   "account": {

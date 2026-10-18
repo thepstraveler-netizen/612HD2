@@ -1,5 +1,12 @@
 # Changelog
 
+## Admin passwords
+
+### Changed
+
+- The admin area needs a password sign-in even after logging in by email link or Google, and staff passwords must be at least 8 characters with letters, a number and a symbol; weaker ones are asked to change once (D-111).
+- New passwords everywhere (sign-up, reset, change) must meet the same rule, with a hint under the field.
+
 ## Phones
 
 ### Added

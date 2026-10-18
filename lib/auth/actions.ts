@@ -8,9 +8,12 @@ import { isSupabaseConfigured } from "@/lib/env";
 import { localizedPath } from "@/lib/routing/protected";
 import { enforceRateLimit } from "@/lib/security/rate-limit";
 import { verifyCaptcha } from "@/lib/security/turnstile";
+import { recordPasswordStrength } from "@/lib/auth/staff-password-server";
+import { isStrongPassword } from "@/lib/auth/staff-password";
 import { createClient } from "@/lib/supabase/server";
 import { safeNextPath } from "@/lib/utils";
 import {
+  confirmPasswordSchema,
   forgotPasswordSchema,
   magicLinkSchema,
   signInSchema,
@@ -65,11 +68,12 @@ export async function signInWithPassword(input: unknown, next?: string | null): 
   if (!(await verifyCaptcha(parsed.data.turnstileToken)).ok) return captchaFailed;
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email: parsed.data.email,
     password: parsed.data.password,
   });
   if (error) return { ok: false, error: toErrorKey(error) };
+  await recordPasswordStrength(data.user.id, data.user.app_metadata, isStrongPassword(parsed.data.password));
   redirect(await defaultNext(next));
 }
 
@@ -146,9 +150,37 @@ export async function updatePassword(input: unknown): Promise<ActionResult> {
   if (!parsed.success) return { ok: false, error: "generic" };
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
+  const { data, error } = await supabase.auth.updateUser({ password: parsed.data.password });
   if (error) return { ok: false, error: toErrorKey(error) };
+  // The schema only accepts strong passwords.
+  await recordPasswordStrength(data.user.id, data.user.app_metadata, true);
   return { ok: true, message: "passwordUpdated" };
+}
+
+/**
+ * Staff who signed in by magic link or Google type their password to open
+ * the admin area (D-111): signing in again with it records "password" on
+ * the session.
+ */
+export async function confirmAdminPassword(input: unknown, next?: string | null): Promise<ActionResult> {
+  if (!isSupabaseConfigured()) return notConfigured;
+  const parsed = confirmPasswordSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "required" };
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user?.email) return { ok: false, error: "generic" };
+  if (!(await enforceRateLimit("auth", { key: user.email })).ok) return rateLimited;
+
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: user.email,
+    password: parsed.data.password,
+  });
+  if (error)
+    return { ok: false, error: error.code === "invalid_credentials" ? "wrongPassword" : toErrorKey(error) };
+  await recordPasswordStrength(data.user.id, data.user.app_metadata, isStrongPassword(parsed.data.password));
+  redirect(localizedPath(await getLocale(), safeNextPath(next, "/admin")));
 }
 
 export async function signOut(): Promise<void> {

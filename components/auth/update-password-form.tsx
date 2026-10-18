@@ -7,12 +7,16 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
+import { useRouter } from "@/i18n/navigation";
 import { updatePassword } from "@/lib/auth/actions";
+import { safeNextPath } from "@/lib/utils";
 import { updatePasswordSchema, type UpdatePasswordInput } from "@/schemas/auth";
 import { TextField } from "./fields";
 
-export function UpdatePasswordForm() {
+/** `next`: where to go after a successful change (the admin area sends staff here). */
+export function UpdatePasswordForm({ next }: { next?: string }) {
   const t = useTranslations("auth");
+  const router = useRouter();
   const [pending, startTransition] = useTransition();
   const form = useForm<UpdatePasswordInput>({
     resolver: zodResolver(updatePasswordSchema),
@@ -25,6 +29,7 @@ export function UpdatePasswordForm() {
       if (result.ok) {
         toast.success(t("passwordUpdated"));
         form.reset();
+        if (next) router.push(safeNextPath(next, "/admin"));
       } else {
         toast.error(t(`errors.${result.error}`));
       }
@@ -40,6 +45,7 @@ export function UpdatePasswordForm() {
           type="password"
           autoComplete="new-password"
         />
+        <p className="-mt-2 text-xs text-muted-foreground">{t("passwordHint")}</p>
         <TextField
           control={form.control}
           name="confirm"

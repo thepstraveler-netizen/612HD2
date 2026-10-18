@@ -3,6 +3,7 @@ import { getLocale } from "next-intl/server";
 import { cache } from "react";
 import { redirect } from "@/i18n/navigation";
 import type { SessionContext } from "@/lib/auth/session";
+import { enforceStaffPassword, staffPasswordDecision } from "@/lib/auth/staff-password-server";
 import { visibleModules } from "@/lib/permissions/check";
 import { getSecuritySettings } from "@/lib/security/settings";
 import { createClient } from "@/lib/supabase/server";
@@ -47,6 +48,8 @@ export async function mfaDecision(session: SessionContext, nextPath: string): Pr
 
 /** For pages and layouts: sends the user to the code prompt or the security page when needed. */
 export async function enforceMfa(session: SessionContext, nextPath: string): Promise<void> {
+  // Staff must also have signed in with a strong password (D-111).
+  if (areaFor(nextPath) === "admin") await enforceStaffPassword(session, nextPath);
   const href = mfaRedirectHref(await mfaDecision(session, nextPath), nextPath);
   if (href) redirect({ href, locale: await getLocale() });
 }
@@ -57,6 +60,7 @@ export async function enforceMfa(session: SessionContext, nextPath: string): Pro
  * module permission) has no factor while `require_admin_mfa` is on.
  */
 export async function mfaSatisfied(session: SessionContext): Promise<boolean> {
+  if ((await staffPasswordDecision(session)) !== "allow") return false;
   if (hasVerifiedFactor(session.user.factors)) return (await getAssuranceLevel()) === "aal2";
   if (visibleModules(session.permissions).length === 0) return true;
   return !(await getSecuritySettings()).require_admin_mfa;
