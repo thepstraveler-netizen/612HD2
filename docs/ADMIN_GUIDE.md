@@ -62,6 +62,8 @@ You can also see which roles a person has on their customer page (Admin → Cust
 
 ---
 
+**Password rule.** The admin area always needs your password, even if you logged in with an email link or Google; it asks for it once per sign-in. Admin passwords must be at least 8 characters with letters, a number and a symbol (for example `Radhe@2026`). If yours is weaker you are asked to set a new one. No password yet? Use **Forgot password** on the login page to set one.
+
 ## 2. Finding your way around
 
 - **Sidebar** (left on a laptop, the menu button at the top left on a phone). Modules are grouped into Overview, Catalog, Sales, People, Content and System. You only see the modules your role can open.

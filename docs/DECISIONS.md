@@ -470,3 +470,20 @@ Most visitors and many staff use phones, so every page was checked at 375px and 
 - **Desktop is unchanged.** All of this is below `md` or `lg`; the 1280px screenshots match the old ones.
 
 The shared pieces are `MobileTabBar`, `MobileActionBar` (public detail pages), `StickyActionBar` and `MobilePayBar` (checkouts and driver links), and in admin `DataTable` cards, `AdminActionBar`, `CardSaveRow` / `PageSaveRow`, `MoreFilters`, `HeaderActions`, `SectionJumpNav` and `ScrollRow`. New screens should use them rather than building their own.
+
+## Admin passwords
+
+### D-111 · Staff must use a strong password
+
+Anyone who can open an admin module needs two things before the admin area or any admin action works:
+
+- **A password sign-in on this session.** Signing in by email link or Google is fine for the rest of the site, but the admin area then asks for the password (`/account/admin-password`), which signs in again with it. The check reads the `amr` methods in the session token, so it can't be skipped by visiting a page directly; admin actions refuse too (through `mfaSatisfied`).
+- **A strong password**: at least 8 characters with a letter, a number and a symbol. We only see the password when it is typed, so sign-in and password changes record `app_metadata.password_strong` (only the service role can write it). Staff whose current password is weaker are sent to set a new one, then back to where they were.
+
+Every new password (sign-up, reset, change) must now meet the same rule; existing customer passwords keep working. Two-step sign-in still applies on top. Rules in `lib/auth/staff-password.ts`.
+
+## Reviews page
+
+### D-112 · One page with every review
+
+`/reviews` lists every published review from hotels, tours, stores and services, newest first, 12 to a page, with the overall average and 5 → 1 spread on top. Each review shows what it is for (linked to the hotel, tour or store while that is public, otherwise the kind of booking). It reads through the anon client like the per-listing sections, so RLS and the column grants still decide what is shown, and it is cached under the same `reviews` tag that moderation and replies refresh. The header link ("Reviews", before "Partner With Us") is a `navigation_links` row added by `20261013000100_reviews_nav.sql`, so it can be renamed or moved in Admin → CMS → Navigation.

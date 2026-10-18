@@ -6,7 +6,12 @@ import { expect, test } from "@playwright/test";
 test("services index lists every published service", async ({ page }) => {
   await page.goto("/services");
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  await expect(page.locator("main li a[href*='/services/']")).toHaveCount(14);
+  // Food, essentials and medicine link straight to their stores (service-card.tsx).
+  await expect(
+    page.locator(
+      "main li a[href*='/services/'], main li a[href$='/food'], main li a[href$='/essentials'], main li a[href$='/medicine']",
+    ),
+  ).toHaveCount(14);
 });
 
 test("service pages render from the catalog", async ({ page }) => {

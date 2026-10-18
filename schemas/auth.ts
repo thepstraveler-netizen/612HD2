@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isStrongPassword, MIN_PASSWORD_LENGTH } from "@/lib/auth/staff-password";
 
 /** Shared by the client forms (react-hook-form) and the server actions. */
 
@@ -11,7 +12,11 @@ export const emailSchema = z
 /** Cloudflare Turnstile token from the form's widget; checked server-side only when configured. */
 export const turnstileTokenSchema = z.string().trim().max(2048).optional();
 
-const passwordSchema = z.string().min(8, { error: "passwordTooShort" }).max(72, { error: "passwordTooLong" });
+const passwordSchema = z
+  .string()
+  .min(MIN_PASSWORD_LENGTH, { error: "passwordTooShort" })
+  .max(72, { error: "passwordTooLong" })
+  .refine(isStrongPassword, { error: "passwordWeak" });
 
 export const signInSchema = z.object({
   email: emailSchema,
@@ -33,6 +38,8 @@ export const forgotPasswordSchema = z.object({ email: emailSchema, turnstileToke
 export const updatePasswordSchema = z
   .object({ password: passwordSchema, confirm: z.string() })
   .refine((v) => v.password === v.confirm, { error: "passwordsDontMatch", path: ["confirm"] });
+
+export const confirmPasswordSchema = z.object({ password: z.string().min(1, { error: "required" }).max(72) });
 
 export type SignInInput = z.infer<typeof signInSchema>;
 export type SignUpInput = z.infer<typeof signUpSchema>;

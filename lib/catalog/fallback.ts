@@ -100,6 +100,7 @@ const HEADER: [keyof typeof en.nav, string][] = [
   ["medicine", "/services/medicine"],
   ["packages", "/packages"],
   ["travel", "/travel"],
+  ["reviews", "/reviews"],
   ["partner", "/partner"],
 ];
 

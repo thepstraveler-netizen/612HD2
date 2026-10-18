@@ -12,11 +12,11 @@ describe("auth schemas", () => {
     const result = signUpSchema.safeParse({ fullName: "A", email: "nope", password: "short" });
     expect(result.success).toBe(false);
     const messages = result.error!.issues.map((i) => i.message).sort();
-    expect(messages).toEqual(["invalidEmail", "nameTooShort", "passwordTooShort"]);
+    expect(messages).toEqual(["invalidEmail", "nameTooShort", "passwordTooShort", "passwordWeak"]);
   });
 
   it("requires matching passwords", () => {
-    const result = updatePasswordSchema.safeParse({ password: "longenough", confirm: "different" });
+    const result = updatePasswordSchema.safeParse({ password: "Longenough#1", confirm: "different" });
     expect(result.error?.issues[0]).toMatchObject({ message: "passwordsDontMatch", path: ["confirm"] });
   });
 });

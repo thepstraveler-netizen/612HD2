@@ -54,6 +54,7 @@ export function SignupForm({ next }: { next?: string }) {
           type="password"
           autoComplete="new-password"
         />
+        <p className="-mt-2 text-xs text-muted-foreground">{t("passwordHint")}</p>
         <TurnstileWidget action="signup" onToken={setCaptcha} resetKey={captchaKey} />
         <Button type="submit" className="w-full" disabled={pending}>
           {t("submitSignup")}
