@@ -25,6 +25,7 @@ export const STATIC_SITEMAP_SOURCES: readonly SitemapSource[] = [
   { path: "/essentials", changeFrequency: "daily", priority: 0.8 },
   { path: "/medicine", changeFrequency: "monthly", priority: 0.7 },
   { path: "/services", changeFrequency: "weekly", priority: 0.7 },
+  { path: "/reviews", changeFrequency: "daily", priority: 0.6 },
   { path: "/partner", changeFrequency: "monthly", priority: 0.6 },
 ];
 

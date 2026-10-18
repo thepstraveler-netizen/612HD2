@@ -1,5 +1,11 @@
 # Changelog
 
+## Reviews page
+
+### Added
+
+- A Reviews page (`/reviews`) with every customer review on one page and the overall rating, linked from the top menu (D-112).
+
 ## Admin passwords
 
 ### Changed

@@ -24,6 +24,7 @@
     "medicine": "Medicine",
     "packages": "Packages",
     "travel": "Flights / Trains / Buses",
+    "reviews": "Reviews",
     "partner": "Partner With Us",
     "menu": "Open menu",
     "wishlist": "Wishlist",
@@ -7129,6 +7130,25 @@
       "lastSuperAdmin": "This is the only super admin. Make someone else super admin first.",
       "saveFailed": "Could not save the change. Please try again.",
       "invalid": "Something was wrong with the request. Reload and try again."
+    }
+  },
+  "allReviews": {
+    "title": "Customer reviews",
+    "lead": "What travellers and customers say about their stays, trips and orders with P&S Traveler. Every review is from a real booking.",
+    "emptyBody": "Reviews from customers will appear here after their stays, trips and orders.",
+    "pagination": "Review pages",
+    "newer": "Newer",
+    "older": "Older",
+    "pageOf": "Page {page} of {pages}",
+    "services": {
+      "hotel": "Hotel stay",
+      "cab": "Cab trip",
+      "ride": "Local ride",
+      "food": "Food order",
+      "medicine": "Medicine order",
+      "package": "Tour package",
+      "travel": "Travel booking",
+      "essentials": "Essentials order"
     }
   }
 }
